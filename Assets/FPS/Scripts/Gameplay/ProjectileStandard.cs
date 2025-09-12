@@ -231,11 +231,16 @@ namespace Unity.FPS.Gameplay
             }
             else
             {
-                // point damage
-                Damageable damageable = collider.GetComponent<Damageable>();
-                if (damageable)
+                var proxy = collider.GetComponentInParent<BotHealthProxy>();
+                if (proxy != null)
                 {
-                    damageable.InflictDamage(Damage, false, m_ProjectileBase.Owner);
+                    proxy.TakeDamage(Damage, m_ProjectileBase.Owner);
+                }
+                else
+                {
+                    Damageable damageable = collider.GetComponent<Damageable>();
+                    if (damageable)
+                        damageable.InflictDamage(Damage, false, m_ProjectileBase.Owner);
                 }
             }
 

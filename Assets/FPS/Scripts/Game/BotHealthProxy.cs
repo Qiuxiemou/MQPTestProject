@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace Unity.FPS.Game
 {
-    // Put this on the client bot (or its hitbox)
     public class BotHealthProxy : MonoBehaviour
     {
         [Tooltip("Authority Health component on the server-side bot")]
@@ -38,7 +37,6 @@ namespace Unity.FPS.Game
 
         void OnServerDie()
         {
-            // destroy the client ghost when server dies
             Destroy(gameObject);
         }
     }

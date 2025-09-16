@@ -87,6 +87,7 @@
     <Compile Include="Assets\FPS\Scripts\Game\Events.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Shared\ProjectileBase.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\ActorsManager.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\BotHealthProxy.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\FPS\Scripts\Game\fps.Game.asmdef" />

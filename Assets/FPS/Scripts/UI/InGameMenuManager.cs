@@ -1,4 +1,6 @@
-﻿using Unity.FPS.Game;
+﻿using TMPro;
+
+using Unity.FPS.Game;
 using Unity.FPS.Gameplay;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -29,6 +31,36 @@ namespace Unity.FPS.UI
 
         [Tooltip("GameObject for the controls")]
         public GameObject ControlImage;
+
+        // UI
+        [Header("Latency Controls")]
+        [Tooltip("Slider that controls delayed bot latency (ms)")]
+        public Slider LatencySlider;
+
+        [Tooltip("Text element showing current latency in ms (optional)")]
+        public TMP_Text LatencyValueLabel;
+
+        // Targets
+        [Tooltip("The delayed bot component to control")]
+        public BotDelayed DelayedBot;
+
+        [Tooltip("(Optional) Damage proxy to apply same visual delay")]
+        public BotHealthProxy DelayedBotHealthProxy;
+
+        // Bot Visibility Toggles (ADD) 
+        [Header("Bot Toggles")]
+        [Tooltip("Toggle to show/hide the Original Bot's visuals only")]
+        public Toggle OrigBotToggle;
+
+        [Tooltip("Toggle to show/hide the Delayed Bot's visuals only")]
+        public Toggle DelayedBotToggle;
+
+        [Tooltip("Root object of Original Bot (e.g., Enemy_OrigBot)")]
+        public GameObject OrigBotRoot;
+
+        [Tooltip("Root object of Delayed Bot (e.g., Enemy_DelayedBot)")]
+        public GameObject DelayedBotRoot;
+
 
         PlayerInputHandler m_PlayerInputsHandler;
         Health m_PlayerHealth;
@@ -74,7 +106,93 @@ namespace Unity.FPS.UI
             m_CancelAction.Enable();
             m_NavigateAction.Enable();
             m_MenuAction.Enable();
+
+            //  Latency control setup 
+            if (LatencySlider)
+            {
+                // sensible defaults; override in Inspector if you like
+                if (LatencySlider.minValue == 0f) LatencySlider.minValue = 0f;
+                if (LatencySlider.maxValue <= 0f) LatencySlider.maxValue = 2000f; // 0–2000 ms
+
+                float startMs = DelayedBot ? DelayedBot.latencyMs : 0f;
+                LatencySlider.value = startMs;
+                UpdateLatencyLabel(startMs);
+                LatencySlider.onValueChanged.AddListener(OnLatencyChanged);
+            }
+
+            // Bot visibility toggle setup (ADD) 
+            if (OrigBotToggle && OrigBotRoot)
+            {
+                OrigBotToggle.isOn = GetVisualsVisible(OrigBotRoot.transform);
+                OrigBotToggle.onValueChanged.AddListener(OnOrigBotToggleChanged);
+            }
+
+            if (DelayedBotToggle && DelayedBotRoot)
+            {
+                DelayedBotToggle.isOn = GetVisualsVisible(DelayedBotRoot.transform);
+                DelayedBotToggle.onValueChanged.AddListener(OnDelayedBotToggleChanged);
+            }
+
         }
+
+        /// Added functions to toggle bot visibility
+
+        // Toggle only the visuals so bots keep simulating
+        void SetVisualsVisible(Transform root, bool visible)
+        {
+            if (!root) return;
+
+            // All renderers: MeshRenderer, SkinnedMeshRenderer, SpriteRenderer, LineRenderer,
+            // TrailRenderer, ParticleSystemRenderer, etc.
+            var renderers = root.GetComponentsInChildren<Renderer>(true);
+            foreach (var r in renderers) r.enabled = visible;
+
+            // Microgame often uses legacy Projector (e.g., ShadowProjector)
+            var projectors = root.GetComponentsInChildren<Projector>(true);
+            foreach (var p in projectors) p.enabled = visible;
+
+            // If you ALSO want to hide world-space health bars, uncomment this:
+            // var canvases = root.GetComponentsInChildren<Canvas>(true);
+            // foreach (var c in canvases) c.enabled = visible;
+        }
+
+        // Read current visible state from any Renderer/Projector under the root
+        bool GetVisualsVisible(Transform root)
+        {
+            if (!root) return true;
+            var r = root.GetComponentInChildren<Renderer>(true);
+            if (r) return r.enabled;
+            var p = root.GetComponentInChildren<Projector>(true);
+            if (p) return p.enabled;
+            return true; // default if none found
+        }
+
+        void OnOrigBotToggleChanged(bool visible)
+        {
+            if (OrigBotRoot) SetVisualsVisible(OrigBotRoot.transform, visible);
+        }
+
+        void OnDelayedBotToggleChanged(bool visible)
+        {
+            if (DelayedBotRoot) SetVisualsVisible(DelayedBotRoot.transform, visible);
+        }
+
+        ///END Bot visibility toggle setup (ADD) 
+
+
+
+        void OnLatencyChanged(float newMs)
+        {
+            if (DelayedBot) DelayedBot.SetLatency(newMs);
+            if (DelayedBotHealthProxy) DelayedBotHealthProxy.forwardDelayMs = newMs;
+            UpdateLatencyLabel(newMs);
+        }
+
+        void UpdateLatencyLabel(float ms)
+        {
+            if (LatencyValueLabel) LatencyValueLabel.text = $"{Mathf.RoundToInt(ms)} ms";
+        }
+
 
         void Update()
         {

@@ -22,6 +22,14 @@ namespace Unity.FPS.Game
 
         }
 
+        public void SetLatency(float ms)
+        {
+            // If we shorten the delay, old future-stamped states would feel wrong.
+            // Clearing gives an immediate, predictable change.
+            if (ms < latencyMs) stateBuffer.Clear();
+            latencyMs = Mathf.Max(0f, ms);
+        }
+
         // Update is called once per frame
         void Update()
         {

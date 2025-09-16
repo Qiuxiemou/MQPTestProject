@@ -469,7 +469,7 @@ PrefabInstance:
     - target: {fileID: 9087143436424816424, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
       propertyPath: DeathDuration
-      value: 1.44
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9200139261743394960, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
@@ -1276,6 +1276,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: fps.AI::Unity.FPS.Game.BotHealthProxy
   serverHealth: {fileID: 1154647246}
   forwardDelayMs: 1000
+  destroyBufferAfterClientDeathMs: 100
+--- !u!114 &1246784447 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6370966072896210225, guid: 25a1b0efadb966e44889fce712c8ff8d,
+    type: 3}
+  m_PrefabInstance: {fileID: 1250476574}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1246784424}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e27364eefd6dd0341ba72a3bfc0d9727, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1250476574
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1353,7 +1366,7 @@ PrefabInstance:
         type: 3}
       propertyPath: Health
       value: 
-      objectReference: {fileID: 1154647246}
+      objectReference: {fileID: 1246784447}
     - target: {fileID: 3464315327790461765, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
       propertyPath: m_Enabled
@@ -1367,7 +1380,7 @@ PrefabInstance:
     - target: {fileID: 6370966072896210225, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6449686686394465367, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
@@ -4744,7 +4757,7 @@ PrefabInstance:
     - target: {fileID: 6654034042119420766, guid: 6f72a8daf2a7b2d4d8c0e3438358a8f1,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -6
+      value: -0.01
       objectReference: {fileID: 0}
     - target: {fileID: 6654034042119420766, guid: 6f72a8daf2a7b2d4d8c0e3438358a8f1,
         type: 3}

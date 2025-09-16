@@ -1,43 +1,108 @@
 using UnityEngine;
+using Unity.FPS.Game;
+using System.Collections;
 
 namespace Unity.FPS.Game
 {
+    [RequireComponent(typeof(Health))]
     public class BotHealthProxy : MonoBehaviour
     {
-        [Tooltip("Authority Health component on the server-side bot")]
+        [Header("Authority")]
+        [Tooltip("Health on the server-side bot (authoritative)")]
         public Health serverHealth;
 
-        [Tooltip("Optional: forward damage with same visual delay (ms)")]
+        [Header("Delays")]
+        [Tooltip("Delay (ms) before forwarding damage to the server bot")]
         public float forwardDelayMs = 200f;
+
+        [Tooltip("Extra buffer (ms) after client death before destroying this proxy, to ensure all delayed hits are forwarded")]
+        public float destroyBufferAfterClientDeathMs = 100f;
+
+        private Health clientHealth;
+        private bool clientDying;
+
+        void Awake()
+        {
+            clientHealth = GetComponent<Health>();
+        }
 
         void OnEnable()
         {
-            if (serverHealth != null)
-                serverHealth.OnDie += OnServerDie;
+            
+            if (clientHealth != null)
+                clientHealth.OnDamaged += OnClientDamaged;
+
+            
+            if (clientHealth != null)
+                clientHealth.OnDie += OnClientDie;
+
+            // if (serverHealth != null) serverHealth.OnDie += OnServerDie;
         }
 
         void OnDisable()
         {
-            if (serverHealth != null)
-                serverHealth.OnDie -= OnServerDie;
+            if (clientHealth != null)
+            {
+                clientHealth.OnDamaged -= OnClientDamaged;
+                clientHealth.OnDie     -= OnClientDie;
+            }
+            // if (serverHealth != null) serverHealth.OnDie -= OnServerDie;
         }
 
         public void TakeDamage(float damage, GameObject source)
         {
-            if (!serverHealth) return;
-            StartCoroutine(Forward(damage, source));
+            if (clientHealth != null && !clientDying)
+                clientHealth.TakeDamage(damage, source);
+
+            HitLogger.LogHit(
+                forwardDelayMs,
+                damage,
+                transform,            
+                clientHealth,         
+                serverHealth ? serverHealth.transform : null,
+                serverHealth          
+        );
+
+            if (serverHealth != null)
+                StartCoroutine(ForwardToServerAfterDelay(damage, source));
+
+
         }
 
-        System.Collections.IEnumerator Forward(float dmg, GameObject src)
+        IEnumerator ForwardToServerAfterDelay(float damage, GameObject source)
         {
             if (forwardDelayMs > 0f)
                 yield return new WaitForSeconds(forwardDelayMs / 1000f);
-            serverHealth.TakeDamage(dmg, src);
+
+            if (serverHealth != null)
+                serverHealth.TakeDamage(damage, source);
+            HitLogger.LogHit(
+                forwardDelayMs,
+                damage,
+                transform,
+                clientHealth,
+                serverHealth.transform,
+                serverHealth
+            );
         }
 
-        void OnServerDie()
+        void OnClientDamaged(float damage, GameObject source)
         {
-            Destroy(gameObject);
+
         }
+
+        void OnClientDie()
+        {
+            clientDying = true;
+
+
+            foreach (var r in GetComponentsInChildren<Renderer>(true))  r.enabled = false;
+            foreach (var c in GetComponentsInChildren<Collider>(true))  c.enabled = false;
+
+            float wait = (forwardDelayMs + destroyBufferAfterClientDeathMs) / 1000f;
+            Destroy(gameObject, Mathf.Max(0.01f, wait));
+        }
+
+        // void OnServerDie() { if (this) Destroy(gameObject); }
     }
 }

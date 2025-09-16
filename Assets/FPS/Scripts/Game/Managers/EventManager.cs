@@ -5,6 +5,12 @@ namespace Unity.FPS.Game
 {
     public class GameEvent
     {
+        public DateTime Timestamp { get; private set; }
+
+        public GameEvent()
+        {
+            Timestamp = DateTime.Now;
+        }
     }
 
     // A simple Event System that can be used for remote systems communication
@@ -57,5 +63,32 @@ namespace Unity.FPS.Game
             s_Events.Clear();
             s_EventLookups.Clear();
         }
+    }
+
+
+    // Event Type:
+ 
+    // FireShot
+    public class FireShotEvent : GameEvent
+    {
+        public string ShooterId;
+        public string WeaponId;
+    }
+
+    // Hit / Damage Taken
+    public class HitEvent : GameEvent
+    {
+        public string ShooterId;   // Who fired
+        public string TargetId;    // Who got hit
+        public float Damage;       // Damage dealt
+    }
+
+
+    // Death
+    public class DeathEvent : GameEvent
+    {
+        
+        public string VictimId;    // Who died
+        public string KillerId;    // Who killed them (could be null if environment)
     }
 }

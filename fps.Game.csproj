@@ -68,6 +68,7 @@
     <Compile Include="Assets\FPS\Scripts\Game\TimedSelfDestruct.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\MeshCombiner.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\MeshCombineUtility.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\Managers\EventLogManager.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\AudioUtility.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\IgnoreHeatMap.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Shared\DamageArea.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="Assets\FPS\Scripts\Game\Events.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Shared\ProjectileBase.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\ActorsManager.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\BotHealthProxy.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\FPS\Scripts\Game\fps.Game.asmdef" />

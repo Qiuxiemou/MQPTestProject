@@ -147,6 +147,13 @@ namespace Unity.FPS.Gameplay
                 // Handle accumulating recoil
                 if (hasFired)
                 {
+                    // Log Event Fire Shot
+                    EventManager.Broadcast(new FireShotEvent
+                    {
+                        ShooterId = gameObject.name,   // "Player"
+                        WeaponId = activeWeapon.name   // weapon prefab name
+                    });
+
                     m_AccumulatedRecoil += Vector3.back * activeWeapon.RecoilForce;
                     m_AccumulatedRecoil = Vector3.ClampMagnitude(m_AccumulatedRecoil, MaxRecoilDistance);
                 }

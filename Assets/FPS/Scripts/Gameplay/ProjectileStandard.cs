@@ -239,6 +239,14 @@ namespace Unity.FPS.Gameplay
                 }
             }
 
+            // Log Hit Event 
+            EventManager.Broadcast(new HitEvent
+            {
+                ShooterId = m_ProjectileBase.Owner != null ? m_ProjectileBase.Owner.name : "Unknown",
+                TargetId = collider.gameObject.name,
+                Damage = Damage
+            });
+
             // impact vfx
             if (ImpactVfx)
             {
@@ -255,6 +263,9 @@ namespace Unity.FPS.Gameplay
             {
                 AudioUtility.CreateSFX(ImpactSfxClip, point, AudioUtility.AudioGroups.Impact, 1f, 3f);
             }
+
+
+
 
             // Self Destruct
             Destroy(this.gameObject);

@@ -80,6 +80,14 @@ namespace Unity.FPS.Game
             if (CurrentHealth <= 0f)
             {
                 m_IsDead = true;
+
+                // Log Event Death
+                EventManager.Broadcast(new DeathEvent
+                {
+                    VictimId = gameObject.name,
+                    KillerId = "Unknown"
+                });
+
                 OnDie?.Invoke();
             }
         }

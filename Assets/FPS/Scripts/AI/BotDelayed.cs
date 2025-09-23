@@ -12,7 +12,7 @@ namespace Unity.FPS.Game
         [Header("References")]
         [Tooltip("First Bot")]
         public Transform firstBot;          
-        public float latencyMs = 200f;      // Delay in milliseconds
+        public static float latencyMs = 200f;      // Delay in milliseconds
         public float modifier = 1;
 
         private Queue<(Vector3 pos, Quaternion rot, float applyTime)> stateBuffer = new Queue<(Vector3, Quaternion, float)>();
@@ -29,6 +29,11 @@ namespace Unity.FPS.Game
             // Clearing gives an immediate, predictable change.
             if (ms < latencyMs) stateBuffer.Clear();
             latencyMs = Mathf.Max(0f, ms * modifier);
+        }
+
+        public float GetLatency()
+        {
+            return latencyMs;
         }
 
         // Update is called once per frame

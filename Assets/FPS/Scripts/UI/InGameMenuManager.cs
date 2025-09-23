@@ -83,6 +83,8 @@ namespace Unity.FPS.UI
             m_FramerateCounter = FindFirstObjectByType<FramerateCounter>();
             DebugUtility.HandleErrorIfNullFindObject<FramerateCounter, InGameMenuManager>(m_FramerateCounter, this);
 
+            DelayedBot = FindAnyObjectByType<BotDelayed>();
+
             MenuRoot.SetActive(false);
 
             LookSensitivitySlider.value = m_PlayerInputsHandler.LookSensitivity;
@@ -114,7 +116,7 @@ namespace Unity.FPS.UI
                 if (LatencySlider.minValue == 0f) LatencySlider.minValue = 0f;
                 if (LatencySlider.maxValue <= 0f) LatencySlider.maxValue = 2000f; // 0–2000 ms
 
-                float startMs = DelayedBot ? DelayedBot.latencyMs : 0f;
+                float startMs = DelayedBot ? DelayedBot.GetLatency() : 0f;
                 LatencySlider.value = startMs;
                 UpdateLatencyLabel(startMs);
                 LatencySlider.onValueChanged.AddListener(OnLatencyChanged);

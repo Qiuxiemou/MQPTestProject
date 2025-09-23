@@ -2181,7 +2181,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   firstBot: {fileID: 1154647239}
-  latencyMs: 1000
   modifier: 1
 --- !u!114 &1246784426
 MonoBehaviour:
@@ -2613,8 +2612,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   firstBot: {fileID: 1154647239}
-  latencyMs: 1000
-  modifier: 1
+  modifier: 2
 --- !u!114 &1371730124
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7339,7 +7337,7 @@ PrefabInstance:
         type: 3}
       propertyPath: DelayedBot
       value: 
-      objectReference: {fileID: 1246784425}
+      objectReference: {fileID: 0}
     - target: {fileID: 1567544279954943050, guid: c996b53e9f849234393d1e90f68d1679,
         type: 3}
       propertyPath: OrigBotRoot

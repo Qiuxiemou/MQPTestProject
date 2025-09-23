@@ -55,6 +55,9 @@ namespace Unity.FPS.UI
         [Tooltip("Toggle to show/hide the Delayed Bot's visuals only")]
         public Toggle DelayedBotToggle;
 
+        [Tooltip("Toggle to enable/disable timewarp")]
+        public Toggle TimeWarpToggle;
+
         [Tooltip("Root object of Original Bot (e.g., Enemy_OrigBot)")]
         public GameObject OrigBotRoot;
 
@@ -135,6 +138,8 @@ namespace Unity.FPS.UI
                 DelayedBotToggle.onValueChanged.AddListener(OnDelayedBotToggleChanged);
             }
 
+            TimeWarpToggle.isOn = true;
+            TimeWarpToggle.onValueChanged.AddListener(OnTimeWarpChanged);
         }
 
         /// Added functions to toggle bot visibility
@@ -177,6 +182,11 @@ namespace Unity.FPS.UI
         void OnDelayedBotToggleChanged(bool visible)
         {
             if (DelayedBotRoot) SetVisualsVisible(DelayedBotRoot.transform, visible);
+        }
+
+        void OnTimeWarpChanged(bool enabled)
+        {
+            TimeWarpToggle.isOn = enabled;
         }
 
         ///END Bot visibility toggle setup (ADD) 

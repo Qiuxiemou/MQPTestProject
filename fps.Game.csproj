@@ -78,6 +78,7 @@
     <Compile Include="Assets\FPS\Scripts\Game\Shared\Destructable.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\GameFlowManager.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Shared\WeaponController.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\HitLogger.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\GameConstants.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\EventManager.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\AudioManager.cs" />

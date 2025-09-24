@@ -54,14 +54,6 @@ namespace Unity.FPS.Game
             if (clientHealth != null && !clientDying)
                 clientHealth.TakeDamage(damage, source);
 
-            HitLogger.LogHit(
-                forwardDelayMs,
-                damage,
-                transform,            
-                clientHealth,         
-                serverHealth ? serverHealth.transform : null,
-                serverHealth          
-        );
 
             if (serverHealth != null)
                 StartCoroutine(ForwardToServerAfterDelay(damage, source));
@@ -76,14 +68,21 @@ namespace Unity.FPS.Game
 
             if (serverHealth != null)
                 serverHealth.TakeDamage(damage, source);
-            HitLogger.LogHit(
-                forwardDelayMs,
-                damage,
-                transform,
-                clientHealth,
-                serverHealth.transform,
-                serverHealth
-            );
+
+
+            EventManager.Broadcast(new HitCsvEvent {
+                EventType      = "server_applied",
+                ShooterId      = source ? source.name : "Unknown",
+                TargetId       = serverHealth.gameObject.name,
+                Damage         = damage,
+                ForwardDelayMs = forwardDelayMs,
+                HitPoint       = transform.position, 
+                HitBox         = true,              
+                ClientTf       = transform,
+                ClientHealth   = clientHealth,
+                ServerTf       = serverHealth.transform,
+                ServerHealth   = serverHealth
+            });
         }
 
         void OnClientDamaged(float damage, GameObject source)

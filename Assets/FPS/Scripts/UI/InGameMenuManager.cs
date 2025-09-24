@@ -55,6 +55,9 @@ namespace Unity.FPS.UI
         [Tooltip("Toggle to show/hide the Delayed Bot's visuals only")]
         public Toggle DelayedBotToggle;
 
+        [Tooltip("Toggle to enable/disable timewarp")]
+        public Toggle TimeWarpToggle;
+
         [Tooltip("Root object of Original Bot (e.g., Enemy_OrigBot)")]
         public GameObject OrigBotRoot;
 
@@ -82,6 +85,8 @@ namespace Unity.FPS.UI
 
             m_FramerateCounter = FindFirstObjectByType<FramerateCounter>();
             DebugUtility.HandleErrorIfNullFindObject<FramerateCounter, InGameMenuManager>(m_FramerateCounter, this);
+
+            DelayedBot = FindAnyObjectByType<BotDelayed>();
 
             MenuRoot.SetActive(false);
 
@@ -114,7 +119,7 @@ namespace Unity.FPS.UI
                 if (LatencySlider.minValue == 0f) LatencySlider.minValue = 0f;
                 if (LatencySlider.maxValue <= 0f) LatencySlider.maxValue = 2000f; // 0–2000 ms
 
-                float startMs = DelayedBot ? DelayedBot.latencyMs : 0f;
+                float startMs = DelayedBot ? DelayedBot.GetLatency() : 0f;
                 LatencySlider.value = startMs;
                 UpdateLatencyLabel(startMs);
                 LatencySlider.onValueChanged.AddListener(OnLatencyChanged);
@@ -133,6 +138,8 @@ namespace Unity.FPS.UI
                 DelayedBotToggle.onValueChanged.AddListener(OnDelayedBotToggleChanged);
             }
 
+            TimeWarpToggle.isOn = true;
+            TimeWarpToggle.onValueChanged.AddListener(OnTimeWarpChanged);
         }
 
         /// Added functions to toggle bot visibility
@@ -175,6 +182,11 @@ namespace Unity.FPS.UI
         void OnDelayedBotToggleChanged(bool visible)
         {
             if (DelayedBotRoot) SetVisualsVisible(DelayedBotRoot.transform, visible);
+        }
+
+        void OnTimeWarpChanged(bool enabled)
+        {
+            TimeWarpToggle.isOn = enabled;
         }
 
         ///END Bot visibility toggle setup (ADD) 

@@ -12,7 +12,8 @@ namespace Unity.FPS.Game
         [Header("References")]
         [Tooltip("First Bot")]
         public Transform firstBot;          
-        public float latencyMs = 200f;      // Delay in milliseconds
+        public static float latencyMs = 200f;      // Delay in milliseconds
+        public float modifier = 1;
 
         private Queue<(Vector3 pos, Quaternion rot, float applyTime)> stateBuffer = new Queue<(Vector3, Quaternion, float)>();
 
@@ -27,7 +28,12 @@ namespace Unity.FPS.Game
             // If we shorten the delay, old future-stamped states would feel wrong.
             // Clearing gives an immediate, predictable change.
             if (ms < latencyMs) stateBuffer.Clear();
-            latencyMs = Mathf.Max(0f, ms);
+            latencyMs = Mathf.Max(0f, ms * modifier);
+        }
+
+        public float GetLatency()
+        {
+            return latencyMs;
         }
 
         // Update is called once per frame
@@ -36,7 +42,7 @@ namespace Unity.FPS.Game
             if (firstBot == null) return;
 
             // Step 1: Record the current state of the logic bot with a future applyTime
-            stateBuffer.Enqueue((firstBot.position, firstBot.rotation, Time.time + latencyMs / 1000f));
+            stateBuffer.Enqueue((firstBot.position, firstBot.rotation, Time.time + latencyMs * modifier / 1000f));
 
             // Step 2: Apply states that have reached their delay
             while (stateBuffer.Count > 0 && Time.time >= stateBuffer.Peek().applyTime)

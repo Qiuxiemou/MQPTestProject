@@ -3086,6 +3086,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1737504309}
   - component: {fileID: 1737504308}
+  - component: {fileID: 1737504310}
+  - component: {fileID: 1737504311}
   m_Layer: 0
   m_Name: LogManager
   m_TagString: Untagged
@@ -3120,6 +3122,31 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1737504310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1737504307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a67e384ed06e20d42b4cdb3b300f4353, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: fps.Game::Unity.FPS.Game.WorldStateLogManager
+  logInterval: 0.1
+--- !u!114 &1737504311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1737504307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc4e5ec613ea34a4e9302f1c5f051caa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: fps.Game::Unity.FPS.Game.GameStatsLogManager
 --- !u!1001 &1771139419
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7176,6 +7203,11 @@ PrefabInstance:
       propertyPath: LatencyValueLabel
       value: 
       objectReference: {fileID: 136880377}
+    - target: {fileID: 1567544279954943050, guid: c996b53e9f849234393d1e90f68d1679,
+        type: 3}
+      propertyPath: DelayedBotHealthProxy
+      value: 
+      objectReference: {fileID: 1246784441}
     - target: {fileID: 1826386070391163904, guid: c996b53e9f849234393d1e90f68d1679,
         type: 3}
       propertyPath: m_textInfo.lineCount

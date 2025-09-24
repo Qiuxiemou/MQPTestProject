@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Unity.FPS.Game
 {
@@ -90,5 +91,37 @@ namespace Unity.FPS.Game
         
         public string VictimId;    // Who died
         public string KillerId;    // Who killed them (could be null if environment)
+    }
+
+    public class HitCsvEvent : GameEvent
+    {
+        public string EventType;        // "client_hit" / "world_hit" / "server_applied"
+        public string ShooterId;
+        public string TargetId;
+        public float  Damage;
+        public float  ForwardDelayMs;
+
+        public Vector3 HitPoint;
+        public bool    HitBox;
+
+        public Transform ClientTf;
+        public Health    ClientHealth;
+        public Transform ServerTf;
+        public Health    ServerHealth;
+    }
+
+    public class KeyPressEvent : GameEvent
+    {
+        public string PlayerId;
+        public KeyCode Key;
+        public bool Pressed;
+    }
+
+    public class ViewSampleEvent : GameEvent
+    {
+        public string PlayerId;
+        public Vector3 Position;     
+        public Vector3 RotationEuler; 
+        public Vector3 Forward;     
     }
 }

@@ -178,6 +178,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 168451937821874537, guid: 25a1b0efadb966e44889fce712c8ff8d,
+        type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 320366457750320401, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
       propertyPath: m_Layer
@@ -431,7 +436,7 @@ PrefabInstance:
     - target: {fileID: 6421371450313891992, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
       propertyPath: m_Layer
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6449686686394465367, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
@@ -496,6 +501,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1154647240}
+    - targetCorrespondingSourceObject: {fileID: 2015434656898269652, guid: 25a1b0efadb966e44889fce712c8ff8d,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1154647254}
   m_SourcePrefab: {fileID: 100100000, guid: 25a1b0efadb966e44889fce712c8ff8d, type: 3}
 --- !u!1 &84826637
 GameObject:
@@ -2568,6 +2577,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e27364eefd6dd0341ba72a3bfc0d9727, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1154647254
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1154647230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9ae5a008251a5f4490375201f7f2d66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: fps.Game::Unity.FPS.Game.BotHealthProxy
+  pastHealth: {fileID: 1371730130}
+  serverHealth: {fileID: 1246784447}
+  futureHealth: {fileID: 1154647246}
+  destroyBufferAfterClientDeathMs: 100
 --- !u!4 &1212145535 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2141676431450117668, guid: cd17687759887a0438ee021e51abc9d9,
@@ -2632,8 +2657,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9ae5a008251a5f4490375201f7f2d66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: fps.AI::Unity.FPS.Game.BotHealthProxy
-  serverHealth: {fileID: 1154647246}
-  forwardDelayMs: 1000
+  pastHealth: {fileID: 1371730130}
+  serverHealth: {fileID: 1246784447}
+  futureHealth: {fileID: 1154647246}
   destroyBufferAfterClientDeathMs: 100
 --- !u!114 &1246784447 stripped
 MonoBehaviour:
@@ -3014,8 +3040,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9ae5a008251a5f4490375201f7f2d66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: fps.AI::Unity.FPS.Game.BotHealthProxy
+  pastHealth: {fileID: 1371730130}
   serverHealth: {fileID: 1246784447}
-  forwardDelayMs: 1000
+  futureHealth: {fileID: 1154647246}
   destroyBufferAfterClientDeathMs: 100
 --- !u!114 &1371730123
 MonoBehaviour:
@@ -7782,7 +7809,7 @@ PrefabInstance:
         type: 3}
       propertyPath: DelayedBot
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1371730123}
     - target: {fileID: 1567544279954943050, guid: c996b53e9f849234393d1e90f68d1679,
         type: 3}
       propertyPath: OrigBotRoot
@@ -7823,6 +7850,11 @@ PrefabInstance:
       propertyPath: LatencyValueLabel
       value: 
       objectReference: {fileID: 136880377}
+    - target: {fileID: 1567544279954943050, guid: c996b53e9f849234393d1e90f68d1679,
+        type: 3}
+      propertyPath: DelayedBotHealthProxy
+      value: 
+      objectReference: {fileID: 1371730122}
     - target: {fileID: 1567544280599478587, guid: c996b53e9f849234393d1e90f68d1679,
         type: 3}
       propertyPath: m_SizeDelta.y

@@ -186,6 +186,7 @@ namespace Unity.FPS.UI
 
         void OnTimeWarpChanged(bool enabled)
         {
+            if (DelayedBotHealthProxy) DelayedBotHealthProxy.PropagateBackwards(enabled);
             TimeWarpToggle.isOn = enabled;
         }
 
@@ -196,7 +197,7 @@ namespace Unity.FPS.UI
         void OnLatencyChanged(float newMs)
         {
             if (DelayedBot) DelayedBot.SetLatency(newMs);
-            if (DelayedBotHealthProxy) DelayedBotHealthProxy.forwardDelayMs = newMs;
+            if (DelayedBotHealthProxy) DelayedBotHealthProxy.SetDelay(newMs);
             UpdateLatencyLabel(newMs);
         }
 

@@ -28,7 +28,7 @@ namespace Unity.FPS.Game
 
         private Health clientHealth;
         private bool clientDying;
-        private bool propagateBackwards = false;
+        private static bool propagateBackwards = false;
 
         void Awake()
         {
@@ -37,7 +37,6 @@ namespace Unity.FPS.Game
 
         void OnEnable()
         {
-            
             if (clientHealth != null)
                 clientHealth.OnDamaged += OnClientDamaged;
 
@@ -123,7 +122,6 @@ namespace Unity.FPS.Game
 
             //if (serverHealth != null)
             //    StartCoroutine(ForwardToServerAfterDelay(damage, source));
-            Debug.Log("hit bot");
             Debug.Log(propagateBackwards);
             if (propagateBackwards && futureHealth != null)
                 StartCoroutine(DamageBackwards(damage, source));

@@ -436,7 +436,7 @@ PrefabInstance:
     - target: {fileID: 6421371450313891992, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
       propertyPath: m_Layer
-      value: 0
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6449686686394465367, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
@@ -2766,6 +2766,11 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6421371450313891992, guid: 25a1b0efadb966e44889fce712c8ff8d,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 6449686686394465367, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
       propertyPath: m_Enabled
@@ -3284,6 +3289,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6421371450313891992, guid: 25a1b0efadb966e44889fce712c8ff8d,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6449686686394465367, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
@@ -7817,9 +7827,19 @@ PrefabInstance:
       objectReference: {fileID: 1154647230}
     - target: {fileID: 1567544279954943050, guid: c996b53e9f849234393d1e90f68d1679,
         type: 3}
+      propertyPath: PastBotRoot
+      value: 
+      objectReference: {fileID: 1371730121}
+    - target: {fileID: 1567544279954943050, guid: c996b53e9f849234393d1e90f68d1679,
+        type: 3}
       propertyPath: DelayedBotGO
       value: 
       objectReference: {fileID: 1246784424}
+    - target: {fileID: 1567544279954943050, guid: c996b53e9f849234393d1e90f68d1679,
+        type: 3}
+      propertyPath: FutureBotRoot
+      value: 
+      objectReference: {fileID: 1154647230}
     - target: {fileID: 1567544279954943050, guid: c996b53e9f849234393d1e90f68d1679,
         type: 3}
       propertyPath: LatencySlider
@@ -7830,6 +7850,11 @@ PrefabInstance:
       propertyPath: OrigBotToggle
       value: 
       objectReference: {fileID: 2036628673}
+    - target: {fileID: 1567544279954943050, guid: c996b53e9f849234393d1e90f68d1679,
+        type: 3}
+      propertyPath: ServerBotRoot
+      value: 
+      objectReference: {fileID: 1246784424}
     - target: {fileID: 1567544279954943050, guid: c996b53e9f849234393d1e90f68d1679,
         type: 3}
       propertyPath: DelayedBotRoot

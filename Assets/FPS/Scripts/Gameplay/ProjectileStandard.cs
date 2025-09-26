@@ -257,7 +257,7 @@ namespace Unity.FPS.Gameplay
                 ShooterId      = m_ProjectileBase.Owner ? m_ProjectileBase.Owner.name : "Unknown",
                 TargetId       = ownerGO.name,  
                 Damage         = Damage,
-                ForwardDelayMs = proxyForLog ? proxyForLog.forwardDelayMs : 0f,
+                ForwardDelayMs = proxyForLog ? BotHealthProxy.forwardDelayMs : 0f,
                 HitPoint       = point,
                 HitBox         = hitBox,
 

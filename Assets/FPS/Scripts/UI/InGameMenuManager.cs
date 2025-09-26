@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 namespace Unity.FPS.UI
 {
@@ -58,11 +59,14 @@ namespace Unity.FPS.UI
         [Tooltip("Toggle to enable/disable timewarp")]
         public Toggle TimeWarpToggle;
 
-        [Tooltip("Root object of Original Bot (e.g., Enemy_OrigBot)")]
-        public GameObject OrigBotRoot;
+        [Tooltip("Root object of Future Bot (e.g., Enemy_OrigBot)")]
+        public GameObject FutureBotRoot;
 
-        [Tooltip("Root object of Delayed Bot (e.g., Enemy_DelayedBot)")]
-        public GameObject DelayedBotRoot;
+        [Tooltip("Root object of Server Bot (e.g., Enemy_DelayedBot)")]
+        public GameObject ServerBotRoot;
+
+        [Tooltip("Root object of Past Bot")]
+        public GameObject PastBotRoot;
 
 
         PlayerInputHandler m_PlayerInputsHandler;
@@ -126,15 +130,15 @@ namespace Unity.FPS.UI
             }
 
             // Bot visibility toggle setup (ADD) 
-            if (OrigBotToggle && OrigBotRoot)
+            if (OrigBotToggle && FutureBotRoot)
             {
-                OrigBotToggle.isOn = GetVisualsVisible(OrigBotRoot.transform);
+                OrigBotToggle.isOn = GetVisualsVisible(FutureBotRoot.transform);
                 OrigBotToggle.onValueChanged.AddListener(OnOrigBotToggleChanged);
             }
 
-            if (DelayedBotToggle && DelayedBotRoot)
+            if (DelayedBotToggle && ServerBotRoot)
             {
-                DelayedBotToggle.isOn = GetVisualsVisible(DelayedBotRoot.transform);
+                DelayedBotToggle.isOn = GetVisualsVisible(ServerBotRoot.transform);
                 DelayedBotToggle.onValueChanged.AddListener(OnDelayedBotToggleChanged);
             }
 
@@ -176,17 +180,48 @@ namespace Unity.FPS.UI
 
         void OnOrigBotToggleChanged(bool visible)
         {
-            if (OrigBotRoot) SetVisualsVisible(OrigBotRoot.transform, visible);
+            if (FutureBotRoot) SetVisualsVisible(FutureBotRoot.transform, visible);
         }
 
         void OnDelayedBotToggleChanged(bool visible)
         {
-            if (DelayedBotRoot) SetVisualsVisible(DelayedBotRoot.transform, visible);
+            if (ServerBotRoot) SetVisualsVisible(ServerBotRoot.transform, visible);
         }
 
         void OnTimeWarpChanged(bool enabled)
         {
-            TimeWarpToggle.isOn = enabled;
+            if (DelayedBotHealthProxy) DelayedBotHealthProxy.PropagateBackwards(enabled);
+            
+            if (enabled)
+            {
+                Transform hitboxTransform = PastBotRoot.transform.Find("HitBox");
+                Debug.Log(hitboxTransform);
+                if (hitboxTransform != null)
+                {
+                    hitboxTransform.gameObject.layer = 0;
+                }
+
+                hitboxTransform = FutureBotRoot.transform.Find("HitBox");
+                if (hitboxTransform != null)
+                {
+                    hitboxTransform.gameObject.layer = 3;
+                }
+            }
+            else
+            {
+                Transform hitboxTransform = PastBotRoot.transform.Find("HitBox");
+                if (hitboxTransform != null)
+                {
+                    hitboxTransform.gameObject.layer = 3;
+                }
+
+                hitboxTransform = FutureBotRoot.transform.Find("HitBox");
+                if (hitboxTransform != null)
+                {
+                    hitboxTransform.gameObject.layer = 0;
+                }
+            }
+                TimeWarpToggle.isOn = enabled;
         }
 
         ///END Bot visibility toggle setup (ADD) 
@@ -196,7 +231,7 @@ namespace Unity.FPS.UI
         void OnLatencyChanged(float newMs)
         {
             if (DelayedBot) DelayedBot.SetLatency(newMs);
-            if (DelayedBotHealthProxy) DelayedBotHealthProxy.forwardDelayMs = newMs;
+            if (DelayedBotHealthProxy) DelayedBotHealthProxy.SetDelay(newMs);
             UpdateLatencyLabel(newMs);
         }
 

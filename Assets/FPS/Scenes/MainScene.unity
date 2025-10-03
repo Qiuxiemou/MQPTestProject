@@ -485,6 +485,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9087143436424816424, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
+      propertyPath: DropRate
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9087143436424816424, guid: 25a1b0efadb966e44889fce712c8ff8d,
+        type: 3}
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
@@ -2630,6 +2635,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   firstBot: {fileID: 1154647239}
   modifier: 1
+  baseMoveSpeed: 5
+  catchupMultiplier: 2
 --- !u!114 &1246784426
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2789,6 +2796,11 @@ PrefabInstance:
     - target: {fileID: 9087143436424816424, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
       propertyPath: DeathVFX
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9087143436424816424, guid: 25a1b0efadb966e44889fce712c8ff8d,
+        type: 3}
+      propertyPath: DropRate
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9087143436424816424, guid: 25a1b0efadb966e44889fce712c8ff8d,
@@ -3073,6 +3085,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   firstBot: {fileID: 1154647239}
   modifier: 2
+  baseMoveSpeed: 5
+  catchupMultiplier: 2
 --- !u!114 &1371730124
 MonoBehaviour:
   m_ObjectHideFlags: 0

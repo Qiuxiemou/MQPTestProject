@@ -35,6 +35,9 @@ namespace Unity.FPS.AI
         [Tooltip("Delay after death where the GameObject is destroyed (to allow for animation)")]
         public float DeathDuration = 0f;
 
+        [Tooltip("Whether enemy death should have vfx")]
+        public bool DeathVFX = true;
+
 
         [Header("Weapons Parameters")] [Tooltip("Allow weapon swapping for this enemy")]
         public bool SwapToNextWeapon = false;
@@ -360,8 +363,11 @@ namespace Unity.FPS.AI
         void OnDie()
         {
             // spawn a particle system when dying
-            var vfx = Instantiate(DeathVfx, DeathVfxSpawnPoint.position, Quaternion.identity);
-            Destroy(vfx, 5f);
+            if (DeathVFX)
+            {
+                var vfx = Instantiate(DeathVfx, DeathVfxSpawnPoint.position, Quaternion.identity);
+                Destroy(vfx, 5f);
+            }
 
             // tells the game flow manager to handle the enemy destuction
             m_EnemyManager.UnregisterEnemy(this);
@@ -373,7 +379,7 @@ namespace Unity.FPS.AI
             }
 
             // this will call the OnDestroy function
-            Destroy(gameObject, DeathDuration);
+            //Destroy(gameObject, DeathDuration);
         }
 
         void OnDrawGizmosSelected()

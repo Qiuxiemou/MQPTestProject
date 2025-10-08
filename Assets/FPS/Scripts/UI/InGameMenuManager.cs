@@ -180,12 +180,20 @@ namespace Unity.FPS.UI
 
         void OnOrigBotToggleChanged(bool visible)
         {
-            if (FutureBotRoot) SetVisualsVisible(FutureBotRoot.transform, visible);
+            if (FutureBotRoot)
+            {
+                SetVisualsVisible(FutureBotRoot.transform, visible);
+                FutureBotRoot.GetComponent<WorldspaceHealthBar>().setHealthVisibility(visible);
+            }
         }
 
         void OnDelayedBotToggleChanged(bool visible)
         {
-            if (ServerBotRoot) SetVisualsVisible(ServerBotRoot.transform, visible);
+            if (ServerBotRoot)
+            {
+                SetVisualsVisible(ServerBotRoot.transform, visible);
+                ServerBotRoot.GetComponent<WorldspaceHealthBar>().setHealthVisibility(visible);
+            }
         }
 
         void OnTimeWarpChanged(bool enabled)

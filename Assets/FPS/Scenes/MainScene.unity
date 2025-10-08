@@ -178,6 +178,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 168451937821874537, guid: 25a1b0efadb966e44889fce712c8ff8d,
+        type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 320366457750320401, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
       propertyPath: m_Layer
@@ -475,6 +480,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9087143436424816424, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
+      propertyPath: DeathVFX
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9087143436424816424, guid: 25a1b0efadb966e44889fce712c8ff8d,
+        type: 3}
+      propertyPath: DropRate
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9087143436424816424, guid: 25a1b0efadb966e44889fce712c8ff8d,
+        type: 3}
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
@@ -496,6 +511,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1154647240}
+    - targetCorrespondingSourceObject: {fileID: 2015434656898269652, guid: 25a1b0efadb966e44889fce712c8ff8d,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1154647254}
   m_SourcePrefab: {fileID: 100100000, guid: 25a1b0efadb966e44889fce712c8ff8d, type: 3}
 --- !u!1 &84826637
 GameObject:
@@ -2568,6 +2587,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e27364eefd6dd0341ba72a3bfc0d9727, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1154647254
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1154647230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9ae5a008251a5f4490375201f7f2d66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: fps.Game::Unity.FPS.Game.BotHealthProxy
+  pastHealth: {fileID: 1371730130}
+  serverHealth: {fileID: 1246784447}
+  futureHealth: {fileID: 1154647246}
+  destroyBufferAfterClientDeathMs: 100
 --- !u!4 &1212145535 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2141676431450117668, guid: cd17687759887a0438ee021e51abc9d9,
@@ -2600,6 +2635,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   firstBot: {fileID: 1154647239}
   modifier: 1
+  baseMoveSpeed: 5
+  catchupMultiplier: 2
 --- !u!114 &1246784426
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2632,8 +2669,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9ae5a008251a5f4490375201f7f2d66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: fps.AI::Unity.FPS.Game.BotHealthProxy
-  serverHealth: {fileID: 1154647246}
-  forwardDelayMs: 1000
+  pastHealth: {fileID: 1371730130}
+  serverHealth: {fileID: 1246784447}
+  futureHealth: {fileID: 1154647246}
   destroyBufferAfterClientDeathMs: 100
 --- !u!114 &1246784447 stripped
 MonoBehaviour:
@@ -2647,6 +2685,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e27364eefd6dd0341ba72a3bfc0d9727, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &1246784455 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2015434656898269656, guid: 25a1b0efadb966e44889fce712c8ff8d,
+    type: 3}
+  m_PrefabInstance: {fileID: 1250476574}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1250476574
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2740,6 +2784,11 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6421371450313891992, guid: 25a1b0efadb966e44889fce712c8ff8d,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 6449686686394465367, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
       propertyPath: m_Enabled
@@ -2752,8 +2801,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9087143436424816424, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
-      propertyPath: m_Enabled
+      propertyPath: DeathVFX
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9087143436424816424, guid: 25a1b0efadb966e44889fce712c8ff8d,
+        type: 3}
+      propertyPath: DropRate
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9087143436424816424, guid: 25a1b0efadb966e44889fce712c8ff8d,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9087143436424816424, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
@@ -3014,8 +3073,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9ae5a008251a5f4490375201f7f2d66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: fps.AI::Unity.FPS.Game.BotHealthProxy
+  pastHealth: {fileID: 1371730130}
   serverHealth: {fileID: 1246784447}
-  forwardDelayMs: 1000
+  futureHealth: {fileID: 1154647246}
   destroyBufferAfterClientDeathMs: 100
 --- !u!114 &1371730123
 MonoBehaviour:
@@ -3029,8 +3089,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 711e2891027f6df4ca78759212cbb635, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  firstBot: {fileID: 1154647239}
-  modifier: 2
+  firstBot: {fileID: 1246784455}
+  modifier: 1
+  baseMoveSpeed: 5
+  catchupMultiplier: 2
 --- !u!114 &1371730124
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3258,6 +3320,11 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6421371450313891992, guid: 25a1b0efadb966e44889fce712c8ff8d,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6449686686394465367, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
       propertyPath: m_Enabled
@@ -3271,7 +3338,7 @@ PrefabInstance:
     - target: {fileID: 9087143436424816424, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9087143436424816424, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
@@ -3511,6 +3578,33 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2729281214845312454}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1688169413 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7442781921941657531, guid: 761cdc9e4e883334cbdcea062d0befa7,
+    type: 3}
+  m_PrefabInstance: {fileID: 2729281214152228920}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1688169414 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8694137560673455815, guid: 761cdc9e4e883334cbdcea062d0befa7,
+    type: 3}
+  m_PrefabInstance: {fileID: 2729281214152228920}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1688169419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1688169413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 608f777585162a94c897c98d562da294, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: fps.Game::ViewSampler
+  PlayerId: Player1
+  CameraTransform: {fileID: 1688169414}
+  IntervalSeconds: 0.1
 --- !u!1 &1710103390
 GameObject:
   m_ObjectHideFlags: 0
@@ -3701,6 +3795,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1737504309}
   - component: {fileID: 1737504308}
+  - component: {fileID: 1737504310}
+  - component: {fileID: 1737504311}
   m_Layer: 0
   m_Name: LogManager
   m_TagString: Untagged
@@ -3720,6 +3816,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc3f81dc312555a48a45c3baa2368303, type: 3}
   m_Name: 
   m_EditorClassIdentifier: fps.Game::LogManager
+  WriteUnderAssets: 1
+  ClearOnStart: 1
 --- !u!4 &1737504309
 Transform:
   m_ObjectHideFlags: 0
@@ -3735,6 +3833,31 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1737504310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1737504307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a67e384ed06e20d42b4cdb3b300f4353, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: fps.Game::Unity.FPS.Game.WorldStateLogManager
+  logInterval: 0.1
+--- !u!114 &1737504311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1737504307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc4e5ec613ea34a4e9302f1c5f051caa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: fps.Game::Unity.FPS.Game.GameStatsLogManager
 --- !u!1001 &1771139419
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6047,8 +6170,16 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 7253983127304857660, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 2729281214152228935}
+    - targetCorrespondingSourceObject: {fileID: 7253983127304857660, guid: 761cdc9e4e883334cbdcea062d0befa7,
+        type: 3}
       insertIndex: -1
       addedObject: {fileID: 2729281214152228922}
+    - targetCorrespondingSourceObject: {fileID: 7442781921941657531, guid: 761cdc9e4e883334cbdcea062d0befa7,
+        type: 3}
+      insertIndex: 2
+      addedObject: {fileID: 1688169419}
   m_SourcePrefab: {fileID: 100100000, guid: 761cdc9e4e883334cbdcea062d0befa7, type: 3}
 --- !u!1 &2729281214152228921 stripped
 GameObject:
@@ -6069,6 +6200,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Id: b7ef103c-6e78-41af-8322-5ac95ed05882
+--- !u!114 &2729281214152228935
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2729281214152228921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb77dab4186ae88408deb7bc84ed8542, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: fps.Game::KeyInputBroadcaster
+  PlayerId: Player1
+  KeysToWatch: 77000000610000007300000064000000200000003001000032010000430100004401000072000000
 --- !u!1001 &2729281214182533258
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7755,7 +7900,7 @@ PrefabInstance:
         type: 3}
       propertyPath: DelayedBot
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1371730123}
     - target: {fileID: 1567544279954943050, guid: c996b53e9f849234393d1e90f68d1679,
         type: 3}
       propertyPath: OrigBotRoot
@@ -7763,9 +7908,19 @@ PrefabInstance:
       objectReference: {fileID: 1154647230}
     - target: {fileID: 1567544279954943050, guid: c996b53e9f849234393d1e90f68d1679,
         type: 3}
+      propertyPath: PastBotRoot
+      value: 
+      objectReference: {fileID: 1371730121}
+    - target: {fileID: 1567544279954943050, guid: c996b53e9f849234393d1e90f68d1679,
+        type: 3}
       propertyPath: DelayedBotGO
       value: 
       objectReference: {fileID: 1246784424}
+    - target: {fileID: 1567544279954943050, guid: c996b53e9f849234393d1e90f68d1679,
+        type: 3}
+      propertyPath: FutureBotRoot
+      value: 
+      objectReference: {fileID: 1154647230}
     - target: {fileID: 1567544279954943050, guid: c996b53e9f849234393d1e90f68d1679,
         type: 3}
       propertyPath: LatencySlider
@@ -7776,6 +7931,11 @@ PrefabInstance:
       propertyPath: OrigBotToggle
       value: 
       objectReference: {fileID: 2036628673}
+    - target: {fileID: 1567544279954943050, guid: c996b53e9f849234393d1e90f68d1679,
+        type: 3}
+      propertyPath: ServerBotRoot
+      value: 
+      objectReference: {fileID: 1246784424}
     - target: {fileID: 1567544279954943050, guid: c996b53e9f849234393d1e90f68d1679,
         type: 3}
       propertyPath: DelayedBotRoot
@@ -7796,6 +7956,11 @@ PrefabInstance:
       propertyPath: LatencyValueLabel
       value: 
       objectReference: {fileID: 136880377}
+    - target: {fileID: 1567544279954943050, guid: c996b53e9f849234393d1e90f68d1679,
+        type: 3}
+      propertyPath: DelayedBotHealthProxy
+      value: 
+      objectReference: {fileID: 1371730122}
     - target: {fileID: 1567544280599478587, guid: c996b53e9f849234393d1e90f68d1679,
         type: 3}
       propertyPath: m_SizeDelta.y

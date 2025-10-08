@@ -244,12 +244,28 @@ namespace Unity.FPS.Gameplay
                 }
             }
 
-            // Log Hit Event 
-            EventManager.Broadcast(new HitEvent
-            {
-                ShooterId = m_ProjectileBase.Owner != null ? m_ProjectileBase.Owner.name : "Unknown",
-                TargetId = collider.gameObject.name,
-                Damage = Damage
+            var proxyForLog = collider.GetComponentInParent<BotHealthProxy>();
+            var health  = collider.GetComponentInParent<Health>();
+            var ownerGO =  proxyForLog ? proxyForLog.gameObject
+                    :  health ? health.gameObject
+                    :  collider.transform.root.gameObject;
+            bool hitBox = false;
+            hitBox = collider.CompareTag("Bot");
+
+            EventManager.Broadcast(new HitCsvEvent {
+                EventType      = proxyForLog ? "client_hit" : "world_hit",
+                ShooterId      = m_ProjectileBase.Owner ? m_ProjectileBase.Owner.name : "Unknown",
+                TargetId       = ownerGO.name,  
+                Damage         = Damage,
+                ForwardDelayMs = proxyForLog ? BotHealthProxy.forwardDelayMs : 0f,
+                HitPoint       = point,
+                HitBox         = hitBox,
+
+
+                ClientTf       = proxyForLog ? proxyForLog.transform : null,
+                ClientHealth   = proxyForLog ? proxyForLog.GetComponent<Health>() : null,
+                ServerTf       = proxyForLog ? (proxyForLog.serverHealth ? proxyForLog.serverHealth.transform : null) : null,
+                ServerHealth   = proxyForLog ? proxyForLog.serverHealth : null
             });
 
             // impact vfx

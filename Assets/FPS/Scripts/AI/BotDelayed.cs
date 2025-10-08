@@ -17,10 +17,48 @@ namespace Unity.FPS.Game
 
         private Queue<(Vector3 pos, Quaternion rot, float applyTime)> stateBuffer = new Queue<(Vector3, Quaternion, float)>();
 
+        // Current target from the queue
+        private Vector3 targetPos;
+        private Quaternion targetRot;
+
+        // Movement speed control
+        public float baseMoveSpeed = 5f;  // Normal speed
+        public float catchupMultiplier = 2f; // How much faster to move when behind
+
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
         {
 
+        }
+
+        void Update()
+        {
+            if (firstBot == null) return;
+
+            // Step 1: Record the current state of the leader
+            stateBuffer.Enqueue((firstBot.position, firstBot.rotation, Time.time + latencyMs * modifier / 1000f));
+
+            // Step 2: If there are states ready to apply, update target
+            while (stateBuffer.Count > 0 && Time.time >= stateBuffer.Peek().applyTime)
+            {
+                var state = stateBuffer.Dequeue();
+                targetPos = state.pos;
+                targetRot = state.rot;
+            }
+
+            // Step 3: Move toward target instead of snapping
+            float distance = Vector3.Distance(transform.position, targetPos);
+
+            // Increase speed if we’re far behind
+            float moveSpeed = baseMoveSpeed;
+            if (distance > 0.1f)
+            {
+                // scale speed based on how far we are behind
+                moveSpeed += distance * catchupMultiplier;
+            }
+
+            transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 10f);
         }
 
         public void SetLatency(float ms)
@@ -37,20 +75,20 @@ namespace Unity.FPS.Game
         }
 
         // Update is called once per frame
-        void Update()
-        {
-            if (firstBot == null) return;
+        //void Update()
+        //{
+        //    if (firstBot == null) return;
 
-            // Step 1: Record the current state of the logic bot with a future applyTime
-            stateBuffer.Enqueue((firstBot.position, firstBot.rotation, Time.time + latencyMs * modifier / 1000f));
+        //    // Step 1: Record the current state of the logic bot with a future applyTime
+        //    stateBuffer.Enqueue((firstBot.position, firstBot.rotation, Time.time + latencyMs * modifier / 1000f));
 
-            // Step 2: Apply states that have reached their delay
-            while (stateBuffer.Count > 0 && Time.time >= stateBuffer.Peek().applyTime)
-            {
-                var state = stateBuffer.Dequeue();
-                transform.position = state.pos;
-                transform.rotation = state.rot;
-            }
-        }
+        //    // Step 2: Apply states that have reached their delay
+        //    while (stateBuffer.Count > 0 && Time.time >= stateBuffer.Peek().applyTime)
+        //    {
+        //        var state = stateBuffer.Dequeue();
+        //        transform.position = state.pos;
+        //        transform.rotation = state.rot;
+        //    }
+        //}
     }
 }

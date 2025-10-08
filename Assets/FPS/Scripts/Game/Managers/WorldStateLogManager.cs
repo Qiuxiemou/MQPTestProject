@@ -4,24 +4,18 @@ namespace Unity.FPS.Game
 {
     public class WorldStateLogManager : MonoBehaviour
     {
-        [SerializeField] private float logInterval = 1f; 
         [SerializeField] private bool includeCamera = false; 
 
         string _sessionId;
-        float  _nextLogT;
 
         void Awake()
         {
             _sessionId = EventLogManager.Instance ? EventLogManager.Instance.GetSessionId()
                          : System.DateTime.Now.ToString("yyyyMMdd_HHmmss");
-            _nextLogT  = Time.time + logInterval;
         }
 
         void Update()
         {
-            if (Time.time < _nextLogT) return;
-            _nextLogT += logInterval;
-
             double wallMs = System.DateTimeOffset.Now.ToUnixTimeMilliseconds();
             float  gameT  = Time.time;
 

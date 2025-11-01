@@ -3662,7 +3662,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Future Bot
+  m_text: Original Bot
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3818,8 +3818,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: fps.Game::LogManager
   WriteUnderAssets: 1
   ClearOnStart: 1
-  FlushEveryNLines: 200
-  FlushEverySeconds: 5
 --- !u!4 &1737504309
 Transform:
   m_ObjectHideFlags: 0
@@ -3848,7 +3846,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: fps.Game::Unity.FPS.Game.WorldStateLogManager
   logInterval: 0.1
-  includeCamera: 0
 --- !u!114 &1737504311
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4012,7 +4009,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Server Bot
+  m_text: Delayed Bot
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

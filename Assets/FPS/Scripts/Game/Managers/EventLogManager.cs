@@ -224,7 +224,6 @@ namespace Unity.FPS.Game
             BumpFlushCounter();
         }
 
-        // stats.csv：会话/关卡汇总
         public void LogStats(string sessionId, double wallTsMs,
                              int totalShots, int totalHits, float accPct,
                              int delayedHits, float delayedAccPct)

@@ -56,9 +56,9 @@ namespace Unity.FPS.Gameplay
             m_ReloadAction = InputSystem.actions.FindAction("Player/Reload");
             m_NextWeaponAction = InputSystem.actions.FindAction("Player/NextWeapon");
             
-            m_MoveAction.Disable();
+            m_MoveAction.Enable();
             m_LookAction.Enable();
-            m_JumpAction.Disable();
+            m_JumpAction.Enable();
             m_FireAction.Enable();
             m_AimAction.Enable();
             m_SprintAction.Enable();

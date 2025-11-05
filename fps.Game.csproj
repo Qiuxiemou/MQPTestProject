@@ -62,25 +62,30 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\FPS\Scripts\Game\Shared\Damageable.cs" />
-    <Compile Include="Assets\FPS\Scripts\Game\IgnoreHitDetection.cs" />
-    <Compile Include="Assets\FPS\Scripts\Game\DebugUtility.cs" />
-    <Compile Include="Assets\FPS\Scripts\Game\Shared\Health.cs" />
-    <Compile Include="Assets\FPS\Scripts\Game\TimedSelfDestruct.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\MeshCombiner.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\MeshCombineUtility.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\EventLogManager.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\AudioUtility.cs" />
-    <Compile Include="Assets\FPS\Scripts\Game\Managers\ViewSampler.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\IgnoreHeatMap.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Shared\DamageArea.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\ConstantRotation.cs" />
-    <Compile Include="Assets\FPS\Scripts\Game\Managers\GameStatsLogManager.cs" />
-    <Compile Include="Assets\FPS\Scripts\Game\MinMaxParameters.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Actor.cs" />
-    <Compile Include="Assets\FPS\Scripts\Game\Shared\Destructable.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\GameFlowManager.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Shared\WeaponController.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\KeyInputBroadcaster.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\WorldState.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\PrefabReplacer.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\Events.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\Shared\ProjectileBase.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\BotHealthProxy.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\IgnoreHitDetection.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\DebugUtility.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\Shared\Health.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\TimedSelfDestruct.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\Managers\ViewSampler.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\Managers\GameStatsLogManager.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\MinMaxParameters.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\Shared\Destructable.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\HitLogger.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\GameConstants.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\EventManager.cs" />
@@ -88,13 +93,8 @@
     <Compile Include="Assets\FPS\Scripts\Game\Shared\Objective.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\PrefabReplacerOnInstance.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\WorldStateLogManager.cs" />
-    <Compile Include="Assets\FPS\Scripts\Game\WorldState.cs" />
-    <Compile Include="Assets\FPS\Scripts\Game\PrefabReplacer.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\ObjectiveManager.cs" />
-    <Compile Include="Assets\FPS\Scripts\Game\Events.cs" />
-    <Compile Include="Assets\FPS\Scripts\Game\Shared\ProjectileBase.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\ActorsManager.cs" />
-    <Compile Include="Assets\FPS\Scripts\Game\BotHealthProxy.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\FPS\Scripts\Game\fps.Game.asmdef" />
@@ -620,12 +620,20 @@
       <HintPath>Library\PackageCache\com.unity.collections@d49facba0036\Unity.Collections.Tests\System.IO.Hashing\System.IO.Hashing.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Mono.Cecil">
-      <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil@d78732e851eb\Mono.Cecil.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe">
       <HintPath>Library\PackageCache\com.unity.collections@d49facba0036\Unity.Collections.Tests\System.Runtime.CompilerServices.Unsafe\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Library\PackageCache\com.unity.nuget.newtonsoft-json@74deb55db2a0\Runtime\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="AiEditorToolsSdk">
+      <HintPath>Library\PackageCache\com.unity.ai.toolkit@48a271771d1a\Modules\Sdk\Editor\AiEditorToolsSdk.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil@d78732e851eb\Mono.Cecil.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="netstandard">

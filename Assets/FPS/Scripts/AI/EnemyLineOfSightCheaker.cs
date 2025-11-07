@@ -37,21 +37,36 @@ public class EnemyLineOfSightChecker : MonoBehaviour
         }
     }
 
-    private bool CheckLineOfSight(Transform Target)
-    {
-        Vector3 direction = (Target.transform.position - transform.position).normalized;
-        float dotProduct = Vector3.Dot(transform.forward, direction);
-        if (dotProduct >= Mathf.Cos(FieldOfView))
-        {
-            if (Physics.Raycast(transform.position, direction, out RaycastHit hit, Collider.radius, LineOfSightLayers))
-            {
-                OnGainSight?.Invoke(Target);
-                return true;
-            }
-        }
+    private bool CheckLineOfSight(Transform target)
+{
+    Vector3 origin = transform.position + Vector3.up * 1.6f;
+    Vector3 targetPos = target.position + Vector3.up * 1.0f;
+    Vector3 dir = (targetPos - origin).normalized;
 
-        return false;
+    float dist = Vector3.Distance(origin, targetPos) + 0.2f;
+
+    if (Physics.Raycast(origin, dir, out var hit, dist, LineOfSightLayers, QueryTriggerInteraction.Collide))
+    {
+        if (hit.transform.root == target.root)
+        {
+            Debug.Log("[LOS] GainSight " + target.name);
+            OnGainSight?.Invoke(target);
+            return true;
+        }
+        else
+        {
+            Debug.Log("[LOS] Blocked by " + hit.transform.name);
+        }
     }
+    else
+    {
+        Debug.Log("[LOS] Ray miss");
+    }
+
+    Debug.DrawLine(origin, origin + dir * dist, Color.cyan, 0.1f);
+    return false;
+}
+
 
     private IEnumerator CheckForLineOfSight(Transform Target)
     {

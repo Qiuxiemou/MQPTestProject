@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class RoundManager : MonoBehaviour
 {
@@ -56,6 +57,7 @@ public class RoundManager : MonoBehaviour
     // ---------------- Round flow ----------------
     public void StartRound()
     {
+        if (RoundRunning) return;   // avoid double start
         RoundRunning = true;
         _timeRemaining = roundLengthSeconds;
 
@@ -87,15 +89,7 @@ public class RoundManager : MonoBehaviour
         if (timerUI) timerUI.Hide();
         if (surveyUI) surveyUI.Show(CurrentRound);   // survey lives in MainScene
     }
-
-    // Called by SurveyUI → buffer row, advance round, restart timer
-    public void SubmitSurvey(SurveyData data)
-    {
-        _buffer.Add(data);         // no disk write yet
-        CurrentRound += 1;
-        StartRound();
-    }
-
+    // ---------------- Survey and Scene Load ----------------
     public void ExitGame()
     {
         FlushBuffer();
@@ -105,6 +99,38 @@ public class RoundManager : MonoBehaviour
         Application.Quit();
 #endif
     }
+
+    // Called by SurveyUI → buffer row, advance round, restart timer
+    public void SubmitSurvey(SurveyData data)
+    {
+        _buffer.Add(data);         // no disk write yet
+        CurrentRound += 1;
+        SceneManager.LoadScene("MainScene");
+    }
+
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += HandleSceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= HandleSceneLoaded;
+    }
+
+    void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name != "MainScene")
+            return;
+
+        // Find the new UI instances in the freshly loaded scene
+        timerUI = FindObjectOfType<TimerUI>(true);
+        surveyUI = FindObjectOfType<SurveyUI>(true);
+
+        // Start the next round
+        StartRound();
+    }
+
 
     // --------------- helpers ---------------
     void SetGameplayPause(bool paused)

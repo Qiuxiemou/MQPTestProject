@@ -8,7 +8,7 @@ public class TimerUI : MonoBehaviour
     void Awake()
     {
         Hide();
-        DontDestroyOnLoad(gameObject);           // safe even if you stay in one scene
+        //DontDestroyOnLoad(gameObject);           
     }
 
     void OnEnable()

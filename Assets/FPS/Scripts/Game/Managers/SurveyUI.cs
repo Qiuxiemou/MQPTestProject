@@ -34,7 +34,7 @@ public class SurveyUI : MonoBehaviour
         if (submitButton) submitButton.onClick.AddListener(OnSubmit);
         if (exitButton) exitButton.onClick.AddListener(OnExit);
 
-        DontDestroyOnLoad(gameObject);           // safe even if you stay in one scene
+        //DontDestroyOnLoad(gameObject);           
     }
 
     static void Setup(Slider s)

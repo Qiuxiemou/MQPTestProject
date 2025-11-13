@@ -154,8 +154,11 @@ namespace Unity.FPS.AI
                 onDetectedTarget?.Invoke();
             }
 
-            if (HadKnownTarget && KnownDetectedTarget == null)
+            if (HadKnownTarget && KnownDetectedTarget == null){
+                Debug.Log("[Detection] LOST target");
                 onLostTarget?.Invoke();
+            }
+                
 
             HadKnownTarget = KnownDetectedTarget != null;
 

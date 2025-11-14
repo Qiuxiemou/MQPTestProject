@@ -49,65 +49,65 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_TextInfo.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_Settings.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_TextProcessingStack.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_TextElement.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_Asset.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMPro_EventManager.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_ColorGradient.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_FontFeaturesCommon.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_RichTextTagsCommon.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_TextParsingUtilities.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_SubMesh.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_SpriteCharacter.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_ListPool.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_ShaderUtilities.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_SpriteAnimator.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_MeshInfo.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_ScrollbarEventHandler.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_LineInfo.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\ITextPreProcessor.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_CoroutineTween.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMPro_ExtensionMethods.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_TextElement_Legacy.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TextMeshProUGUI.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_FontAsset.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_FontAssetCommon.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_Character.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TextMeshPro.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TextContainer.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_StyleSheet.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_Dropdown.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\FontFeatureCommonGPOS.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_Text.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMPro_MeshUtilities.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\AssemblyInfo.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_FontFeatureTable.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\FastAction.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_CharacterInfo.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_DynamicFontAssetUtilities.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_ResourcesManager.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_SubMeshUI.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_TextProcessingCommon.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_InputValidator.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_FontAssetUtilities.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_DefaultControls.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_Compatibility.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_UpdateManager.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_SpriteGlyph.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_Style.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\MaterialReferenceManager.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_UpdateRegistery.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_TextUtilities.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_SpriteAsset.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_SelectionCaret.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_InputField.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_SpriteAssetImportFormats.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_ObjectPool.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\FontFeatureCommonGSUB.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_MaterialManager.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\FontFeatureCommon.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_PackageResourceImporter.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_Settings.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_Asset.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_ColorGradient.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_FontFeaturesCommon.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_RichTextTagsCommon.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_TextParsingUtilities.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_SpriteCharacter.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_MeshInfo.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_ScrollbarEventHandler.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_LineInfo.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_TextElement_Legacy.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_FontAssetCommon.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TextMeshPro.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TextContainer.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\FontFeatureCommonGPOS.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_Text.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_FontFeatureTable.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_CharacterInfo.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_DynamicFontAssetUtilities.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_ResourcesManager.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_SubMeshUI.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_InputValidator.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_Style.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_UpdateRegistery.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_ObjectPool.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\FontFeatureCommonGSUB.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Runtime\TMP\TMP_Sprite.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -638,12 +638,20 @@
       <HintPath>Library\PackageCache\com.unity.collections@d49facba0036\Unity.Collections.Tests\System.IO.Hashing\System.IO.Hashing.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Mono.Cecil">
-      <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil@d78732e851eb\Mono.Cecil.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe">
       <HintPath>Library\PackageCache\com.unity.collections@d49facba0036\Unity.Collections.Tests\System.Runtime.CompilerServices.Unsafe\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Library\PackageCache\com.unity.nuget.newtonsoft-json@74deb55db2a0\Runtime\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="AiEditorToolsSdk">
+      <HintPath>Library\PackageCache\com.unity.ai.toolkit@48a271771d1a\Modules\Sdk\Editor\AiEditorToolsSdk.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil@d78732e851eb\Mono.Cecil.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="netstandard">

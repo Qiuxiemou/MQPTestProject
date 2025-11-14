@@ -49,34 +49,25 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\UvUnwrapping.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\MaterialUtility.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\VertexPositioning.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\ProBuilderMeshSelection.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\PivotPoint.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\BezierShape.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Shapes\ProBuilderShape.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\SemVer.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\Spline.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\ProGridsIgnoreSnap.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\ObjectPool.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\HandleConstraint2D.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\Changelog.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Shapes\Pipe.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\IntVec4.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\MeshOperations\Bevel.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\MeshOperations\AppendElements.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\SelectPathFaces.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\SelectionPickerRendererStandard.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\ProBuilderMeshFunction.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\Smoothing.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\Normal.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\MeshOperations\ElementSelection.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\MeshOperations\ExtrudeElements.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Shapes\Torus.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\Edge.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\AutoUnwrapSettings.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\ColorUtility.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\Submesh.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\MeshOperations\UV\TextureStitching.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\UvAutoManualConversion.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\MeshHandles.cs" />
@@ -84,23 +75,14 @@
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\ShapeFactory.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\Normals.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\BezierPoint.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\ColliderBehaviour.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Shapes\Sphere.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\Face.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\ProBuilderEnum.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\TriggerBehaviour.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Shapes\Stairs.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\MeshOperations\Subdivision.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\MeshOperations\Triangulation.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Shapes\Door.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\Triangle.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Shapes\Cylinder.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\MeshOperations\CombineMeshes.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Shapes\Sprite.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\WingedEdge.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\ProBuilderSnapping.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\ArrayUtility.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\PreferenceDictionary.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\HandleOrientation.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Shapes\Shape.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\Clipping.cs" />
@@ -108,51 +90,69 @@
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\SelectionPicker.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\MeshOperations\SurfaceTopology.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\FaceRebuildData.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\ShapeGenerator.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\SelectionPickerSettings.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\MeshHandle.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\MeshOperations\UV\UVEditing.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\MeshOperations\DeleteElements.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Shapes\Arch.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Shapes\Cone.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Shapes\Prism.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\IntVec2.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\MeshOperations\QuadUtility.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\InternalUtility.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\Vertex.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\AssemblyInfo.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\PreferenceKeys.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\IHasDefault.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\Transform2D.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\TransformUtility.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\HandleUtility.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\SelectionPickerRendererHDRP.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\EntityBehaviour.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\MeshOperations\InternalMeshUtility.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\MeshOperations\MergeElements.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\EdgeUtility.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\BuiltinMaterials.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\SerializationUtility.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\MeshOperations\VertexEditing.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\MeshOperations\MeshImporter.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\IntVec3.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\VectorHash.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\MeshUtility.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\MeshOperations\ConnectElements.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\SimpleTuple.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\EdgeLookup.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\ProBuilderMesh.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\ColorPalette.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\SelectionPickerRenderer.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\MaterialUtility.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\SemVer.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\Changelog.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Shapes\Pipe.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\MeshOperations\Bevel.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\SelectPathFaces.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\SelectionPickerRendererStandard.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Shapes\Torus.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\Submesh.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\ColliderBehaviour.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Shapes\Sphere.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\Face.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\ProBuilderEnum.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\TriggerBehaviour.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\MeshOperations\Triangulation.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\Triangle.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Shapes\Sprite.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\PreferenceDictionary.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\ShapeGenerator.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\MeshHandle.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\MeshOperations\DeleteElements.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Shapes\Arch.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Shapes\Prism.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\IntVec2.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\Transform2D.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\HandleUtility.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\MeshOperations\InternalMeshUtility.cs" />
+    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\IntVec3.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\VectorMask.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\MeshOperations\MeshTransform.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\PolyShape.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\EdgeLookup.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\ProBuilderMesh.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\MeshOperations\AssemblyInfo.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Shapes\Plane.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\Log.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\Bounds2D.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\MeshOperations\MeshValidation.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\ColorPalette.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\WingedEdgeEnumerator.cs" />
-    <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\SelectionPickerRenderer.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\Math.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Core\Projection.cs" />
     <Compile Include="Library\PackageCache\com.unity.probuilder@c19679f07bae\Runtime\Shapes\Cube.cs" />
@@ -689,12 +689,20 @@
       <HintPath>Library\PackageCache\com.unity.collections@d49facba0036\Unity.Collections.Tests\System.IO.Hashing\System.IO.Hashing.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Mono.Cecil">
-      <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil@d78732e851eb\Mono.Cecil.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe">
       <HintPath>Library\PackageCache\com.unity.collections@d49facba0036\Unity.Collections.Tests\System.Runtime.CompilerServices.Unsafe\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Library\PackageCache\com.unity.nuget.newtonsoft-json@74deb55db2a0\Runtime\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="AiEditorToolsSdk">
+      <HintPath>Library\PackageCache\com.unity.ai.toolkit@48a271771d1a\Modules\Sdk\Editor\AiEditorToolsSdk.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil@d78732e851eb\Mono.Cecil.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="netstandard">

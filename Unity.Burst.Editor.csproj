@@ -49,23 +49,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Library\PackageCache\com.unity.burst@f7a407abf4d5\Editor\BurstInspectorGUI.cs" />
+    <Compile Include="Library\PackageCache\com.unity.burst@f7a407abf4d5\Editor\BurstDisassembler.Core.LLVMIR.cs" />
+    <Compile Include="Library\PackageCache\com.unity.burst@f7a407abf4d5\Editor\BurstDisassembler.Core.x86.cs" />
+    <Compile Include="Library\PackageCache\com.unity.burst@f7a407abf4d5\Editor\BurstAotCompiler.cs" />
+    <Compile Include="Library\PackageCache\com.unity.burst@f7a407abf4d5\Editor\LabeledPopup.cs" />
+    <Compile Include="Library\PackageCache\com.unity.burst@f7a407abf4d5\Editor\BurstDisassembler.cs" />
+    <Compile Include="Library\PackageCache\com.unity.burst@f7a407abf4d5\Editor\BurstDisassembler.Core.x86.info.cs" />
+    <Compile Include="Library\PackageCache\com.unity.burst@f7a407abf4d5\Editor\BurstMath.cs" />
     <Compile Include="Library\PackageCache\com.unity.burst@f7a407abf4d5\Editor\BurstDisassembler.Core.Wasm.cs" />
     <Compile Include="Library\PackageCache\com.unity.burst@f7a407abf4d5\Editor\BurstDisassembler.Core.LLVMIR.info.cs" />
-    <Compile Include="Library\PackageCache\com.unity.burst@f7a407abf4d5\Editor\BurstDisassembler.Core.LLVMIR.cs" />
     <Compile Include="Library\PackageCache\com.unity.burst@f7a407abf4d5\Editor\BurstPlatformAotSettings.cs" />
     <Compile Include="Library\PackageCache\com.unity.burst@f7a407abf4d5\Editor\BurstDisassembler.Core.ARM64.info.cs" />
     <Compile Include="Library\PackageCache\com.unity.burst@f7a407abf4d5\Editor\LongTextArea.cs" />
     <Compile Include="Library\PackageCache\com.unity.burst@f7a407abf4d5\Editor\BurstDisassembler.Core.ARM64.cs" />
     <Compile Include="Library\PackageCache\com.unity.burst@f7a407abf4d5\Editor\BurstStringSearch.cs" />
     <Compile Include="Library\PackageCache\com.unity.burst@f7a407abf4d5\Editor\BurstDisassembler.Core.Wasm.info.cs" />
-    <Compile Include="Library\PackageCache\com.unity.burst@f7a407abf4d5\Editor\BurstDisassembler.Core.x86.cs" />
-    <Compile Include="Library\PackageCache\com.unity.burst@f7a407abf4d5\Editor\BurstAotCompiler.cs" />
     <Compile Include="Library\PackageCache\com.unity.burst@f7a407abf4d5\Editor\BurstLoader.cs" />
-    <Compile Include="Library\PackageCache\com.unity.burst@f7a407abf4d5\Editor\LabeledPopup.cs" />
-    <Compile Include="Library\PackageCache\com.unity.burst@f7a407abf4d5\Editor\BurstDisassembler.Core.x86.info.cs" />
     <Compile Include="Library\PackageCache\com.unity.burst@f7a407abf4d5\Editor\BurstDisassembler.Core.cs" />
-    <Compile Include="Library\PackageCache\com.unity.burst@f7a407abf4d5\Editor\BurstDisassembler.cs" />
-    <Compile Include="Library\PackageCache\com.unity.burst@f7a407abf4d5\Editor\BurstMath.cs" />
     <Compile Include="Library\PackageCache\com.unity.burst@f7a407abf4d5\Editor\BurstMenu.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -604,12 +604,20 @@
       <HintPath>Library\PackageCache\com.unity.collections@d49facba0036\Unity.Collections.Tests\System.IO.Hashing\System.IO.Hashing.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Mono.Cecil">
-      <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil@d78732e851eb\Mono.Cecil.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe">
       <HintPath>Library\PackageCache\com.unity.collections@d49facba0036\Unity.Collections.Tests\System.Runtime.CompilerServices.Unsafe\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Library\PackageCache\com.unity.nuget.newtonsoft-json@74deb55db2a0\Runtime\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="AiEditorToolsSdk">
+      <HintPath>Library\PackageCache\com.unity.ai.toolkit@48a271771d1a\Modules\Sdk\Editor\AiEditorToolsSdk.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil@d78732e851eb\Mono.Cecil.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="mscorlib">

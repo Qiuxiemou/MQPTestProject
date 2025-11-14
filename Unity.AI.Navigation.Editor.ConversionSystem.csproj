@@ -50,13 +50,13 @@
   <ItemGroup>
     <Compile Include="Library\PackageCache\com.unity.ai.navigation@eb5635ad590d\Editor\ConversionSystem\ConverterItemInfo.cs" />
     <Compile Include="Library\PackageCache\com.unity.ai.navigation@eb5635ad590d\Editor\ConversionSystem\ConverterItemDescriptor.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ai.navigation@eb5635ad590d\Editor\ConversionSystem\RunItemContext.cs" />
     <Compile Include="Library\PackageCache\com.unity.ai.navigation@eb5635ad590d\Editor\ConversionSystem\SystemConvertersEditor.cs" />
     <Compile Include="Library\PackageCache\com.unity.ai.navigation@eb5635ad590d\Editor\ConversionSystem\SystemConverter.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ai.navigation@eb5635ad590d\Editor\ConversionSystem\SystemConverterContainer.cs" />
     <Compile Include="Library\PackageCache\com.unity.ai.navigation@eb5635ad590d\Editor\ConversionSystem\InitializeConverterContext.cs" />
     <Compile Include="Library\PackageCache\com.unity.ai.navigation@eb5635ad590d\Editor\ConversionSystem\EditorStyles.cs" />
     <Compile Include="Library\PackageCache\com.unity.ai.navigation@eb5635ad590d\Editor\ConversionSystem\AssemblyInfo.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ai.navigation@eb5635ad590d\Editor\ConversionSystem\RunItemContext.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ai.navigation@eb5635ad590d\Editor\ConversionSystem\SystemConverterContainer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Library\PackageCache\com.unity.ai.navigation@eb5635ad590d\Editor\ConversionSystem\converter_widget.uss" />
@@ -599,12 +599,20 @@
       <HintPath>Library\PackageCache\com.unity.collections@d49facba0036\Unity.Collections.Tests\System.IO.Hashing\System.IO.Hashing.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Mono.Cecil">
-      <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil@d78732e851eb\Mono.Cecil.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe">
       <HintPath>Library\PackageCache\com.unity.collections@d49facba0036\Unity.Collections.Tests\System.Runtime.CompilerServices.Unsafe\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Library\PackageCache\com.unity.nuget.newtonsoft-json@74deb55db2a0\Runtime\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="AiEditorToolsSdk">
+      <HintPath>Library\PackageCache\com.unity.ai.toolkit@48a271771d1a\Modules\Sdk\Editor\AiEditorToolsSdk.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil@d78732e851eb\Mono.Cecil.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="mscorlib">

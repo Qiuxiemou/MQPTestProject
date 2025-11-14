@@ -12,13 +12,13 @@ TagManager:
   - ServerBot
   - Water
   - UI
-  - 
-  - 
+  - Player
+  - Floor
   - PostProcessing
-  - 
+  - Enemy
   - FirstPersonWeapon
   - PhysicalAmmo
-  - 
+  - LineOfSight
   - Wall
   - 
   - 

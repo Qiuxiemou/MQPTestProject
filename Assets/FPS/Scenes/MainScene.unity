@@ -4202,13 +4202,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c7747893f578244ebf571f0db1588b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: fps.Game::RoundManager
-  roundLengthSeconds: 5
+  roundLengthSeconds: 60
   disableWhilePaused:
   - {fileID: 2729281214152228945}
   - {fileID: 2729281214152228942}
   - {fileID: 2729281214152228944}
   timerUI: {fileID: 925943784}
   surveyUI: {fileID: 1298435347}
+  minRoleSwitchSeconds: 10
+  maxRoleSwitchSeconds: 25
 --- !u!4 &2021164507
 Transform:
   m_ObjectHideFlags: 0

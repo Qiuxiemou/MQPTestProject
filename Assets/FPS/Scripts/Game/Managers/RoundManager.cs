@@ -21,17 +21,31 @@ public class RoundManager : MonoBehaviour
     public TimerUI timerUI;
     public SurveyUI surveyUI;
 
+    [Header("Role Switching (Prototype)")]
+    [Tooltip("Minimum seconds before a role switch is allowed (must be >= 10).")]
+    public float minRoleSwitchSeconds = 10f;
+
+    [Tooltip("Maximum seconds before a role switch (should be <= round length).")]
+    public float maxRoleSwitchSeconds = 25f;
+
+    // ---- public state ----
     public int CurrentRound { get; private set; } = 1;
     public bool RoundRunning { get; private set; }
     public float TimeRemaining => Mathf.Max(0f, _timeRemaining);
+    public bool IsSeeker => _isSeeker;          // true = seeker, false = hider
 
-    // Tick event for TimerUI
+    // Timer event for TimerUI
     public event Action<float> OnTimerTick;
 
     // ---- internals ----
     float _timeRemaining;
-    readonly List<SurveyData> _buffer = new();    // store all round results in memory
-    string _csvPath;
+    readonly List<SurveyData> _buffer = new();   // store all round results in memory
+    string _surveyCsvPath;
+
+    // role switching internals
+    bool _isSeeker;
+    float _roleSwitchTimer;
+    string _roleLogPath;
 
     // ---------------- Unity lifecycle ----------------
 
@@ -46,10 +60,20 @@ public class RoundManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        // Prepare logs folder: <ProjectRoot>/Logs/SurveyLogs/survey_log_*.csv
+        // Prepare logs folder: <ProjectRoot>/Logs/SurveyLogs/
         var logsDir = GetProjectLogsPath();
-        var file = $"survey_log_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.csv";
-        _csvPath = Path.Combine(logsDir, file);
+
+        var surveyFile = $"survey_log_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.csv";
+        _surveyCsvPath = Path.Combine(logsDir, surveyFile);
+
+        var roleFile = $"role_log_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.csv";
+        _roleLogPath = Path.Combine(logsDir, roleFile);
+
+        // Write headers
+        File.WriteAllText(_surveyCsvPath,
+            "timestamp,round,smoothness,responsiveness,fairness,qoe,fun,notes\n");
+        File.WriteAllText(_roleLogPath,
+            "timestamp,round,timeRemaining,role\n");
     }
 
     void Start()
@@ -95,6 +119,11 @@ public class RoundManager : MonoBehaviour
         RoundRunning = true;
         _timeRemaining = roundLengthSeconds;
 
+        // Random initial role for this round
+        _isSeeker = UnityEngine.Random.value > 0.5f;
+        _roleSwitchTimer = GetNextRoleInterval();
+        LogRoleChange();             // log initial role
+
         SetGameplayPause(false);
         if (surveyUI) surveyUI.Hide();
         if (timerUI) timerUI.Show();
@@ -108,7 +137,13 @@ public class RoundManager : MonoBehaviour
         while (_timeRemaining > 0f)
         {
             _timeRemaining -= Time.deltaTime;
+
+            // Handle potential mid-round role switch
+            HandleRoleTimer();
+
+            // Notify TimerUI
             OnTimerTick?.Invoke(TimeRemaining);
+
             yield return null;
         }
 
@@ -169,19 +204,55 @@ public class RoundManager : MonoBehaviour
 
     void BindUIIfNeeded()
     {
-        if (timerUI == null)
+        if (timerUI == null || !timerUI.gameObject)
         {
             timerUI = FindFirstObjectByType<TimerUI>(FindObjectsInactive.Include);
-            if (timerUI == null)
-                Debug.LogWarning("[RoundManager] TimerUI not found in MainScene!");
         }
 
-        if (surveyUI == null)
+        if (surveyUI == null || !surveyUI.gameObject)
         {
             surveyUI = FindFirstObjectByType<SurveyUI>(FindObjectsInactive.Include);
-            if (surveyUI == null)
-                Debug.LogWarning("[RoundManager] SurveyUI not found in MainScene!");
         }
+    }
+
+    // ---------------- Role switching helpers ----------------
+
+    void HandleRoleTimer()
+    {
+        if (!RoundRunning) return;
+
+        // Ensure minimum of 10 seconds
+        float min = Mathf.Max(10f, minRoleSwitchSeconds);
+        if (min <= 0f) return;
+
+        _roleSwitchTimer -= Time.deltaTime;
+        if (_roleSwitchTimer <= 0f)
+        {
+            // Toggle role
+            _isSeeker = !_isSeeker;
+            LogRoleChange();
+
+            // Schedule next switch
+            _roleSwitchTimer = GetNextRoleInterval();
+        }
+    }
+
+    float GetNextRoleInterval()
+    {
+        float min = Mathf.Max(10f, minRoleSwitchSeconds);
+        float max = Mathf.Max(min + 0.01f, maxRoleSwitchSeconds);
+
+        // You can tune these in the Inspector; if max < min, we fix it above.
+        return UnityEngine.Random.Range(min, max);
+    }
+
+    void LogRoleChange()
+    {
+        if (string.IsNullOrEmpty(_roleLogPath)) return;
+
+        var roleStr = _isSeeker ? "Seeker" : "Hider";
+        var line = $"{DateTime.Now:o},{CurrentRound},{TimeRemaining:F2},{roleStr}\n";
+        File.AppendAllText(_roleLogPath, line, Encoding.UTF8);
     }
 
     // ---------------- Misc helpers ----------------
@@ -214,8 +285,8 @@ public class RoundManager : MonoBehaviour
                 $"{DateTime.Now:o},{d.round},{d.smoothness},{d.responsiveness},{d.fairness},{d.qoe},{d.fun},{notes}");
         }
 
-        File.WriteAllText(_csvPath, sb.ToString(), Encoding.UTF8);
-        Debug.Log($"[RoundManager] Wrote {_buffer.Count} survey rows → {_csvPath}");
+        File.WriteAllText(_surveyCsvPath, sb.ToString(), Encoding.UTF8);
+        Debug.Log($"[RoundManager] Wrote {_buffer.Count} survey rows → {_surveyCsvPath}");
         _buffer.Clear();
     }
 

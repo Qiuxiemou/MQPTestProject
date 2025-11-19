@@ -111,7 +111,7 @@ GameObject:
   - component: {fileID: 8745372878802205896}
   - component: {fileID: 8090847488450120274}
   m_Layer: 10
-  m_Name: Weapon_Shotgun
+  m_Name: Weapon_Rifle
   m_TagString: Untagged
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -146,7 +146,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ad90ba0b1477764da373f5ec01a8cb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  WeaponName: Shotgun
+  WeaponName: One Shot
   WeaponIcon: {fileID: 21300000, guid: 8cbb10368086f014a8b7fc8932e7f436, type: 3}
   CrosshairDataDefault:
     CrosshairSprite: {fileID: 21300000, guid: 2962952d6e5ae7342a298d45a3945069, type: 3}
@@ -159,11 +159,11 @@ MonoBehaviour:
   WeaponRoot: {fileID: 1505447205160222267}
   WeaponMuzzle: {fileID: 8334323006752503713}
   ShootType: 0
-  ProjectilePrefab: {fileID: 8924682559891268397, guid: f05c7e6fbbfbe824388456bb4abff9d4,
+  ProjectilePrefab: {fileID: 8924682559891268397, guid: dd654cb84cc16c343aeefb86ae4f93d1,
     type: 3}
-  DelayBetweenShots: 0.2
-  BulletSpreadAngle: 7
-  BulletsPerShot: 24
+  DelayBetweenShots: 0.25
+  BulletSpreadAngle: 0
+  BulletsPerShot: 1
   RecoilForce: 1
   AimZoomRatio: 0.7
   AimOffset: {x: 0, y: 0.13, z: 0}
@@ -174,9 +174,9 @@ MonoBehaviour:
   EjectionPort: {fileID: 0}
   ShellCasingEjectionForce: 2
   ShellPoolSize: 1
-  AmmoReloadRate: 1.1
+  AmmoReloadRate: 4
   AmmoReloadDelay: 1
-  MaxAmmo: 2
+  MaxAmmo: 6
   AutomaticReleaseOnCharged: 0
   MaxChargeDuration: 1
   AmmoUsedOnStartCharge: 0

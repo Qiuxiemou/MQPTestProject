@@ -9,6 +9,10 @@ namespace Unity.FPS.AI
     {
         [Header("Vision Settings")]
 
+        [Header("Detection Timing")]
+        public float DetectionInterval = 1f;   
+        float _nextDetectionTime = 0f;
+
         [Tooltip("Precision vision angle (e.g. 120 degrees in front)")]
         public float ViewAngle = 120f;
 
@@ -30,12 +34,15 @@ namespace Unity.FPS.AI
         [Tooltip("Time before forgetting target completely")]
         public float KnownTargetTimeout = 4f;
 
+        public float missMaxRange=30f;
+        public float missChanceAtMaxRange = 0.8f;
         public Animator Animator;
 
         public UnityAction onDetectedTarget;
         public UnityAction onLostTarget;
 
-        public GameObject KnownDetectedTarget { get; private set; }
+        
+        public GameObject KnownDetectedTarget;
         public bool IsSeeingTarget { get; private set; }
         public bool IsTargetInAttackRange { get; private set; }
         public bool HadKnownTarget { get; private set; }
@@ -57,7 +64,17 @@ namespace Unity.FPS.AI
 
         public virtual void HandleTargetDetection(Actor selfActor, Collider[] selfColliders)
         {
-  
+            //if have target already, ignore miss chage
+            bool noTargetYet = (KnownDetectedTarget == null);
+            if (noTargetYet)
+            {
+                if (Time.time < _nextDetectionTime)
+                {
+                    return;   
+                }
+                _nextDetectionTime = Time.time + DetectionInterval;
+            }
+        
 
             IsSeeingTarget = false;
 
@@ -129,6 +146,17 @@ namespace Unity.FPS.AI
                 }
 
 
+                //miss chance check
+                float distance01 = Mathf.Clamp01(dist / missMaxRange);  
+                 
+                float missChance = distance01 * missChanceAtMaxRange;                     
+
+                if (Random.value < missChance)
+                {
+                    Debug.Log($"[Detection] Random miss: dist={dist:F1}, chance={missChance:P0}");
+                    continue;  // Treat as not seen
+                }
+                Debug.Log($"[Detection] Random not miss: dist={dist:F1}, chance={missChance:P0}");
 
                 // Valid precise detection
                 if (sqrDist < closestSqrDistance)
@@ -157,6 +185,7 @@ namespace Unity.FPS.AI
             if (HadKnownTarget && KnownDetectedTarget == null){
                 Debug.Log("[Detection] LOST target");
                 onLostTarget?.Invoke();
+                _nextDetectionTime = Time.time + DetectionInterval;
             }
                 
 

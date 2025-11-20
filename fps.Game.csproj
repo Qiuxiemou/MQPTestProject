@@ -73,6 +73,9 @@
     <Compile Include="Assets\FPS\Scripts\Game\Managers\GameFlowManager.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Shared\WeaponController.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\KeyInputBroadcaster.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\Managers\RoundManager.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\Managers\SurveyUI.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\Managers\TimerUI.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\WorldState.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\PrefabReplacer.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Events.cs" />
@@ -90,10 +93,7 @@
     <Compile Include="Assets\FPS\Scripts\Game\GameConstants.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\EventManager.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\AudioManager.cs" />
-    <Compile Include="Assets\FPS\Scripts\Game\Managers\RoundManager.cs" />
-    <Compile Include="Assets\FPS\Scripts\Game\Managers\SurveyUI.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Shared\Objective.cs" />
-    <Compile Include="Assets\FPS\Scripts\Game\Managers\TimerUI.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\PrefabReplacerOnInstance.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\WorldStateLogManager.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\ObjectiveManager.cs" />

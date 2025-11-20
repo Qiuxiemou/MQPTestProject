@@ -1047,6 +1047,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6809973363424661249, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
+      propertyPath: missMaxRange
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 6809973363424661249, guid: 25a1b0efadb966e44889fce712c8ff8d,
+        type: 3}
       propertyPath: DetectionRange
       value: 9999
       objectReference: {fileID: 0}
@@ -1054,6 +1059,11 @@ PrefabInstance:
         type: 3}
       propertyPath: KnownTargetTimeout
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6809973363424661249, guid: 25a1b0efadb966e44889fce712c8ff8d,
+        type: 3}
+      propertyPath: missChanceAtMaxRange
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 6809973363424661249, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}

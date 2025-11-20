@@ -9,6 +9,13 @@ namespace Unity.FPS.AI
     {
         [Header("Vision Settings")]
 
+        [Header("Reaction Time Settings")]
+        public float MinReactionTime = 1f;   
+        public float MaxReactionTime = 3f;   
+        float _reactionEndTime = 0f;           
+        bool _isReacting = false;             
+        Actor _pendingTarget = null; 
+
         [Header("Detection Timing")]
         public float DetectionInterval = 1f;   
         float _nextDetectionTime = 0f;
@@ -40,8 +47,6 @@ namespace Unity.FPS.AI
 
         public UnityAction onDetectedTarget;
         public UnityAction onLostTarget;
-
-        
         public GameObject KnownDetectedTarget;
         public bool IsSeeingTarget { get; private set; }
         public bool IsTargetInAttackRange { get; private set; }
@@ -64,14 +69,44 @@ namespace Unity.FPS.AI
 
         public virtual void HandleTargetDetection(Actor selfActor, Collider[] selfColliders)
         {
+            bool hasTarget   = (KnownDetectedTarget != null);
+            bool isReacting  = _isReacting;
+            if (KnownDetectedTarget != null)
+            {
+                Actor targetActor = KnownDetectedTarget.GetComponentInParent<Actor>();
+                if (targetActor == null)
+                {
+                    KnownDetectedTarget = null;
+                }
+                else
+                {
+                    Vector3 dir = targetActor.AimPoint.position - DetectionSourcePoint.position;
+
+                    bool blocked = false;
+                    if (Physics.Raycast(DetectionSourcePoint.position, dir.normalized,
+                                        out RaycastHit hitTrack, DetectionRange, ObstructionLayers))
+                    {
+                        Actor hitA = hitTrack.collider.GetComponentInParent<Actor>();
+                        if (hitA != targetActor)
+                            blocked = true;
+                    }
+
+                    if (!blocked)
+                    {
+                        IsSeeingTarget = true;
+                        LastSeenPosition = targetActor.AimPoint.position;
+                        TimeLastSeenTarget = Time.time;
+                    }
+                }
+            }
+
             //if have target already, ignore miss chage
             bool noTargetYet = (KnownDetectedTarget == null);
-            if (noTargetYet)
+            if (!hasTarget && !isReacting)
             {
                 if (Time.time < _nextDetectionTime)
-                {
-                    return;   
-                }
+                    return;
+
                 _nextDetectionTime = Time.time + DetectionInterval;
             }
         
@@ -147,27 +182,72 @@ namespace Unity.FPS.AI
 
 
                 //miss chance check
-                float distance01 = Mathf.Clamp01(dist / missMaxRange);  
-                 
-                float missChance = distance01 * missChanceAtMaxRange;                     
+                float distance01 = Mathf.Clamp01(dist / missMaxRange);
+                if (!_isReacting)
+                {
+                    float reactionTime = Mathf.Lerp(MinReactionTime, MaxReactionTime, distance01);
+
+                    _isReacting = true;
+                    _pendingTarget = other;
+                    _reactionEndTime = Time.time + reactionTime;
+
+                    Debug.Log($"[Detection] Reacting start: dist={dist:F1}, time={reactionTime:F2}");
+                }
+
+                bool sawThisFrame = true;
+                float missChance = distance01 * missChanceAtMaxRange;
 
                 if (Random.value < missChance)
                 {
-                    Debug.Log($"[Detection] Random miss: dist={dist:F1}, chance={missChance:P0}");
-                    continue;  // Treat as not seen
+                    sawThisFrame = false;
+                    Debug.Log($"[Detection] miss dist={dist:F1}, chance={missChance:P0}");
                 }
-                Debug.Log($"[Detection] Random not miss: dist={dist:F1}, chance={missChance:P0}");
+                else
+                {
+                    Debug.Log($"[Detection] HIT dist={dist:F1}, chance={missChance:P0}");
+                }
 
+                if (sawThisFrame)
+                {
+                    LastSeenPosition = other.AimPoint.position;
+                    TimeLastSeenTarget = Time.time;
+                }
                 // Valid precise detection
                 if (sqrDist < closestSqrDistance)
                 {
                     closestSqrDistance = sqrDist;
-                    KnownDetectedTarget = other.AimPoint.gameObject;
-                    LastSeenPosition = other.AimPoint.position;
-                    TimeLastSeenTarget = Time.time;
-                    
-                    IsSeeingTarget = true;
+
+                    float reactionTime = Mathf.Lerp(MinReactionTime, MaxReactionTime, distance01);
+
+                    if (!_isReacting)
+                    {
+                        _isReacting = true;
+                        _pendingTarget = other;
+                        _reactionEndTime = Time.time + reactionTime;
+
+                        Debug.Log($"[Detection] Reacting... dist={dist:F1}, reaction={reactionTime:F2}s");
+                    }
                 }
+
+            }
+
+            if (_isReacting && Time.time >= _reactionEndTime)
+            {
+                if (_pendingTarget != null)
+                {
+                    KnownDetectedTarget = _pendingTarget.AimPoint.gameObject;
+                    IsSeeingTarget = true;
+
+                    LastSeenPosition = _pendingTarget.AimPoint.position;
+                    TimeLastSeenTarget = Time.time;
+
+                    Debug.Log("[Detection] Target LOCKED after reaction delay");
+
+                    onDetectedTarget?.Invoke();
+                }
+
+                _isReacting = false;
+                _pendingTarget = null;
             }
 
             // Attack range check
@@ -186,6 +266,9 @@ namespace Unity.FPS.AI
                 Debug.Log("[Detection] LOST target");
                 onLostTarget?.Invoke();
                 _nextDetectionTime = Time.time + DetectionInterval;
+                _isReacting = false;
+                _pendingTarget = null;
+                _reactionEndTime = 0f;
             }
                 
 
@@ -196,6 +279,8 @@ namespace Unity.FPS.AI
             {
                 KnownDetectedTarget = null;
             }
+
+            
         }
 
         public virtual void OnDamaged(GameObject attacker)

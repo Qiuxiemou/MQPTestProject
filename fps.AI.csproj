@@ -61,17 +61,23 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.2.2f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\FPS\Scripts\AI\NavigationModule.cs" />
+    <Compile Include="Assets\FPS\Scripts\AI\EnemyMovement.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\BotDelayed.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\EnemyWayPoint.cs" />
-    <Compile Include="Assets\FPS\Scripts\AI\FollowPlayer.cs" />
+    <Compile Include="Assets\FPS\Scripts\AI\ChaseTest.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\EnemyController.cs" />
-    <Compile Include="Assets\FPS\Scripts\AI\EnemyTurret.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\EnemyMobile.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\EnemyManager.cs" />
-    <Compile Include="Assets\FPS\Scripts\AI\BotMovement.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\PatrolPath.cs" />
+    <Compile Include="Assets\FPS\Scripts\AI\PlayerInput.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\DetectionModule.cs" />
+    <Compile Include="Assets\FPS\Scripts\AI\EnemyDebugProbe.cs" />
+    <Compile Include="Assets\FPS\Scripts\AI\NavigationModule.cs" />
+    <Compile Include="Assets\FPS\Scripts\AI\FollowPlayer.cs" />
+    <Compile Include="Assets\FPS\Scripts\AI\AISeek.cs" />
+    <Compile Include="Assets\FPS\Scripts\AI\EnemyTurret.cs" />
+    <Compile Include="Assets\FPS\Scripts\AI\EnemyLineOfSightCheaker.cs" />
+    <Compile Include="Assets\FPS\Scripts\AI\BotMovement.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\FPS\Scripts\AI\fps.AI.asmdef" />
@@ -597,12 +603,20 @@
       <HintPath>Library\PackageCache\com.unity.collections@d49facba0036\Unity.Collections.Tests\System.IO.Hashing\System.IO.Hashing.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Mono.Cecil">
-      <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil@d78732e851eb\Mono.Cecil.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe">
       <HintPath>Library\PackageCache\com.unity.collections@d49facba0036\Unity.Collections.Tests\System.Runtime.CompilerServices.Unsafe\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Library\PackageCache\com.unity.nuget.newtonsoft-json@74deb55db2a0\Runtime\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="AiEditorToolsSdk">
+      <HintPath>Library\PackageCache\com.unity.ai.toolkit@48a271771d1a\Modules\Sdk\Editor\AiEditorToolsSdk.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil@d78732e851eb\Mono.Cecil.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="netstandard">

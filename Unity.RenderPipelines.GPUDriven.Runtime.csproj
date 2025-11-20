@@ -49,49 +49,49 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\Components\DisallowGPUDrivenRendering.cs" />
-    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\Debug\DebugDisplayGPUResidentDrawer.cs" />
-    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\InstanceData\InstanceData.cs" />
-    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\InstanceData\InstanceDataSystemBurst.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\InstanceData\GPUInstanceDataUploader.cs" />
-    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\LODGroupDataPoolBurst.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\GPUResidentDrawer.cs" />
-    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\InstanceData\InstanceType.cs" />
-    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\GPUResidentBatcher.SpeedTree.cs" />
-    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\InstanceData\InstanceDataSystem.Jobs.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\OcclusionCullingDebugShaderVariables.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\Utilities\MemoryUtilities.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\GPUResidentDrawerResources.cs" />
-    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\Utilities\ParallelSortExtensions.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\InstanceData\InstanceTransformUpdateDefs.cs" />
-    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\Components\DisallowSmallMeshCulling.cs" />
-    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\InstanceCullingBatcher.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\LODRenderingUtils.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\RenderersParameters.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\GPUResidentDrawerBurst.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\InstanceOcclusionCullerShaderVariables.cs" />
-    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\IGPUResidentRenderPipeline.cs" />
-    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\GPUResidentBatcher.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\GPUResidentDrawer.Validator.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\AssemblyInfo.cs" />
-    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\InstanceData\InstanceDataSystem.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\InstanceOcclusionCuller.cs" />
-    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\AABB.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\GPUResidentDrawerTypes.cs" />
-    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\BatchLayers.cs" />
-    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\FrustumPlanes.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\InstanceData\GPUInstanceDataBuffer.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\InstanceCullerBurst.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\GPUResidentDrawerDebug.cs" />
-    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\InstanceData\InstanceWindDataUpdateDefs.cs" />
-    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\Utilities\ParallelBitArray.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\LODGroupDataPool.cs" />
-    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\RenderersBatchersContext.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\InstanceData\InstanceAllocator.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\OcclusionCullingCommonShaderVariables.cs" />
+    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\InstanceCuller.cs" />
+    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\InstanceData\InstanceData.cs" />
+    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\Debug\DebugDisplayGPUResidentDrawer.cs" />
+    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\InstanceData\InstanceDataSystemBurst.cs" />
+    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\LODGroupDataPoolBurst.cs" />
+    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\InstanceData\InstanceType.cs" />
+    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\GPUResidentBatcher.SpeedTree.cs" />
+    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\InstanceData\InstanceDataSystem.Jobs.cs" />
+    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\Utilities\ParallelSortExtensions.cs" />
+    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\Components\DisallowSmallMeshCulling.cs" />
+    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\InstanceCullingBatcher.cs" />
+    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\IGPUResidentRenderPipeline.cs" />
+    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\GPUResidentBatcher.cs" />
+    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\InstanceData\InstanceDataSystem.cs" />
+    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\AABB.cs" />
+    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\BatchLayers.cs" />
+    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\FrustumPlanes.cs" />
+    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\InstanceData\InstanceWindDataUpdateDefs.cs" />
+    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\Utilities\ParallelBitArray.cs" />
+    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\RenderersBatchersContext.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\OccluderDepthPyramidConstants.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\OcclusionCullingCommon.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\InstanceCullingBatcherBurst.cs" />
-    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\InstanceCuller.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Library\PackageCache\com.unity.render-pipelines.core@5e056b397fc0\Runtime\GPUDriven\OcclusionCullingDebugShaderVariables.cs.hlsl" />
@@ -632,12 +632,20 @@
       <HintPath>Library\PackageCache\com.unity.collections@d49facba0036\Unity.Collections.Tests\System.IO.Hashing\System.IO.Hashing.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Mono.Cecil">
-      <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil@d78732e851eb\Mono.Cecil.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe">
       <HintPath>Library\PackageCache\com.unity.collections@d49facba0036\Unity.Collections.Tests\System.Runtime.CompilerServices.Unsafe\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Library\PackageCache\com.unity.nuget.newtonsoft-json@74deb55db2a0\Runtime\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="AiEditorToolsSdk">
+      <HintPath>Library\PackageCache\com.unity.ai.toolkit@48a271771d1a\Modules\Sdk\Editor\AiEditorToolsSdk.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil@d78732e851eb\Mono.Cecil.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="netstandard">

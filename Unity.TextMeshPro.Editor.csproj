@@ -48,60 +48,60 @@
     <Analyzer Include="D:\AAASchoolWork\Unity\Hub\Editor\6000.2.2f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_BitmapShaderGUI.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\PropertyDrawers\TMP_MarkToMarkAdjustmentRecordPropertyDrawer.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_SettingsEditor.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_InputFieldEditor.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_StyleAssetMenu.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMPro_SortingLayerHelper.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_BaseShaderGUI.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_EditorPanelUI.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMPro_CreateObjectMenu.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\PropertyDrawers\TMP_GlyphPropertyDrawer.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_SubMesh_Editor.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_EditorPanel.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_ColorGradientEditor.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\HDRP\TMP_SDF_HDRPLitShaderGUI.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMPro_TexturePostProcessor.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_ProjectTextSettings.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\PropertyDrawers\TMP_TextAlignmentDrawer.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\PropertyDrawers\TMP_CharacterPropertyDrawer.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_MarkupTagUpdateUtility.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_SpriteAssetMenu.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\HDRP\TMP_BaseHDRPUnlitShaderGUI.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_PreBuildProcessor.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMPro_TextContainerEditor.cs" />
+    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_BitmapShaderGUI.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\PropertyDrawers\GlyphMetricsPropertyDrawer.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_SpriteAssetImporter.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_SettingsEditor.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\HDRP\TMP_BaseHDRPLitShaderGUI.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_DropdownEditor.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMPro_ContextMenus.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMPro_EditorShaderUtilities.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_SubMeshUI_Editor.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_InputFieldEditor.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_SpriteAssetEditor.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_StyleAssetMenu.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\HDRP\TMP_SDF_HDRPUnlitShaderGUI.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_BaseShaderGUI.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMPro_SortingLayerHelper.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_EditorCoroutine.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_EditorPanelUI.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_UIStyleManager.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\PropertyDrawers\TMP_SpriteGlyphPropertyDrawer.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_ResourcesLoader.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMPro_CreateObjectMenu.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\PropertyDrawers\TMP_GlyphPropertyDrawer.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_SubMesh_Editor.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_EditorPanel.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMPro_FontAssetCreatorWindow.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_EditorUtility.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_EditorResourceManager.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\PropertyDrawers\TMP_SpriteCharacterPropertyDrawer.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_StyleSheetEditor.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_ColorGradientEditor.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\PropertyDrawers\GlyphPairAdjustmentRecordPropertyDrawer.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\HDRP\TMP_SDF_HDRPLitShaderGUI.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMPro_TexturePostProcessor.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\PropertyDrawers\DropdownOptionListDrawer.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\PropertyDrawers\LigatureSubstitutionRecordPropertyDrawer.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_ProjectTextSettings.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_FontAssetEditor.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\PropertyDrawers\TMP_TextAlignmentDrawer.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\PropertyDrawers\GlyphRectPropertyDrawer.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_SDFShaderGUI.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_FontAsset_CreationMenu.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\PropertyDrawers\TMP_CharacterPropertyDrawer.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_MarkupTagUpdateUtility.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_SpriteAssetMenu.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\HDRP\TMP_BaseHDRPUnlitShaderGUI.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_PostBuildProcessHandler.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\PropertyDrawers\TMP_MarkToBaseAdjustmentRecordPropertyDrawer.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_BaseEditorPanel.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_ColorGradientAssetMenu.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_PackageUtilities.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_PreBuildProcessor.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMP_SerializedPropertyHolder.cs" />
-    <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\TMPro_TextContainerEditor.cs" />
     <Compile Include="Library\PackageCache\com.unity.ugui@754dbde2be27\Editor\TMP\PropertyDrawers\TMP_PropertyDrawerUtilities.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -640,12 +640,20 @@
       <HintPath>Library\PackageCache\com.unity.collections@d49facba0036\Unity.Collections.Tests\System.IO.Hashing\System.IO.Hashing.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Mono.Cecil">
-      <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil@d78732e851eb\Mono.Cecil.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe">
       <HintPath>Library\PackageCache\com.unity.collections@d49facba0036\Unity.Collections.Tests\System.Runtime.CompilerServices.Unsafe\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Library\PackageCache\com.unity.nuget.newtonsoft-json@74deb55db2a0\Runtime\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="AiEditorToolsSdk">
+      <HintPath>Library\PackageCache\com.unity.ai.toolkit@48a271771d1a\Modules\Sdk\Editor\AiEditorToolsSdk.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil@d78732e851eb\Mono.Cecil.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="mscorlib">

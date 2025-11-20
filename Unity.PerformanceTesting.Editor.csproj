@@ -49,18 +49,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Library\PackageCache\com.unity.test-framework.performance@92d1d09a72ed\Editor\TestReportGraph\SampleGroupAdditionalData.cs" />
-    <Compile Include="Library\PackageCache\com.unity.test-framework.performance@92d1d09a72ed\Editor\UIElements\ToolbarWithSearch.cs" />
-    <Compile Include="Library\PackageCache\com.unity.test-framework.performance@92d1d09a72ed\Editor\TestReportGraph\SamplePoint.cs" />
     <Compile Include="Library\PackageCache\com.unity.test-framework.performance@92d1d09a72ed\Editor\TestRunnerInitializer.cs" />
-    <Compile Include="Library\PackageCache\com.unity.test-framework.performance@92d1d09a72ed\Editor\PerformanceTestBuildAssemblyFilter.cs" />
     <Compile Include="Library\PackageCache\com.unity.test-framework.performance@92d1d09a72ed\Editor\PerformanceTestRunSaver.cs" />
     <Compile Include="Library\PackageCache\com.unity.test-framework.performance@92d1d09a72ed\Editor\TestResultsParser.cs" />
     <Compile Include="Library\PackageCache\com.unity.test-framework.performance@92d1d09a72ed\Editor\TestReportGraph\TestReportWindow.cs" />
-    <Compile Include="Library\PackageCache\com.unity.test-framework.performance@92d1d09a72ed\Editor\TestReportGraph\TestListTable.cs" />
     <Compile Include="Library\PackageCache\com.unity.test-framework.performance@92d1d09a72ed\Editor\TestRunBuilder.cs" />
+    <Compile Include="Library\PackageCache\com.unity.test-framework.performance@92d1d09a72ed\Editor\AssemblyInfo.cs" />
+    <Compile Include="Library\PackageCache\com.unity.test-framework.performance@92d1d09a72ed\Editor\UIElements\ToolbarWithSearch.cs" />
+    <Compile Include="Library\PackageCache\com.unity.test-framework.performance@92d1d09a72ed\Editor\TestReportGraph\SamplePoint.cs" />
+    <Compile Include="Library\PackageCache\com.unity.test-framework.performance@92d1d09a72ed\Editor\PerformanceTestBuildAssemblyFilter.cs" />
+    <Compile Include="Library\PackageCache\com.unity.test-framework.performance@92d1d09a72ed\Editor\TestReportGraph\TestListTable.cs" />
     <Compile Include="Library\PackageCache\com.unity.test-framework.performance@92d1d09a72ed\Editor\CmdLineResultsSavingCallbacks.cs" />
     <Compile Include="Library\PackageCache\com.unity.test-framework.performance@92d1d09a72ed\Editor\TestResultXmlParser.cs" />
-    <Compile Include="Library\PackageCache\com.unity.test-framework.performance@92d1d09a72ed\Editor\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Library\PackageCache\com.unity.test-framework.performance@92d1d09a72ed\Editor\TestReportGraph\TestReportShader.shader" />

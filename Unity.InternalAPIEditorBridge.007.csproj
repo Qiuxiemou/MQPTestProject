@@ -50,16 +50,16 @@
   <ItemGroup>
     <Compile Include="Library\PackageCache\com.unity.learn.iet-framework@c18a35c1d1a1\Editor\InternalBridge\EditorGUIProxy.cs" />
     <Compile Include="Library\PackageCache\com.unity.learn.iet-framework@c18a35c1d1a1\Editor\InternalBridge\EditorWindowProxy.cs" />
+    <Compile Include="Library\PackageCache\com.unity.learn.iet-framework@c18a35c1d1a1\Editor\InternalBridge\UIElementsHelper.cs" />
+    <Compile Include="Library\PackageCache\com.unity.learn.iet-framework@c18a35c1d1a1\Editor\InternalBridge\AssemblyInfo.cs.cs" />
+    <Compile Include="Library\PackageCache\com.unity.learn.iet-framework@c18a35c1d1a1\Editor\InternalBridge\GUIViewProxy.cs" />
+    <Compile Include="Library\PackageCache\com.unity.learn.iet-framework@c18a35c1d1a1\Editor\InternalBridge\LocalizationDatabaseProxy.cs" />
     <Compile Include="Library\PackageCache\com.unity.learn.iet-framework@c18a35c1d1a1\Editor\InternalBridge\EditorGUIUtilityProxy.cs" />
     <Compile Include="Library\PackageCache\com.unity.learn.iet-framework@c18a35c1d1a1\Editor\InternalBridge\UnityConnectSession.cs" />
     <Compile Include="Library\PackageCache\com.unity.learn.iet-framework@c18a35c1d1a1\Editor\InternalBridge\AudioUtilProxy.cs" />
     <Compile Include="Library\PackageCache\com.unity.learn.iet-framework@c18a35c1d1a1\Editor\InternalBridge\WindowLayoutProxy.cs" />
-    <Compile Include="Library\PackageCache\com.unity.learn.iet-framework@c18a35c1d1a1\Editor\InternalBridge\UIElementsHelper.cs" />
-    <Compile Include="Library\PackageCache\com.unity.learn.iet-framework@c18a35c1d1a1\Editor\InternalBridge\AssemblyInfo.cs.cs" />
     <Compile Include="Library\PackageCache\com.unity.learn.iet-framework@c18a35c1d1a1\Editor\InternalBridge\InspectorWindowProxy.cs" />
-    <Compile Include="Library\PackageCache\com.unity.learn.iet-framework@c18a35c1d1a1\Editor\InternalBridge\GUIViewProxy.cs" />
     <Compile Include="Library\PackageCache\com.unity.learn.iet-framework@c18a35c1d1a1\Editor\InternalBridge\GUIViewDebuggerHelperProxy.cs" />
-    <Compile Include="Library\PackageCache\com.unity.learn.iet-framework@c18a35c1d1a1\Editor\InternalBridge\LocalizationDatabaseProxy.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Library\PackageCache\com.unity.learn.iet-framework@c18a35c1d1a1\Editor\InternalBridge\InternalBridge.asmdef" />
@@ -597,12 +597,20 @@
       <HintPath>Library\PackageCache\com.unity.collections@d49facba0036\Unity.Collections.Tests\System.IO.Hashing\System.IO.Hashing.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Mono.Cecil">
-      <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil@d78732e851eb\Mono.Cecil.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe">
       <HintPath>Library\PackageCache\com.unity.collections@d49facba0036\Unity.Collections.Tests\System.Runtime.CompilerServices.Unsafe\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Library\PackageCache\com.unity.nuget.newtonsoft-json@74deb55db2a0\Runtime\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="AiEditorToolsSdk">
+      <HintPath>Library\PackageCache\com.unity.ai.toolkit@48a271771d1a\Modules\Sdk\Editor\AiEditorToolsSdk.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil@d78732e851eb\Mono.Cecil.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="mscorlib">

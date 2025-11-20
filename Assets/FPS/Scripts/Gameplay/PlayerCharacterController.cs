@@ -266,6 +266,7 @@ namespace Unity.FPS.Gameplay
 
         void HandleCharacterMovement()
         {
+
             // horizontal character rotation
             {
                 // rotate the transform with the input speed around its local Y axis

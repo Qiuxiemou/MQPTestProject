@@ -62,9 +62,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\FPS\Scripts\Gameplay\WeaponFuelCellHandler.cs" />
-    <Compile Include="Assets\FPS\Scripts\Gameplay\ChargedWeaponEffectsHandler.cs" />
     <Compile Include="Assets\FPS\Scripts\Gameplay\ChargedProjectileEffectsHandler.cs" />
     <Compile Include="Assets\FPS\Scripts\Gameplay\Objectives\ObjectiveReachPoint.cs" />
+    <Compile Include="Assets\FPS\Scripts\Gameplay\PositionBobbing.cs" />
+    <Compile Include="Assets\FPS\Scripts\Gameplay\JetpackPickup.cs" />
+    <Compile Include="Assets\FPS\Scripts\Gameplay\Objectives\ObjectiveKillEnemies.cs" />
+    <Compile Include="Assets\FPS\Scripts\Gameplay\ProjectileStandard.cs" />
+    <Compile Include="Assets\FPS\Scripts\Gameplay\Managers\PlayerInputHandler.cs" />
+    <Compile Include="Assets\FPS\Scripts\Gameplay\ProjectileChargeParameters.cs" />
+    <Compile Include="Assets\FPS\Scripts\Gameplay\ChargedWeaponEffectsHandler.cs" />
     <Compile Include="Assets\FPS\Scripts\Gameplay\TeleportPlayer.cs" />
     <Compile Include="Assets\FPS\Scripts\Gameplay\HealthPickup.cs" />
     <Compile Include="Assets\FPS\Scripts\Gameplay\Managers\PlayerWeaponsManager.cs" />
@@ -73,14 +79,8 @@
     <Compile Include="Assets\FPS\Scripts\Gameplay\OverheatBehavior.cs" />
     <Compile Include="Assets\FPS\Scripts\Gameplay\PlayerCharacterController.cs" />
     <Compile Include="Assets\FPS\Scripts\Gameplay\Objectives\ObjectivePickupItem.cs" />
-    <Compile Include="Assets\FPS\Scripts\Gameplay\PositionBobbing.cs" />
     <Compile Include="Assets\FPS\Scripts\Gameplay\AmmoPickup.cs" />
     <Compile Include="Assets\FPS\Scripts\Gameplay\Pickup.cs" />
-    <Compile Include="Assets\FPS\Scripts\Gameplay\JetpackPickup.cs" />
-    <Compile Include="Assets\FPS\Scripts\Gameplay\Objectives\ObjectiveKillEnemies.cs" />
-    <Compile Include="Assets\FPS\Scripts\Gameplay\ProjectileStandard.cs" />
-    <Compile Include="Assets\FPS\Scripts\Gameplay\Managers\PlayerInputHandler.cs" />
-    <Compile Include="Assets\FPS\Scripts\Gameplay\ProjectileChargeParameters.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\FPS\Scripts\Gameplay\fps.Gameplay.asmdef" />
@@ -606,12 +606,20 @@
       <HintPath>Library\PackageCache\com.unity.collections@d49facba0036\Unity.Collections.Tests\System.IO.Hashing\System.IO.Hashing.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Mono.Cecil">
-      <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil@d78732e851eb\Mono.Cecil.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe">
       <HintPath>Library\PackageCache\com.unity.collections@d49facba0036\Unity.Collections.Tests\System.Runtime.CompilerServices.Unsafe\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Library\PackageCache\com.unity.nuget.newtonsoft-json@74deb55db2a0\Runtime\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="AiEditorToolsSdk">
+      <HintPath>Library\PackageCache\com.unity.ai.toolkit@48a271771d1a\Modules\Sdk\Editor\AiEditorToolsSdk.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil@d78732e851eb\Mono.Cecil.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="netstandard">

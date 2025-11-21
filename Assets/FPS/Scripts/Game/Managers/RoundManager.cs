@@ -298,6 +298,23 @@ public class RoundManager : MonoBehaviour
         if (!Directory.Exists(logsDir)) Directory.CreateDirectory(logsDir);
         return logsDir;
     }
+
+    // ----- If player dies, end round immediately -----
+    public void EndRoundOnPlayerDeath()
+    {
+        if (!RoundRunning) return;     // already ended
+        RoundRunning = false;
+
+        // stop gameplay (freeze movement, unlock cursor)
+        SetGameplayPause(true);
+
+        // stop timer UI
+        if (timerUI) timerUI.Hide();
+
+        // immediately show survey UI
+        if (surveyUI) surveyUI.Show(CurrentRound);
+    }
+
 }
 
 // ---------------- Data struct ----------------

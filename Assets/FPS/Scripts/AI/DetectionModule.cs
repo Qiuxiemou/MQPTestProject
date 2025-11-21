@@ -14,7 +14,7 @@ namespace Unity.FPS.AI
         float _nextDetectionTime = 0f;
 
         [Tooltip("Precision vision angle (e.g. 120 degrees in front)")]
-        public float ViewAngle = 120f;
+        public float ViewAngle = 150f;
 
         [Tooltip("Maximum distance for precise vision")]
         public float DetectionRange = 20f;
@@ -35,7 +35,7 @@ namespace Unity.FPS.AI
         public float KnownTargetTimeout = 4f;
 
         public float missMaxRange=30f;
-        public float missChanceAtMaxRange = 0.8f;
+        public float missChanceAtMaxRange = 0.1f;
         public Animator Animator;
 
         public UnityAction onDetectedTarget;

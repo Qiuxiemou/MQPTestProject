@@ -918,7 +918,7 @@ PrefabInstance:
     - target: {fileID: 2015434656898269656, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 34.9
+      value: 36.4
       objectReference: {fileID: 0}
     - target: {fileID: 2015434656898269656, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
@@ -928,7 +928,7 @@ PrefabInstance:
     - target: {fileID: 2015434656898269656, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 5.79
+      value: 14.94
       objectReference: {fileID: 0}
     - target: {fileID: 2015434656898269656, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
@@ -1134,11 +1134,15 @@ PrefabInstance:
       addedObject: {fileID: 1154647267}
     - targetCorrespondingSourceObject: {fileID: 2015434656898269652, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
-      insertIndex: 8
-      addedObject: {fileID: 1154647265}
+      insertIndex: 4
+      addedObject: {fileID: 1154647274}
     - targetCorrespondingSourceObject: {fileID: 2015434656898269652, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
       insertIndex: 9
+      addedObject: {fileID: 1154647265}
+    - targetCorrespondingSourceObject: {fileID: 2015434656898269652, guid: 25a1b0efadb966e44889fce712c8ff8d,
+        type: 3}
+      insertIndex: 10
       addedObject: {fileID: 1154647262}
     - targetCorrespondingSourceObject: {fileID: 2015434656898269652, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
@@ -11653,6 +11657,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 866925624}
   m_CullTransparentMesh: 0
+--- !u!114 &875060629 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6809973363424661249, guid: 25a1b0efadb966e44889fce712c8ff8d,
+    type: 3}
+  m_PrefabInstance: {fileID: 75810200}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 927ff0b4cb9a5dd4fb83c45166cffc50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &887079468 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2497406903890568550, guid: 4e6a92c78485cca4397c4a26d4367682,
@@ -17500,6 +17516,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4e6a92c78485cca4397c4a26d4367682, type: 3}
+--- !u!4 &1100511453 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 320366457750808901, guid: 25a1b0efadb966e44889fce712c8ff8d,
+    type: 3}
+  m_PrefabInstance: {fileID: 75810200}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &1110311884
 Mesh:
   m_ObjectHideFlags: 0
@@ -18524,7 +18546,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1154647230}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 05d321610f52327408ece158d1054024, type: 3}
   m_Name: 
@@ -18538,6 +18560,37 @@ MonoBehaviour:
   PitchDistortionMovementSpeed:
     Min: 1
     Max: 1.5
+--- !u!114 &1154647274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1154647230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10afb01c5ec3b4d428ec4077693c13cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  eye: {fileID: 1100511453}
+  agent: {fileID: 1154647258}
+  detection: {fileID: 875060629}
+  peekDistance: 0.45
+  peekStepOut: 0.35
+  reachThreshold: 0.2
+  midDelay: 0.3
+  wallMask:
+    serializedVersion: 2
+    m_Bits: 8192
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 8192
+  wallSearchRadius: 3
+  sideOffset: 0.7
+  forwardOffset: 0.5
+  coverOffset: 3
+  pickRadius: 20
+  showDebug: 1
 --- !u!1001 &1189042820
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -29086,6 +29139,7 @@ GameObject:
   - component: {fileID: 1737504308}
   - component: {fileID: 1737504310}
   - component: {fileID: 1737504311}
+  - component: {fileID: 1737504312}
   m_Layer: 0
   m_Name: LogManager
   m_TagString: Untagged
@@ -29149,6 +29203,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc4e5ec613ea34a4e9302f1c5f051caa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: fps.Game::Unity.FPS.Game.GameStatsLogManager
+--- !u!114 &1737504312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1737504307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8daa1b869c21297459a7994caf261520, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  WriteUnderAssets: 1
+  SubFolder: Logs/DebugLog
+  FileNamePrefix: ai_log_
+  ClearOnStart: 1
+  FlushEachWrite: 1
 --- !u!1001 &1754682452
 PrefabInstance:
   m_ObjectHideFlags: 0

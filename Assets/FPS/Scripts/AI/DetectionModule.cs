@@ -153,10 +153,10 @@ namespace Unity.FPS.AI
 
                 if (Random.value < missChance)
                 {
-                    Debug.Log($"[Detection] Random miss: dist={dist:F1}, chance={missChance:P0}");
+                    //Debug.Log($"[Detection] Random miss: dist={dist:F1}, chance={missChance:P0}");
                     continue;  // Treat as not seen
                 }
-                Debug.Log($"[Detection] Random not miss: dist={dist:F1}, chance={missChance:P0}");
+                //Debug.Log($"[Detection] Random not miss: dist={dist:F1}, chance={missChance:P0}");
 
                 // Valid precise detection
                 if (sqrDist < closestSqrDistance)

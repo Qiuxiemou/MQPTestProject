@@ -42,7 +42,7 @@ namespace Unity.FPS.AI
 
         void OnDrawGizmosSelected()
         {
-            Gizmos.color = Color.cyan;
+            Gizmos.color = Color.red;
             for (int i = 0; i < PathNodes.Count; i++)
             {
                 int nextIndex = i + 1;

@@ -38,6 +38,18 @@ namespace Unity.FPS.AI
         [Tooltip("Whether enemy death should have vfx")]
         public bool DeathVFX = true;
 
+        [Header("Look-Around While Moving")]
+        public bool LookAroundWhileMoving = true;
+
+        [Tooltip("Maximum angle left/right to rotate while moving (e.g., 150° total sweep = 75° left, 75° right)")]
+        public float ScanHalfAngle = 75f;
+
+        [Tooltip("Speed of the scanning motion (degrees per second)")]
+        public float ScanSpeed = 60f;
+
+        // internal
+        float m_CurrentScanAngle = 0f;
+        bool m_ScanDirectionRight = true;
 
         [Header("Weapons Parameters")] [Tooltip("Allow weapon swapping for this enemy")]
         public bool SwapToNextWeapon = false;
@@ -120,6 +132,13 @@ namespace Unity.FPS.AI
         WeaponController m_CurrentWeapon;
         WeaponController[] m_Weapons;
         NavigationModule m_NavigationModule;
+
+
+        // -------- Look Around internal state --------
+        bool m_IsLookingAround = false;
+        float m_LookedAngle = 0f;
+        bool m_WasAgentStoppedBeforeLook = false;
+        // --------------------------------------------
 
         void Start()
         {
@@ -208,6 +227,7 @@ namespace Unity.FPS.AI
             EnsureIsWithinLevelBounds();
 
             DetectionModule.HandleTargetDetection(m_Actor, m_SelfColliders);
+            //HandleLookAroundWhileMoving();
 
             Color currentColor = OnHitBodyGradient.Evaluate((Time.time - m_LastTimeDamaged) / FlashOnHitDuration);
             m_BodyFlashMaterialPropertyBlock.SetColor("_EmissionColor", currentColor);
@@ -306,6 +326,7 @@ namespace Unity.FPS.AI
             }
             else
             {
+                UpdatePathDestination();
                 return transform.position;
             }
         }
@@ -320,26 +341,74 @@ namespace Unity.FPS.AI
 
         public void UpdatePathDestination(bool inverseOrder = false)
         {
-            if (IsPathValid())
-            {
-                // Check if reached the path destination
+            if (IsPathValid()) {
+
                 if ((transform.position - GetDestinationOnPath()).magnitude <= PathReachingRadius)
                 {
                     // increment path destination index
-                    m_PathDestinationNodeIndex =
-                        inverseOrder ? (m_PathDestinationNodeIndex - 1) : (m_PathDestinationNodeIndex + 1);
-                    if (m_PathDestinationNodeIndex < 0)
-                    {
-                        m_PathDestinationNodeIndex += PatrolPath.PathNodes.Count;
+                    m_PathDestinationNodeIndex = inverseOrder ? (m_PathDestinationNodeIndex - 1) : (m_PathDestinationNodeIndex + 1);
+
+                    if (m_PathDestinationNodeIndex < 0) { 
+                        m_PathDestinationNodeIndex += PatrolPath.PathNodes.Count; 
                     }
 
-                    if (m_PathDestinationNodeIndex >= PatrolPath.PathNodes.Count)
-                    {
+                    if (m_PathDestinationNodeIndex >= PatrolPath.PathNodes.Count) {
                         m_PathDestinationNodeIndex -= PatrolPath.PathNodes.Count;
                     }
                 }
             }
         }
+
+        //----------------------------------
+        void StartLookAround()
+        {
+            if (m_IsLookingAround)
+                return;
+
+            m_IsLookingAround = true;
+            m_LookedAngle = 0f;
+
+            if (NavMeshAgent != null)
+            {
+                m_WasAgentStoppedBeforeLook = NavMeshAgent.isStopped;
+                NavMeshAgent.isStopped = true; // stop walking while rotating in place
+            }
+        }
+
+        void HandleLookAroundWhileMoving()
+        {
+            if (!LookAroundWhileMoving)
+                return;
+
+            // If targeting something, stop scanning
+            if (DetectionModule != null && DetectionModule.IsSeeingTarget)
+                return;
+
+            float delta = ScanSpeed * Time.deltaTime;
+
+            if (m_ScanDirectionRight)
+                m_CurrentScanAngle += delta;
+            else
+                m_CurrentScanAngle -= delta;
+
+            // Reverse direction at each limit
+            if (m_CurrentScanAngle >= ScanHalfAngle)
+                m_ScanDirectionRight = false;
+            else if (m_CurrentScanAngle <= -ScanHalfAngle)
+                m_ScanDirectionRight = true;
+
+            // Apply rotation
+            Quaternion baseRotation = Quaternion.LookRotation(NavMeshAgent.velocity.sqrMagnitude > 0.1f
+                ? NavMeshAgent.velocity.normalized
+                : transform.forward,
+                Vector3.up);
+
+            Quaternion offsetRotation = Quaternion.Euler(0f, m_CurrentScanAngle, 0f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, baseRotation * offsetRotation, Time.deltaTime * 5f);
+        }
+
+        // -------------------------------------
+
 
         void OnDamaged(float damage, GameObject damageSource)
         {

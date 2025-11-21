@@ -1,186 +1,202 @@
-using Unity.FPS.Game;
-using UnityEngine;
+//using UnityEngine;
+//using UnityEngine.AI;
+//using Unity.FPS.Game;
+//using Unity.FPS.AI;
 
-namespace Unity.FPS.AI
-{
-    [RequireComponent(typeof(EnemyController))]
-    public class AISeek : MonoBehaviour
-    {
-        public enum AIState
-        {
-            Patrol,
-            Follow,
-            Attack,
-            Search,
-        }
+//public class AISeeker : MonoBehaviour
+//{
+//    public enum SeekerState
+//    {
+//        Patrol,
+//        Chase,
+//        GoToLastSeen
+//    }
 
-        public Animator Animator;
+//    [Header("References")]
+//    public DetectionModule Detection;
+//    public NavMeshAgent Agent;
+//    public Transform[] Waypoints;
 
-        [Tooltip("Fraction of the enemy's attack range at which it will stop moving towards target while attacking")]
-        [Range(0f, 1f)]
-        public float AttackStopDistanceRatio = 0.5f;
+//    [Header("Distances & Timing")]
+//    [Tooltip("How close to a waypoint to consider it 'reached'")]
+//    public float WaypointReachThreshold = 1f;
 
-        [Tooltip("The random hit damage effects")]
-        public ParticleSystem[] RandomHitSparks;
+//    [Tooltip("How close to last seen position to consider it 'reached'")]
+//    public float LastSeenReachThreshold = 1f;
 
-        public ParticleSystem[] OnDetectVfx;
-        public AudioClip OnDetectSfx;
+//    [Tooltip("How long after losing sight to still move to last seen position")]
+//    public float LostSightSearchTime = 2f;
 
-        [Header("Sound")] public AudioClip MovementSound;
-        public MinMaxFloat PitchDistortionMovementSpeed;
+//    SeekerState _currentState = SeekerState.Patrol;
+//    Actor _selfActor;
+//    int _currentWaypointIndex = 0;
 
-        public AIState AiState { get; private set; }
-        EnemyController m_EnemyController;
-        AudioSource m_AudioSource;
+//    // Time we last had the player in FOV
+//    float _lastTimeSawTarget = Mathf.NegativeInfinity;
 
-        const string k_AnimMoveSpeedParameter = "MoveSpeed";
-        const string k_AnimAttackParameter = "Attack";
-        const string k_AnimAlertedParameter = "Alerted";
-        const string k_AnimOnDamagedParameter = "OnDamaged";
+//    void Awake()
+//    {
+//        if (Agent == null)
+//            Agent = GetComponent<NavMeshAgent>();
 
-        void Start()
-        {
-            m_EnemyController = GetComponent<EnemyController>();
-            DebugUtility.HandleErrorIfNullGetComponent<EnemyController, AISeek>(m_EnemyController, this,
-                gameObject);
+//        if (Detection == null)
+//            Detection = GetComponent<DetectionModule>();
 
-            m_EnemyController.onAttack += OnAttack;
-            m_EnemyController.onDetectedTarget += OnDetectedTarget;
-            m_EnemyController.onLostTarget += OnLostTarget;
-            m_EnemyController.SetPathDestinationToClosestNode();
-            m_EnemyController.onDamaged += OnDamaged;
+//        _selfActor = GetComponent<Actor>();
+//    }
 
-            // Start patrolling
-            AiState = AIState.Patrol;
+//    void Start()
+//    {
+//        // Start at closest waypoint so we don't suddenly snap across the map
+//        SetClosestWaypointAsCurrent();
+//        GoToCurrentWaypoint();
+//        _currentState = SeekerState.Patrol;
+//    }
 
-            // adding a audio source to play the movement sound on it
-            m_AudioSource = GetComponent<AudioSource>();
-            DebugUtility.HandleErrorIfNullGetComponent<AudioSource, AISeek>(m_AudioSource, this, gameObject);
-            m_AudioSource.clip = MovementSound;
-            m_AudioSource.Play();
-        }
+//    void Update()
+//    {
+//        // Update detection (pure vision + last seen position)
+//        Detection.HandleTargetDetection(_selfActor);
 
-        void Update()
-        {
-            UpdateAiStateTransitions();
-            UpdateCurrentAiState();
+//        // Update last time we saw the target
+//        if (Detection.HasTargetInFOV)
+//        {
+//            _lastTimeSawTarget = Time.time;
+//        }
 
-            float moveSpeed = m_EnemyController.NavMeshAgent.velocity.magnitude;
+//        switch (_currentState)
+//        {
+//            case SeekerState.Patrol:
+//                UpdatePatrol();
+//                break;
 
-            // Update animator speed parameter
-            Animator.SetFloat(k_AnimMoveSpeedParameter, moveSpeed);
+//            case SeekerState.Chase:
+//                UpdateChase();
+//                break;
 
-            // changing the pitch of the movement sound depending on the movement speed
-            m_AudioSource.pitch = Mathf.Lerp(PitchDistortionMovementSpeed.Min, PitchDistortionMovementSpeed.Max,
-                moveSpeed / m_EnemyController.NavMeshAgent.speed);
-        }
+//            case SeekerState.GoToLastSeen:
+//                UpdateGoToLastSeen();
+//                break;
+//        }
+//    }
 
-        void UpdateAiStateTransitions()
-        {
-            // Handle transitions 
-            switch (AiState)
-            {
-                case AIState.Follow:
-                    // Transition to attack when there is a line of sight to the target
-                    if (m_EnemyController.IsSeeingTarget && m_EnemyController.IsTargetInAttackRange)
-                    {
-                        AiState = AIState.Attack;
-                        m_EnemyController.SetNavDestination(transform.position);
-                    }
+//    // ----------------- PATROL -----------------
+//    void UpdatePatrol()
+//    {
+//        // If we see the player -> start chasing
+//        if (Detection.HasTargetInFOV && Detection.CurrentTarget != null)
+//        {
+//            _currentState = SeekerState.Chase;
+//            return;
+//        }
 
-                    break;
-                case AIState.Attack:
-                    // Transition to follow when no longer a target in attack range
-                    if (!m_EnemyController.IsTargetInAttackRange)
-                    {
-                        AiState = AIState.Follow;
-                    }
+//        // Move along waypoints
+//        if (Waypoints == null || Waypoints.Length == 0)
+//            return;
 
-                    break;
-            }
-        }
+//        if (!Agent.pathPending && Agent.remainingDistance <= WaypointReachThreshold)
+//        {
+//            // Go to next waypoint
+//            _currentWaypointIndex = (_currentWaypointIndex + 1) % Waypoints.Length;
+//            GoToCurrentWaypoint();
+//        }
+//    }
 
-        void UpdateCurrentAiState()
-        {
-            // Handle logic 
-            switch (AiState)
-            {
-                case AIState.Patrol:
-                    m_EnemyController.UpdatePathDestination();
-                    m_EnemyController.SetNavDestination(m_EnemyController.GetDestinationOnPath());
-                    break;
-                case AIState.Follow:
-                    m_EnemyController.SetNavDestination(m_EnemyController.KnownDetectedTarget.transform.position);
-                    m_EnemyController.OrientTowards(m_EnemyController.KnownDetectedTarget.transform.position);
-                    m_EnemyController.OrientWeaponsTowards(m_EnemyController.KnownDetectedTarget.transform.position);
-                    break;
-                case AIState.Attack:
-                    if (Vector3.Distance(m_EnemyController.KnownDetectedTarget.transform.position,
-                            m_EnemyController.DetectionModule.DetectionSourcePoint.position)
-                        >= (AttackStopDistanceRatio * m_EnemyController.DetectionModule.AttackRange))
-                    {
-                        m_EnemyController.SetNavDestination(m_EnemyController.KnownDetectedTarget.transform.position);
-                    }
-                    else
-                    {
-                        m_EnemyController.SetNavDestination(transform.position);
-                    }
+//    // ----------------- CHASE -----------------
+//    void UpdateChase()
+//    {
+//        // If we still see the player, keep chasing their current position
+//        if (Detection.HasTargetInFOV && Detection.CurrentTarget != null)
+//        {
+//            Agent.SetDestination(Detection.CurrentTarget.transform.position);
+//            return;
+//        }
 
-                    m_EnemyController.OrientTowards(m_EnemyController.KnownDetectedTarget.transform.position);
-                    m_EnemyController.TryAtack(m_EnemyController.KnownDetectedTarget.transform.position);
-                    break;
-            }
-        }
+//        // We lost sight of the player
+//        float timeSinceLastSeen = Time.time - _lastTimeSawTarget;
 
-        void OnAttack()
-        {
-            Animator.SetTrigger(k_AnimAttackParameter);
-        }
+//        // If we lost sight very recently (< LostSightSearchTime) -> go to last seen position
+//        if (timeSinceLastSeen <= LostSightSearchTime && Detection.HasLastSeenPosition)
+//        {
+//            Agent.SetDestination(Detection.LastSeenPosition);
+//            _currentState = SeekerState.GoToLastSeen;
+//        }
+//        else
+//        {
+//            // Lost track for too long -> return to closest waypoint and Patrol
+//            SetClosestWaypointAsCurrent();
+//            GoToCurrentWaypoint();
+//            _currentState = SeekerState.Patrol;
+//        }
+//    }
 
-        void OnDetectedTarget()
-        {
-            if (AiState == AIState.Patrol)
-            {
-                AiState = AIState.Follow;
-            }
+//    // ----------------- GO TO LAST SEEN -----------------
+//    void UpdateGoToLastSeen()
+//    {
+//        // If we see the player again -> back to Chase
+//        if (Detection.HasTargetInFOV && Detection.CurrentTarget != null)
+//        {
+//            _currentState = SeekerState.Chase;
+//            return;
+//        }
 
-            for (int i = 0; i < OnDetectVfx.Length; i++)
-            {
-                OnDetectVfx[i].Play();
-            }
+//        // Still going to last seen position
+//        if (Detection.HasLastSeenPosition)
+//        {
+//            // If we reached that point, and still don't see the player for more than LostSightSearchTime,
+//            // go back to Patrol (closest waypoint).
+//            float dist = Vector3.Distance(transform.position, Detection.LastSeenPosition);
 
-            if (OnDetectSfx)
-            {
-                AudioUtility.CreateSFX(OnDetectSfx, transform.position, AudioUtility.AudioGroups.EnemyDetection, 1f);
-            }
+//            if (dist <= LastSeenReachThreshold)
+//            {
+//                float timeSinceLastSeen = Time.time - _lastTimeSawTarget;
 
-            Animator.SetBool(k_AnimAlertedParameter, true);
-        }
+//                if (timeSinceLastSeen > LostSightSearchTime)
+//                {
+//                    SetClosestWaypointAsCurrent();
+//                    GoToCurrentWaypoint();
+//                    _currentState = SeekerState.Patrol;
+//                }
+//                // If you want, here you could add a small local search behavior instead.
+//            }
+//        }
+//        else
+//        {
+//            // We don't even remember a last seen position anymore -> just return to patrol
+//            SetClosestWaypointAsCurrent();
+//            GoToCurrentWaypoint();
+//            _currentState = SeekerState.Patrol;
+//        }
+//    }
 
-        void OnLostTarget()
-        {
-            if (AiState == AIState.Follow || AiState == AIState.Attack)
-            {
-                AiState = AIState.Patrol;
-            }
+//    // ----------------- HELPERS -----------------
+//    void GoToCurrentWaypoint()
+//    {
+//        if (Waypoints == null || Waypoints.Length == 0)
+//            return;
 
-            for (int i = 0; i < OnDetectVfx.Length; i++)
-            {
-                OnDetectVfx[i].Stop();
-            }
+//        Agent.SetDestination(Waypoints[_currentWaypointIndex].position);
+//    }
 
-            Animator.SetBool(k_AnimAlertedParameter, false);
-        }
+//    void SetClosestWaypointAsCurrent()
+//    {
+//        if (Waypoints == null || Waypoints.Length == 0)
+//            return;
 
-        void OnDamaged()
-        {
-            if (RandomHitSparks.Length > 0)
-            {
-                int n = Random.Range(0, RandomHitSparks.Length - 1);
-                RandomHitSparks[n].Play();
-            }
+//        float bestSqr = Mathf.Infinity;
+//        int bestIndex = 0;
+//        Vector3 pos = transform.position;
 
-            Animator.SetTrigger(k_AnimOnDamagedParameter);
-        }
-    }
-}
+//        for (int i = 0; i < Waypoints.Length; i++)
+//        {
+//            float sqr = (Waypoints[i].position - pos).sqrMagnitude;
+//            if (sqr < bestSqr)
+//            {
+//                bestSqr = sqr;
+//                bestIndex = i;
+//            }
+//        }
+
+//        _currentWaypointIndex = bestIndex;
+//    }
+//}

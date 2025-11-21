@@ -23,7 +23,15 @@ public class EnemyMovement : MonoBehaviour
     private Coroutine MovementCoroutine;
     private Collider[] Colliders = new Collider[10]; // more is less performant, but more options
 
-    private void Awake()
+    //private void Awake()
+    //{
+    //    Agent = GetComponent<NavMeshAgent>();
+
+    //    LineOfSightChecker.OnGainSight += HandleGainSight;
+    //    LineOfSightChecker.OnLoseSight += HandleLoseSight;
+    //}
+
+    private void Start()
     {
         Agent = GetComponent<NavMeshAgent>();
 

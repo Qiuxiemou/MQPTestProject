@@ -94,6 +94,7 @@
     <Compile Include="Assets\FPS\Scripts\Game\Managers\EventManager.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\AudioManager.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Shared\Objective.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\RandLatency.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\PrefabReplacerOnInstance.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\WorldStateLogManager.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\ObjectiveManager.cs" />

@@ -996,6 +996,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2104015986810675393, guid: 25a1b0efadb966e44889fce712c8ff8d,
+        type: 3}
+      propertyPath: BulletSpreadAngle
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 2104015986810675393, guid: 25a1b0efadb966e44889fce712c8ff8d,
+        type: 3}
+      propertyPath: DelayBetweenShots
+      value: 0.6
+      objectReference: {fileID: 0}
     - target: {fileID: 2201913640410082181, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
       propertyPath: m_Layer
@@ -1084,12 +1094,12 @@ PrefabInstance:
     - target: {fileID: 6809973363424661249, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
       propertyPath: AttackRange
-      value: 50
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 6809973363424661249, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
       propertyPath: missMaxRange
-      value: 50
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 6809973363424661249, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
@@ -1099,7 +1109,12 @@ PrefabInstance:
     - target: {fileID: 6809973363424661249, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
       propertyPath: KnownTargetTimeout
-      value: 3
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6809973363424661249, guid: 25a1b0efadb966e44889fce712c8ff8d,
+        type: 3}
+      propertyPath: CloseDetectionRange
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 6809973363424661249, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
@@ -1119,12 +1134,17 @@ PrefabInstance:
     - target: {fileID: 7406548990343174644, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
       propertyPath: m_Speed
-      value: 5
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 7406548990343174644, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406548990343174644, guid: 25a1b0efadb966e44889fce712c8ff8d,
+        type: 3}
+      propertyPath: m_Acceleration
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 7448957880145452174, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
@@ -18752,10 +18772,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9ae5a008251a5f4490375201f7f2d66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: fps.Game::Unity.FPS.Game.BotHealthProxy
-  pastHealth: {fileID: 1371730130}
-  serverHealth: {fileID: 1246784447}
-  futureHealth: {fileID: 1154647246}
-  destroyBufferAfterClientDeathMs: 100
 --- !u!195 &1154647258 stripped
 NavMeshAgent:
   m_CorrespondingSourceObject: {fileID: 7406548990343174644, guid: 25a1b0efadb966e44889fce712c8ff8d,
@@ -19899,10 +19915,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9ae5a008251a5f4490375201f7f2d66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: fps.AI::Unity.FPS.Game.BotHealthProxy
-  pastHealth: {fileID: 1371730130}
-  serverHealth: {fileID: 1246784447}
-  futureHealth: {fileID: 1154647246}
-  destroyBufferAfterClientDeathMs: 100
 --- !u!114 &1246784447 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6370966072896210225, guid: 25a1b0efadb966e44889fce712c8ff8d,
@@ -24769,10 +24781,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9ae5a008251a5f4490375201f7f2d66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: fps.AI::Unity.FPS.Game.BotHealthProxy
-  pastHealth: {fileID: 1371730130}
-  serverHealth: {fileID: 1246784447}
-  futureHealth: {fileID: 1154647246}
-  destroyBufferAfterClientDeathMs: 100
 --- !u!114 &1371730123
 MonoBehaviour:
   m_ObjectHideFlags: 0

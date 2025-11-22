@@ -19,6 +19,9 @@ namespace Unity.FPS.AI
         [Tooltip("Maximum distance for precise vision")]
         public float DetectionRange = 20f;
 
+        [Tooltip("Distance where target is detected even if not in FOV")]
+        public float CloseDetectionRange = 15f;
+
         [Tooltip("360-degree peripheral alert radius")]
         public float PeripheralAlertRange = 6f;
 
@@ -64,22 +67,20 @@ namespace Unity.FPS.AI
 
         public virtual void HandleTargetDetection(Actor selfActor, Collider[] selfColliders)
         {
-            //if have target already, ignore miss chage
             bool noTargetYet = (KnownDetectedTarget == null);
             if (noTargetYet)
             {
                 if (Time.time < _nextDetectionTime)
-                {
-                    return;   
-                }
+                    return;
+
                 _nextDetectionTime = Time.time + DetectionInterval;
             }
-        
 
             IsSeeingTarget = false;
 
             float sqrDetectionRange = DetectionRange * DetectionRange;
             float sqrPeripheralRange = PeripheralAlertRange * PeripheralAlertRange;
+            float sqrCloseRange = CloseDetectionRange * CloseDetectionRange;   // NEW
 
             float closestSqrDistance = Mathf.Infinity;
 
@@ -92,8 +93,6 @@ namespace Unity.FPS.AI
                 float sqrDist = dir.sqrMagnitude;
                 float dist = Mathf.Sqrt(sqrDist);
 
-                //Debug.Log("[Detection] Dist to " + other.name + " = " + dist.ToString("F2"));
-
                 // ---------- 360° Peripheral Alert Range ----------
                 if (sqrDist <= sqrPeripheralRange)
                 {
@@ -101,40 +100,34 @@ namespace Unity.FPS.AI
                     TimeLastSeenTarget = Time.time;
                 }
 
+                // ---------- Close-range auto detection (NEW) ----------
+                bool inCloseRange = sqrDist <= sqrCloseRange;
+
                 // ---------- Precision Vision Range ----------
-                if (sqrDist > sqrDetectionRange)
+                if (!inCloseRange && sqrDist > sqrDetectionRange)
                 {
-                    //Debug.Log("[Detection] FAIL distance: too far, DetectionRange = " + DetectionRange);
+                    // too far for both normal and close detection
                     continue;
                 }
 
                 // ---------- FOV Check ----------
-                float angle = Vector3.Angle(transform.forward, dir.normalized);
-                //Debug.Log("[Detection] Angle to " + other.name + " = " + angle.ToString("F1"));
-
-                if (angle > ViewAngle * 0.5f)
+                if (!inCloseRange) // ONLY require FOV if NOT in close range
                 {
-                    //Debug.Log("[Detection] FAIL FOV: " + angle.ToString("F1") + " > " + (ViewAngle * 0.5f));
-                    continue;
+                    float angle = Vector3.Angle(transform.forward, dir.normalized);
+                    if (angle > ViewAngle * 0.5f)
+                        continue;
                 }
-
 
                 // ---------- Raycast Obstruction ----------
                 Ray ray = new Ray(DetectionSourcePoint.position, dir.normalized);
 
                 if (Physics.Raycast(ray, out RaycastHit hit, DetectionRange, ObstructionLayers))
                 {
-                
                     Debug.DrawLine(DetectionSourcePoint.position, hit.point, Color.red, 0.1f);
-
-                    //Debug.Log("[Detection] Raycast hit: " + hit.collider.name);
 
                     Actor hitActor = hit.collider.GetComponentInParent<Actor>();
                     if (hitActor != other)
-                    {
-                        //Debug.Log("[Detection] FAIL blocked by: " + hit.collider.name);
-                        continue;
-                    }
+                        continue; // blocked by something else
                 }
                 else
                 {
@@ -145,27 +138,25 @@ namespace Unity.FPS.AI
                         0.1f);
                 }
 
+                // ---------- Miss chance (you can skip this for close range if you want) ----------
+                float distance01 = Mathf.Clamp01(dist / missMaxRange);
+                float missChance = distance01 * missChanceAtMaxRange;
 
-                //miss chance check
-                float distance01 = Mathf.Clamp01(dist / missMaxRange);  
-                 
-                float missChance = distance01 * missChanceAtMaxRange;                     
-
-                if (Random.value < missChance)
+                if (!inCloseRange && Random.value < missChance)   // NEW: no miss for close range
                 {
                     Debug.Log($"[Detection] Random miss: dist={dist:F1}, chance={missChance:P0}");
-                    continue;  // Treat as not seen
+                    continue;
                 }
                 Debug.Log($"[Detection] Random not miss: dist={dist:F1}, chance={missChance:P0}");
 
-                // Valid precise detection
+                // ---------- Valid detection ----------
                 if (sqrDist < closestSqrDistance)
                 {
                     closestSqrDistance = sqrDist;
                     KnownDetectedTarget = other.AimPoint.gameObject;
                     LastSeenPosition = other.AimPoint.position;
                     TimeLastSeenTarget = Time.time;
-                    
+
                     IsSeeingTarget = true;
                 }
             }
@@ -182,12 +173,12 @@ namespace Unity.FPS.AI
                 onDetectedTarget?.Invoke();
             }
 
-            if (HadKnownTarget && KnownDetectedTarget == null){
+            if (HadKnownTarget && KnownDetectedTarget == null)
+            {
                 Debug.Log("[Detection] LOST target");
                 onLostTarget?.Invoke();
                 _nextDetectionTime = Time.time + DetectionInterval;
             }
-                
 
             HadKnownTarget = KnownDetectedTarget != null;
 
@@ -197,6 +188,7 @@ namespace Unity.FPS.AI
                 KnownDetectedTarget = null;
             }
         }
+
 
         public virtual void OnDamaged(GameObject attacker)
         {

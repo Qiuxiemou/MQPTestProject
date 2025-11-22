@@ -136,8 +136,8 @@ namespace Unity.FPS.AI
 
         // -------- Look Around internal state --------
         bool m_IsLookingAround = false;
-        float m_LookedAngle = 0f;
-        bool m_WasAgentStoppedBeforeLook = false;
+        //float m_LookedAngle = 0f;
+        //bool m_WasAgentStoppedBeforeLook = false;
         // --------------------------------------------
 
         void Start()
@@ -360,20 +360,6 @@ namespace Unity.FPS.AI
         }
 
         //----------------------------------
-        void StartLookAround()
-        {
-            if (m_IsLookingAround)
-                return;
-
-            m_IsLookingAround = true;
-            m_LookedAngle = 0f;
-
-            if (NavMeshAgent != null)
-            {
-                m_WasAgentStoppedBeforeLook = NavMeshAgent.isStopped;
-                NavMeshAgent.isStopped = true; // stop walking while rotating in place
-            }
-        }
 
         void HandleLookAroundWhileMoving()
         {

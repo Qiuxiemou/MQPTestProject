@@ -61,11 +61,12 @@ namespace Unity.FPS.Game
 
     #if UNITY_EDITOR
         string folder = Path.Combine(Application.dataPath, "Logs");
-    #else
-        string folder = Application.persistentDataPath;
-    #endif
+#else
+        var projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+        var folder = Path.Combine(projectRoot, "Logs", "GameLogs");
+#endif
 
-        if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+            if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
 
         _eventsCsvPath = Path.Combine(folder, $"events_{_sessionId}.csv");
         _viewCsvPath   = Path.Combine(folder, $"view_{_sessionId}.csv");

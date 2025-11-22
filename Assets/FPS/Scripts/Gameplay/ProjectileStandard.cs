@@ -223,6 +223,69 @@ namespace Unity.FPS.Gameplay
         void OnHit(Vector3 point, Vector3 normal, Collider collider)
         {
             // damage
+            //if (AreaOfDamage)
+            //{
+            //    // area damage
+            //    AreaOfDamage.InflictDamageInArea(Damage, point, HittableLayers, k_TriggerInteraction,
+            //        m_ProjectileBase.Owner);
+            //}
+            //else
+            //{
+            //var proxy = collider.GetComponentInParent<BotHealthProxy>();
+            //if (proxy != null)
+            //{
+            //    proxy.TakeDamage(Damage, m_ProjectileBase.Owner);
+            //}
+            //else
+            //{
+            //    Damageable damageable = collider.GetComponent<Damageable>();
+            //    if (damageable)
+            //        damageable.InflictDamage(Damage, false, m_ProjectileBase.Owner);
+            //}
+            //}
+
+            //var proxyForLog = collider.GetComponentInParent<BotHealthProxy>();
+            //var health  = collider.GetComponentInParent<Health>();
+            //var ownerGO =  proxyForLog ? proxyForLog.gameObject
+            //        :  health ? health.gameObject
+            //        :  collider.transform.root.gameObject;
+            //bool hitBox = false;
+            //hitBox = collider.CompareTag("Bot");
+
+            //EventManager.Broadcast(new HitCsvEvent {
+            //    EventType      = proxyForLog ? "client_hit" : "world_hit",
+            //    ShooterId      = m_ProjectileBase.Owner ? m_ProjectileBase.Owner.name : "Unknown",
+            //    TargetId       = ownerGO.name,  
+            //    Damage         = Damage,
+            //    //ForwardDelayMs = proxyForLog ? BotHealthProxy.forwardDelayMs : 0f,
+            //    HitPoint       = point,
+            //    HitBox         = hitBox,
+
+
+            //    ClientTf       = proxyForLog ? proxyForLog.transform : null,
+            //    ClientHealth   = proxyForLog ? proxyForLog.GetComponent<Health>() : null,
+            //    ServerTf       = proxyForLog ? (proxyForLog.serverHealth ? proxyForLog.serverHealth.transform : null) : null,
+            //    ServerHealth   = proxyForLog ? proxyForLog.serverHealth : null
+            //});
+
+            //// impact vfx
+            //if (ImpactVfx)
+            //{
+            //    GameObject impactVfxInstance = Instantiate(ImpactVfx, point + (normal * ImpactVfxSpawnOffset),
+            //        Quaternion.LookRotation(normal));
+            //    if (ImpactVfxLifetime > 0)
+            //    {
+            //        Destroy(impactVfxInstance.gameObject, ImpactVfxLifetime);
+            //    }
+            //}
+
+            //// impact sfx
+            //if (ImpactSfxClip)
+            //{
+            //    AudioUtility.CreateSFX(ImpactSfxClip, point, AudioUtility.AudioGroups.Impact, 1f, 3f);
+            //}
+
+
             if (AreaOfDamage)
             {
                 // area damage
@@ -231,42 +294,13 @@ namespace Unity.FPS.Gameplay
             }
             else
             {
-                var proxy = collider.GetComponentInParent<BotHealthProxy>();
-                if (proxy != null)
+                // point damage
+                Damageable damageable = collider.GetComponent<Damageable>();
+                if (damageable)
                 {
-                    proxy.TakeDamage(Damage, m_ProjectileBase.Owner);
-                }
-                else
-                {
-                    Damageable damageable = collider.GetComponent<Damageable>();
-                    if (damageable)
-                        damageable.InflictDamage(Damage, false, m_ProjectileBase.Owner);
+                    damageable.InflictDamage(Damage, false, m_ProjectileBase.Owner);
                 }
             }
-
-            var proxyForLog = collider.GetComponentInParent<BotHealthProxy>();
-            var health  = collider.GetComponentInParent<Health>();
-            var ownerGO =  proxyForLog ? proxyForLog.gameObject
-                    :  health ? health.gameObject
-                    :  collider.transform.root.gameObject;
-            bool hitBox = false;
-            hitBox = collider.CompareTag("Bot");
-
-            EventManager.Broadcast(new HitCsvEvent {
-                EventType      = proxyForLog ? "client_hit" : "world_hit",
-                ShooterId      = m_ProjectileBase.Owner ? m_ProjectileBase.Owner.name : "Unknown",
-                TargetId       = ownerGO.name,  
-                Damage         = Damage,
-                ForwardDelayMs = proxyForLog ? BotHealthProxy.forwardDelayMs : 0f,
-                HitPoint       = point,
-                HitBox         = hitBox,
-
-
-                ClientTf       = proxyForLog ? proxyForLog.transform : null,
-                ClientHealth   = proxyForLog ? proxyForLog.GetComponent<Health>() : null,
-                ServerTf       = proxyForLog ? (proxyForLog.serverHealth ? proxyForLog.serverHealth.transform : null) : null,
-                ServerHealth   = proxyForLog ? proxyForLog.serverHealth : null
-            });
 
             // impact vfx
             if (ImpactVfx)
@@ -285,11 +319,9 @@ namespace Unity.FPS.Gameplay
                 AudioUtility.CreateSFX(ImpactSfxClip, point, AudioUtility.AudioGroups.Impact, 1f, 3f);
             }
 
-
-
-
             // Self Destruct
             Destroy(this.gameObject);
+        
         }
 
         void OnDrawGizmosSelected()

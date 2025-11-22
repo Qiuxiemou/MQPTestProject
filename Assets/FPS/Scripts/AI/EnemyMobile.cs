@@ -109,12 +109,28 @@ namespace Unity.FPS.AI
                     m_EnemyController.SetNavDestination(m_EnemyController.GetDestinationOnPath());
                     break;
                 case AIState.Follow:
+                    if (m_EnemyController.KnownDetectedTarget == null)
+                    {
+                        AiState = AIState.Patrol;   // or some LostTarget state
+                        return;
+                    }
+
                     m_EnemyController.SetNavDestination(m_EnemyController.KnownDetectedTarget.transform.position);
                     m_EnemyController.OrientTowards(m_EnemyController.KnownDetectedTarget.transform.position);
                     m_EnemyController.OrientWeaponsTowards(m_EnemyController.KnownDetectedTarget.transform.position);
                     break;
+
                 case AIState.Attack:
-                    if (Vector3.Distance(m_EnemyController.KnownDetectedTarget.transform.position,
+                    if (m_EnemyController.KnownDetectedTarget == null ||
+                        m_EnemyController.DetectionModule == null ||
+                        m_EnemyController.DetectionModule.DetectionSourcePoint == null)
+                    {
+                        AiState = AIState.Patrol;   // or GoToLastSeen, etc.
+                        return;
+                    }
+
+                    if (Vector3.Distance(
+                            m_EnemyController.KnownDetectedTarget.transform.position,
                             m_EnemyController.DetectionModule.DetectionSourcePoint.position)
                         >= (AttackStopDistanceRatio * m_EnemyController.DetectionModule.AttackRange))
                     {

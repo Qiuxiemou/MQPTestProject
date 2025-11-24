@@ -11,6 +11,7 @@ namespace Unity.FPS.AI
             Patrol,
             Follow,
             Attack,
+
             Search,
         }
 
@@ -32,6 +33,7 @@ namespace Unity.FPS.AI
         public AIState AiState { get; private set; }
         EnemyController m_EnemyController;
         AudioSource m_AudioSource;
+
         Vector3 lastKnownPosition;
 
         const string k_AnimMoveSpeedParameter = "MoveSpeed";
@@ -42,7 +44,7 @@ namespace Unity.FPS.AI
         void Start()
         {
             m_EnemyController = GetComponent<EnemyController>();
-            DebugUtility.HandleErrorIfNullGetComponent<EnemyController, AISeek>(m_EnemyController, this,
+            DebugUtility.HandleErrorIfNullGetComponent<EnemyController, EnemyMobile>(m_EnemyController, this,
                 gameObject);
 
             m_EnemyController.onAttack += OnAttack;
@@ -56,7 +58,7 @@ namespace Unity.FPS.AI
 
             // adding a audio source to play the movement sound on it
             m_AudioSource = GetComponent<AudioSource>();
-            DebugUtility.HandleErrorIfNullGetComponent<AudioSource, AISeek>(m_AudioSource, this, gameObject);
+            DebugUtility.HandleErrorIfNullGetComponent<AudioSource, EnemyMobile>(m_AudioSource, this, gameObject);
             m_AudioSource.clip = MovementSound;
             m_AudioSource.Play();
         }
@@ -98,13 +100,12 @@ namespace Unity.FPS.AI
                     }
 
                     break;
-
                 case AIState.Search:
-                if (Vector3.Distance(transform.position, lastKnownPosition) < 1.0f)
-                {
-                    AiState = AIState.Patrol;
-                }
-                break;
+                    if (Vector3.Distance(transform.position, lastKnownPosition) < 1.0f)
+                    {
+                        AiState = AIState.Patrol;
+                    }
+                    break;
             }
         }
 
@@ -115,15 +116,32 @@ namespace Unity.FPS.AI
             {
                 case AIState.Patrol:
                     m_EnemyController.UpdatePathDestination();
-                    m_EnemyController.SetNavDestination(m_EnemyController.GetDestinationOnPath());
+                    Vector3 dest = m_EnemyController.GetVisibleDestinationOnPath();
+                    m_EnemyController.SetNavDestination(dest);
                     break;
                 case AIState.Follow:
+                    if (m_EnemyController.KnownDetectedTarget == null)
+                    {
+                        AiState = AIState.Patrol;   // or some LostTarget state
+                        return;
+                    }
+
                     m_EnemyController.SetNavDestination(m_EnemyController.KnownDetectedTarget.transform.position);
                     m_EnemyController.OrientTowards(m_EnemyController.KnownDetectedTarget.transform.position);
                     m_EnemyController.OrientWeaponsTowards(m_EnemyController.KnownDetectedTarget.transform.position);
                     break;
+
                 case AIState.Attack:
-                    if (Vector3.Distance(m_EnemyController.KnownDetectedTarget.transform.position,
+                    if (m_EnemyController.KnownDetectedTarget == null ||
+                        m_EnemyController.DetectionModule == null ||
+                        m_EnemyController.DetectionModule.DetectionSourcePoint == null)
+                    {
+                        AiState = AIState.Patrol;   // or GoToLastSeen, etc.
+                        return;
+                    }
+
+                    if (Vector3.Distance(
+                            m_EnemyController.KnownDetectedTarget.transform.position,
                             m_EnemyController.DetectionModule.DetectionSourcePoint.position)
                         >= (AttackStopDistanceRatio * m_EnemyController.DetectionModule.AttackRange))
                     {
@@ -173,11 +191,7 @@ namespace Unity.FPS.AI
         {
             if (AiState == AIState.Follow || AiState == AIState.Attack)
             {
-                AiState = AIState.Search;
-
-                lastKnownPosition = m_EnemyController.DetectionModule.LastSeenPosition;
-
-                m_EnemyController.SetNavDestination(lastKnownPosition);
+                AiState = AIState.Patrol;
             }
 
             for (int i = 0; i < OnDetectVfx.Length; i++)

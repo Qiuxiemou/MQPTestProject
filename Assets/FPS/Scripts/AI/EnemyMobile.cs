@@ -11,6 +11,8 @@ namespace Unity.FPS.AI
             Patrol,
             Follow,
             Attack,
+
+            Search,
         }
 
         public Animator Animator;
@@ -31,6 +33,8 @@ namespace Unity.FPS.AI
         public AIState AiState { get; private set; }
         EnemyController m_EnemyController;
         AudioSource m_AudioSource;
+
+        Vector3 lastKnownPosition;
 
         const string k_AnimMoveSpeedParameter = "MoveSpeed";
         const string k_AnimAttackParameter = "Attack";
@@ -96,6 +100,12 @@ namespace Unity.FPS.AI
                     }
 
                     break;
+                case AIState.Search:
+                    if (Vector3.Distance(transform.position, lastKnownPosition) < 1.0f)
+                    {
+                        AiState = AIState.Patrol;
+                    }
+                    break;
             }
         }
 
@@ -144,6 +154,10 @@ namespace Unity.FPS.AI
 
                     m_EnemyController.OrientTowards(m_EnemyController.KnownDetectedTarget.transform.position);
                     m_EnemyController.TryAtack(m_EnemyController.KnownDetectedTarget.transform.position);
+                    break;
+                case AIState.Search:
+                    m_EnemyController.SetNavDestination(lastKnownPosition);
+                    m_EnemyController.OrientTowards(lastKnownPosition);
                     break;
             }
         }

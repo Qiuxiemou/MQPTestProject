@@ -69,54 +69,13 @@ namespace Unity.FPS.AI
 
         public virtual void HandleTargetDetection(Actor selfActor, Collider[] selfColliders)
         {
-            bool hasTarget   = (KnownDetectedTarget != null);
-            bool isReacting  = _isReacting;
-            if (KnownDetectedTarget != null)
-            {
-                Actor targetActor = KnownDetectedTarget.GetComponentInParent<Actor>();
-                if (targetActor == null)
-                {
-                    KnownDetectedTarget = null;
-                }
-                else
-                {
-                    Vector3 dir = targetActor.AimPoint.position - DetectionSourcePoint.position;
-
-                    bool blocked = false;
-                    if (Physics.Raycast(DetectionSourcePoint.position, dir.normalized,
-                                        out RaycastHit hitTrack, DetectionRange, ObstructionLayers))
-                    {
-                        Actor hitA = hitTrack.collider.GetComponentInParent<Actor>();
-                        if (hitA != targetActor)
-                            blocked = true;
-                    }
-
-                    if (!blocked)
-                    {
-                        IsSeeingTarget = true;
-                        LastSeenPosition = targetActor.AimPoint.position;
-                        TimeLastSeenTarget = Time.time;
-                    }
-                }
-            }
-
-            //if have target already, ignore miss chage
-            bool noTargetYet = (KnownDetectedTarget == null);
-            if (!hasTarget && !isReacting)
-            {
-                if (Time.time < _nextDetectionTime)
-                    return;
-
-                _nextDetectionTime = Time.time + DetectionInterval;
-            }
-        
-
             IsSeeingTarget = false;
 
             float sqrDetectionRange = DetectionRange * DetectionRange;
             float sqrPeripheralRange = PeripheralAlertRange * PeripheralAlertRange;
 
-            float closestSqrDistance = Mathf.Infinity;
+            Actor seenActor = null;
+            float seenDist = 0f;
 
             foreach (Actor other in m_ActorsManager.Actors)
             {
@@ -125,162 +84,75 @@ namespace Unity.FPS.AI
 
                 Vector3 dir = other.AimPoint.position - DetectionSourcePoint.position;
                 float sqrDist = dir.sqrMagnitude;
-                float dist = Mathf.Sqrt(sqrDist);
 
-                //Debug.Log("[Detection] Dist to " + other.name + " = " + dist.ToString("F2"));
-
-                // ---------- 360° Peripheral Alert Range ----------
-                if (sqrDist <= sqrPeripheralRange)
-                {
-                    LastSeenPosition = other.AimPoint.position;
-                    TimeLastSeenTarget = Time.time;
-                }
-
-                // ---------- Precision Vision Range ----------
                 if (sqrDist > sqrDetectionRange)
-                {
-                    //Debug.Log("[Detection] FAIL distance: too far, DetectionRange = " + DetectionRange);
                     continue;
-                }
 
-                // ---------- FOV Check ----------
                 float angle = Vector3.Angle(transform.forward, dir.normalized);
-                //Debug.Log("[Detection] Angle to " + other.name + " = " + angle.ToString("F1"));
-
                 if (angle > ViewAngle * 0.5f)
-                {
-                    //Debug.Log("[Detection] FAIL FOV: " + angle.ToString("F1") + " > " + (ViewAngle * 0.5f));
                     continue;
-                }
 
-
-                // ---------- Raycast Obstruction ----------
-                Ray ray = new Ray(DetectionSourcePoint.position, dir.normalized);
-
-                if (Physics.Raycast(ray, out RaycastHit hit, DetectionRange, ObstructionLayers))
+                if (Physics.Raycast(DetectionSourcePoint.position, dir.normalized,
+                    out RaycastHit hit, DetectionRange, ObstructionLayers))
                 {
-                
-                    Debug.DrawLine(DetectionSourcePoint.position, hit.point, Color.red, 0.1f);
-
-                    //Debug.Log("[Detection] Raycast hit: " + hit.collider.name);
-
                     Actor hitActor = hit.collider.GetComponentInParent<Actor>();
                     if (hitActor != other)
-                    {
-                        //Debug.Log("[Detection] FAIL blocked by: " + hit.collider.name);
                         continue;
-                    }
-                }
-                else
-                {
-                    Debug.DrawLine(
-                        DetectionSourcePoint.position,
-                        DetectionSourcePoint.position + dir.normalized * DetectionRange,
-                        Color.green,
-                        0.1f);
                 }
 
-
-                //miss chance check
-                float distance01 = Mathf.Clamp01(dist / missMaxRange);
-                if (!_isReacting)
-                {
-                    float reactionTime = Mathf.Lerp(MinReactionTime, MaxReactionTime, distance01);
-
-                    _isReacting = true;
-                    _pendingTarget = other;
-                    _reactionEndTime = Time.time + reactionTime;
-
-                    Debug.Log($"[Detection] Reacting start: dist={dist:F1}, time={reactionTime:F2}");
-                }
-
-                bool sawThisFrame = true;
-                float missChance = distance01 * missChanceAtMaxRange;
-
-                if (Random.value < missChance)
-                {
-                    sawThisFrame = false;
-                    Debug.Log($"[Detection] miss dist={dist:F1}, chance={missChance:P0}");
-                }
-                else
-                {
-                    Debug.Log($"[Detection] HIT dist={dist:F1}, chance={missChance:P0}");
-                }
-
-                if (sawThisFrame)
-                {
-                    LastSeenPosition = other.AimPoint.position;
-                    TimeLastSeenTarget = Time.time;
-                }
-                // Valid precise detection
-                if (sqrDist < closestSqrDistance)
-                {
-                    closestSqrDistance = sqrDist;
-
-                    float reactionTime = Mathf.Lerp(MinReactionTime, MaxReactionTime, distance01);
-
-                    if (!_isReacting)
-                    {
-                        _isReacting = true;
-                        _pendingTarget = other;
-                        _reactionEndTime = Time.time + reactionTime;
-
-                        Debug.Log($"[Detection] Reacting... dist={dist:F1}, reaction={reactionTime:F2}s");
-                    }
-                }
-
+                // this actor is visible this frame
+                seenActor = other;
+                seenDist = Mathf.Sqrt(sqrDist);
+                break;
             }
 
+            // ========== player in sight ==========
+            if (seenActor != null)
+            {
+                IsSeeingTarget = true;
+                LastSeenPosition = seenActor.AimPoint.position;
+                TimeLastSeenTarget = Time.time;
+
+                float distance01 = Mathf.Clamp01(seenDist / missMaxRange);
+                float reactionTime = Mathf.Lerp(MinReactionTime, MaxReactionTime, distance01);
+
+                if (!_isReacting)
+                {
+                    _isReacting = true;
+                    _pendingTarget = seenActor;
+                    _reactionEndTime = Time.time + reactionTime;
+                }
+            }
+
+            // ========== reaction finished ==========
             if (_isReacting && Time.time >= _reactionEndTime)
             {
-                if (_pendingTarget != null)
-                {
-                    KnownDetectedTarget = _pendingTarget.AimPoint.gameObject;
-                    IsSeeingTarget = true;
-
-                    LastSeenPosition = _pendingTarget.AimPoint.position;
-                    TimeLastSeenTarget = Time.time;
-
-                    Debug.Log("[Detection] Target LOCKED after reaction delay");
-
-                    onDetectedTarget?.Invoke();
-                }
+                KnownDetectedTarget = _pendingTarget.AimPoint.gameObject;
+                onDetectedTarget?.Invoke();
 
                 _isReacting = false;
                 _pendingTarget = null;
             }
 
-            // Attack range check
-            IsTargetInAttackRange =
-                KnownDetectedTarget != null &&
-                Vector3.Distance(transform.position, KnownDetectedTarget.transform.position) <= AttackRange;
-
-            // Events
-            if (!HadKnownTarget && KnownDetectedTarget != null)
+            // ========== player disappeared: reset reaction ==========
+            if (!IsSeeingTarget && Time.time - TimeLastSeenTarget > KnownTargetTimeout)
             {
-                Debug.Log("[Detection] First time SEE target: " + KnownDetectedTarget.name);
-                onDetectedTarget?.Invoke();
-            }
-
-            if (HadKnownTarget && KnownDetectedTarget == null){
-                Debug.Log("[Detection] LOST target");
-                onLostTarget?.Invoke();
-                _nextDetectionTime = Time.time + DetectionInterval;
+                KnownDetectedTarget = null;
                 _isReacting = false;
                 _pendingTarget = null;
                 _reactionEndTime = 0f;
             }
-                
 
-            HadKnownTarget = KnownDetectedTarget != null;
-
-            // Forget target completely if too long unseen
-            if (!IsSeeingTarget && Time.time - TimeLastSeenTarget > KnownTargetTimeout)
+            // attack range
+            if (KnownDetectedTarget)
             {
-                KnownDetectedTarget = null;
+                IsTargetInAttackRange =
+                    Vector3.Distance(transform.position, KnownDetectedTarget.transform.position) <= AttackRange;
             }
-
-            
+            else
+            {
+                IsTargetInAttackRange = false;
+            }
         }
 
         public virtual void OnDamaged(GameObject attacker)

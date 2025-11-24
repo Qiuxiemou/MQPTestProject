@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using static UnityEditor.Experimental.GraphView.GraphView;
+//using static UnityEditor.Experimental.GraphView.GraphView;
 
 namespace Unity.FPS.UI
 {
@@ -35,8 +35,8 @@ namespace Unity.FPS.UI
 
         // UI
         [Header("Latency Controls")]
-        [Tooltip("Slider that controls delayed bot latency (ms)")]
-        public Slider LatencySlider;
+        //[Tooltip("Slider that controls delayed bot latency (ms)")]
+        //public Slider LatencySlider;
 
         [Tooltip("Text element showing current latency in ms (optional)")]
         public TMP_Text LatencyValueLabel;
@@ -45,8 +45,8 @@ namespace Unity.FPS.UI
         [Tooltip("The delayed bot component to control")]
         public BotDelayed DelayedBot;
 
-        [Tooltip("(Optional) Damage proxy to apply same visual delay")]
-        public BotHealthProxy DelayedBotHealthProxy;
+        //[Tooltip("(Optional) Damage proxy to apply same visual delay")]
+        //public BotHealthProxy DelayedBotHealthProxy;
 
         // Bot Visibility Toggles (ADD) 
         [Header("Bot Toggles")]
@@ -117,17 +117,17 @@ namespace Unity.FPS.UI
             m_MenuAction.Enable();
 
             //  Latency control setup 
-            if (LatencySlider)
-            {
-                // sensible defaults; override in Inspector if you like
-                if (LatencySlider.minValue == 0f) LatencySlider.minValue = 0f;
-                if (LatencySlider.maxValue <= 0f) LatencySlider.maxValue = 2000f; // 0–2000 ms
+            //if (LatencySlider)
+            //{
+            //    // sensible defaults; override in Inspector if you like
+            //    if (LatencySlider.minValue == 0f) LatencySlider.minValue = 0f;
+            //    if (LatencySlider.maxValue <= 0f) LatencySlider.maxValue = 2000f; // 0–2000 ms
 
-                float startMs = DelayedBot ? DelayedBot.GetLatency() : 0f;
-                LatencySlider.value = startMs;
-                UpdateLatencyLabel(startMs);
-                LatencySlider.onValueChanged.AddListener(OnLatencyChanged);
-            }
+            //    float startMs = DelayedBot ? DelayedBot.GetLatency() : 0f;
+            //    LatencySlider.value = startMs;
+            //    UpdateLatencyLabel(startMs);
+            //    LatencySlider.onValueChanged.AddListener(OnLatencyChanged);
+            //}
 
             // Bot visibility toggle setup (ADD) 
             if (OrigBotToggle && FutureBotRoot)
@@ -198,7 +198,7 @@ namespace Unity.FPS.UI
 
         void OnTimeWarpChanged(bool enabled)
         {
-            if (DelayedBotHealthProxy) DelayedBotHealthProxy.PropagateBackwards(enabled);
+            //if (DelayedBotHealthProxy) DelayedBotHealthProxy.PropagateBackwards(enabled);
             
             if (enabled)
             {
@@ -238,8 +238,8 @@ namespace Unity.FPS.UI
 
         void OnLatencyChanged(float newMs)
         {
-            if (DelayedBot) DelayedBot.SetLatency(newMs);
-            if (DelayedBotHealthProxy) DelayedBotHealthProxy.SetDelay(newMs);
+            //if (DelayedBot) DelayedBot.SetLatency(newMs);
+            //if (DelayedBotHealthProxy) DelayedBotHealthProxy.SetDelay(newMs);
             UpdateLatencyLabel(newMs);
         }
 

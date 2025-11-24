@@ -25,10 +25,10 @@ public class EnemyMovement : MonoBehaviour
 
     private void Awake()
     {
-        Agent = GetComponent<NavMeshAgent>();
+        //Agent = GetComponent<NavMeshAgent>();
 
-        LineOfSightChecker.OnGainSight += HandleGainSight;
-        LineOfSightChecker.OnLoseSight += HandleLoseSight;
+        //LineOfSightChecker.OnGainSight += HandleGainSight;
+        //LineOfSightChecker.OnLoseSight += HandleLoseSight;
     }
 
     private void OnTriggerEnter(Collider other){ Debug.Log("[LOS] Enter " + other.name); }

@@ -63,7 +63,22 @@ namespace Unity.FPS.Game
         }
 
         void OnAllObjectivesCompleted(AllObjectivesCompletedEvent evt) => EndGame(true);
-        void OnPlayerDeath(PlayerDeathEvent evt) => EndGame(false);
+
+        // ------ Modification for RoundManager integration ------
+        //void OnPlayerDeath(PlayerDeathEvent evt) => EndGame(false);
+
+        void OnPlayerDeath(PlayerDeathEvent evt)
+        {
+            // If RoundManager exists → show survey instead
+            if (RoundManager.Instance != null)
+            {
+                RoundManager.Instance.EndRoundOnPlayerDeath();
+                return;
+            }
+
+            // Otherwise fallback to normal lose behavior
+            EndGame(false);
+        }
 
         void EndGame(bool win)
         {

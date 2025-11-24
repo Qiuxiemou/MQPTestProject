@@ -334,12 +334,12 @@ namespace Unity.FPS.Game
         {
             WeaponRoot.SetActive(show);
 
-            if (show && ChangeWeaponSfx)
-            {
-                m_ShootAudioSource.PlayOneShot(ChangeWeaponSfx);
-            }
+            //if (show && ChangeWeaponSfx)
+            //{
+            //    m_ShootAudioSource.PlayOneShot(ChangeWeaponSfx);
+            //}
 
-            IsWeaponActive = show;
+            //IsWeaponActive = show;
         }
 
         public void UseAmmo(float amount)

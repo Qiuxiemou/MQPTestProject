@@ -16,11 +16,14 @@ namespace Unity.FPS.AI
         bool _isReacting = false;             
         Actor _pendingTarget = null; 
 
-        [Tooltip("Precision vision angle (e.g. 120 degrees in front)")]
-        public float ViewAngle = 120f;
+        [Tooltip("Precision vision angle (e.g. 150 degrees in front)")]
+        public float ViewAngle = 150f;
 
         [Tooltip("Maximum distance for precise vision")]
         public float DetectionRange = 20f;
+
+        [Tooltip("Distance where target is detected even if not in FOV")]
+        public float CloseDetectionRange = 15f;
 
         [Tooltip("360-degree peripheral alert radius")]
         public float PeripheralAlertRange = 6f;
@@ -54,12 +57,15 @@ namespace Unity.FPS.AI
         float TimeLastSeenTarget = Mathf.NegativeInfinity;
         ActorsManager m_ActorsManager;
 
+        private LayerMask _detectionLayerMask;
+
         const string k_AnimAttackParameter = "Attack";
         const string k_AnimOnDamagedParameter = "OnDamaged";
 
         protected virtual void Start()
         {
             m_ActorsManager = FindAnyObjectByType<ActorsManager>();
+            _detectionLayerMask = LayerMask.GetMask("Player");
         }
 
         public virtual void HandleTargetDetection(Actor selfActor, Collider[] selfColliders)
@@ -68,6 +74,7 @@ namespace Unity.FPS.AI
 
             float sqrDetectionRange = DetectionRange * DetectionRange;
             float sqrPeripheralRange = PeripheralAlertRange * PeripheralAlertRange;
+            float sqrCloseRange = CloseDetectionRange * CloseDetectionRange;   // NEW
 
             Actor seenActor = null;
             float seenDist = 0f;

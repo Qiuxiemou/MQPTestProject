@@ -16,10 +16,6 @@ namespace Unity.FPS.AI
         bool _isReacting = false;             
         Actor _pendingTarget = null; 
 
-        [Header("Detection Timing")]
-        public float DetectionInterval = 1f;   
-        float _nextDetectionTime = 0f;
-
         [Tooltip("Precision vision angle (e.g. 120 degrees in front)")]
         public float ViewAngle = 120f;
 
@@ -42,7 +38,6 @@ namespace Unity.FPS.AI
         public float KnownTargetTimeout = 4f;
 
         public float missMaxRange=30f;
-        public float missChanceAtMaxRange = 0.8f;
         public Animator Animator;
 
         public UnityAction onDetectedTarget;
@@ -122,6 +117,12 @@ namespace Unity.FPS.AI
                     _pendingTarget = seenActor;
                     _reactionEndTime = Time.time + reactionTime;
                 }
+            }
+            else
+            {
+                _isReacting = false;
+                _pendingTarget = null;
+                _reactionEndTime = 0f;
             }
 
             // ========== reaction finished ==========

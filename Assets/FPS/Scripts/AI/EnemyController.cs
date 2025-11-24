@@ -239,6 +239,15 @@ namespace Unity.FPS.AI
             m_WasDamagedThisFrame = false;
         }
 
+        public Vector3 GetVisibleDestinationOnPath()
+        {
+            if (PatrolPath == null || PatrolPath.PathNodes.Count == 0)
+                return transform.position;
+
+            Vector3 visiblePoint = PatrolPath.GetVisiblePointNearNode(m_PathDestinationNodeIndex, transform);
+            return visiblePoint;
+        }
+
         void EnsureIsWithinLevelBounds()
         {
             // at every frame, this tests for conditions to kill the enemy
@@ -339,23 +348,40 @@ namespace Unity.FPS.AI
             }
         }
 
+        public bool CanSeeNode(int nodeIndex)
+        {
+            if (!IsPathValid()) return false;
+
+            Vector3 nodePos = PatrolPath.GetPositionOfPathNode(nodeIndex);
+            Vector3 dir = nodePos - DetectionModule.DetectionSourcePoint.position;
+            float distance = dir.magnitude;
+
+            // Raycast from AI to node
+            if (Physics.Raycast(DetectionModule.DetectionSourcePoint.position, dir.normalized, out RaycastHit hit, distance, ~0))
+            {
+                // If the first thing we hit is the node itself, we can see it
+                if ((hit.point - nodePos).sqrMagnitude < 0.1f)
+                    return true;
+
+                // Otherwise, something is blocking it
+                return false;
+            }
+
+            // No hit at all? Node is visible
+            return true;
+        }
+
         public void UpdatePathDestination(bool inverseOrder = false)
         {
-            if (IsPathValid()) {
+            if (!IsPathValid())
+                return;
 
-                if ((transform.position - GetDestinationOnPath()).magnitude <= PathReachingRadius)
-                {
-                    // increment path destination index
-                    m_PathDestinationNodeIndex = inverseOrder ? (m_PathDestinationNodeIndex - 1) : (m_PathDestinationNodeIndex + 1);
-
-                    if (m_PathDestinationNodeIndex < 0) { 
-                        m_PathDestinationNodeIndex += PatrolPath.PathNodes.Count; 
-                    }
-
-                    if (m_PathDestinationNodeIndex >= PatrolPath.PathNodes.Count) {
-                        m_PathDestinationNodeIndex -= PatrolPath.PathNodes.Count;
-                    }
-                }
+            if (CanSeeNode(m_PathDestinationNodeIndex))
+            {
+                // increment path destination index
+                m_PathDestinationNodeIndex = inverseOrder
+                    ? (m_PathDestinationNodeIndex - 1 + PatrolPath.PathNodes.Count) % PatrolPath.PathNodes.Count
+                    : (m_PathDestinationNodeIndex + 1) % PatrolPath.PathNodes.Count;
             }
         }
 

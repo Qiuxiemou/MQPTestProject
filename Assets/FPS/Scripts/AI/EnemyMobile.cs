@@ -106,7 +106,8 @@ namespace Unity.FPS.AI
             {
                 case AIState.Patrol:
                     m_EnemyController.UpdatePathDestination();
-                    m_EnemyController.SetNavDestination(m_EnemyController.GetDestinationOnPath());
+                    Vector3 dest = m_EnemyController.GetVisibleDestinationOnPath();
+                    m_EnemyController.SetNavDestination(dest);
                     break;
                 case AIState.Follow:
                     if (m_EnemyController.KnownDetectedTarget == null)

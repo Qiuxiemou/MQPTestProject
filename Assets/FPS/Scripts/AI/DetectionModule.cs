@@ -13,7 +13,7 @@ namespace Unity.FPS.AI
         public float DetectionInterval = 1f;   
         float _nextDetectionTime = 0f;
 
-        [Tooltip("Precision vision angle (e.g. 120 degrees in front)")]
+        [Tooltip("Precision vision angle (e.g. 150 degrees in front)")]
         public float ViewAngle = 150f;
 
         [Tooltip("Maximum distance for precise vision")]
@@ -57,12 +57,15 @@ namespace Unity.FPS.AI
         float TimeLastSeenTarget = Mathf.NegativeInfinity;
         ActorsManager m_ActorsManager;
 
+        private LayerMask _detectionLayerMask;
+
         const string k_AnimAttackParameter = "Attack";
         const string k_AnimOnDamagedParameter = "OnDamaged";
 
         protected virtual void Start()
         {
             m_ActorsManager = FindAnyObjectByType<ActorsManager>();
+            _detectionLayerMask = LayerMask.GetMask("Player");
         }
 
         public virtual void HandleTargetDetection(Actor selfActor, Collider[] selfColliders)
@@ -120,15 +123,44 @@ namespace Unity.FPS.AI
 
                 // ---------- Raycast Obstruction ----------
                 Ray ray = new Ray(DetectionSourcePoint.position, dir.normalized);
+                RaycastHit[] hits = Physics.RaycastAll(ray, DetectionRange, ~0);
 
-                if (Physics.Raycast(ray, out RaycastHit hit, DetectionRange, ObstructionLayers))
+                if (hits.Length > 0)
                 {
-                    Debug.DrawLine(DetectionSourcePoint.position, hit.point, Color.red, 0.1f);
+                    // Sort hits by distance
+                    System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
 
-                    Actor hitActor = hit.collider.GetComponentInParent<Actor>();
-                    if (hitActor != other)
-                        continue; // blocked by something else
+                    bool blocked = false;
+
+                    foreach (var hit in hits)
+                    {
+                        Actor hitActor = hit.collider.GetComponentInParent<Actor>();
+
+                        if (hitActor == other)
+                        {
+                            // target is first thing hit → valid detection
+                            break;
+                        }
+                        else if (hitActor != null)
+                        {
+                            // Some other actor, maybe ignore? Or treat as blocker
+                            blocked = true;
+                            break;
+                        }
+                        else
+                        {
+                            // hit something without Actor component → probably a wall
+                            blocked = true;
+                            break;
+                        }
+                    }
+
+                    if (blocked)
+                        continue; // vision blocked
                 }
+                // ---------- VALIDATE LAYER (only detect Player) ----------
+                if (other.gameObject.layer != LayerMask.NameToLayer("Player"))
+                    continue;
                 else
                 {
                     Debug.DrawLine(

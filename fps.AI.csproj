@@ -64,11 +64,11 @@
     <Compile Include="Assets\FPS\Scripts\AI\EnemyMovement.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\BotDelayed.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\EnemyWayPoint.cs" />
+    <Compile Include="Assets\FPS\Scripts\AI\HiderController.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\ChaseTest.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\EnemyController.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\EnemyMobile.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\EnemyManager.cs" />
-    <Compile Include="Assets\FPS\Scripts\AI\AIHide.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\PatrolPath.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\PlayerInput.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\DetectionModule.cs" />

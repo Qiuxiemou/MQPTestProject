@@ -62,6 +62,7 @@ namespace Unity.FPS.AI
             m_ActorsManager = FindAnyObjectByType<ActorsManager>();
         }
 
+
         public virtual void HandleTargetDetection(Actor selfActor, Collider[] selfColliders)
         {
             //if have target already, ignore miss chage
@@ -72,7 +73,7 @@ namespace Unity.FPS.AI
                 {
                     return;   
                 }
-                _nextDetectionTime = Time.time + DetectionInterval;
+                //_nextDetectionTime = Time.time + DetectionInterval;
             }
         
 
@@ -149,13 +150,13 @@ namespace Unity.FPS.AI
                 //miss chance check
                 float distance01 = Mathf.Clamp01(dist / missMaxRange);  
                  
-                float missChance = distance01 * missChanceAtMaxRange;                     
+                //float missChance = distance01 * missChanceAtMaxRange;                     
 
-                if (Random.value < missChance)
-                {
-                    //Debug.Log($"[Detection] Random miss: dist={dist:F1}, chance={missChance:P0}");
-                    continue;  // Treat as not seen
-                }
+                //if (Random.value < missChance)
+                //{
+                //    //Debug.Log($"[Detection] Random miss: dist={dist:F1}, chance={missChance:P0}");
+                //    continue;  // Treat as not seen
+                //}
                 //Debug.Log($"[Detection] Random not miss: dist={dist:F1}, chance={missChance:P0}");
 
                 // Valid precise detection
@@ -167,6 +168,8 @@ namespace Unity.FPS.AI
                     TimeLastSeenTarget = Time.time;
                     
                     IsSeeingTarget = true;
+
+                    LM.write("[Detection] SEE player: " + KnownDetectedTarget.name);
                 }
             }
 
@@ -178,12 +181,12 @@ namespace Unity.FPS.AI
             // Events
             if (!HadKnownTarget && KnownDetectedTarget != null)
             {
-                Debug.Log("[Detection] First time SEE target: " + KnownDetectedTarget.name);
+                LM.write("[Detection] First time SEE target: " + KnownDetectedTarget.name);
                 onDetectedTarget?.Invoke();
             }
 
             if (HadKnownTarget && KnownDetectedTarget == null){
-                Debug.Log("[Detection] LOST target");
+                LM.write("[Detection] LOST target");
                 onLostTarget?.Invoke();
                 _nextDetectionTime = Time.time + DetectionInterval;
             }

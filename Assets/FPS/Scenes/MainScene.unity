@@ -1201,7 +1201,7 @@ PrefabInstance:
     - target: {fileID: 2015434656898269656, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 34.9
+      value: 36.4
       objectReference: {fileID: 0}
     - target: {fileID: 2015434656898269656, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
@@ -1400,6 +1400,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7406548990343174644, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
+      propertyPath: m_Speed
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406548990343174644, guid: 25a1b0efadb966e44889fce712c8ff8d,
+        type: 3}
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
@@ -1451,7 +1456,7 @@ PrefabInstance:
     - target: {fileID: 9087143436424816424, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9087143436424816424, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
@@ -1479,15 +1484,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2015434656898269652, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
       insertIndex: 3
+      addedObject: {fileID: 1154647274}
+    - targetCorrespondingSourceObject: {fileID: 2015434656898269652, guid: 25a1b0efadb966e44889fce712c8ff8d,
+        type: 3}
+      insertIndex: 4
       addedObject: {fileID: 1154647267}
     - targetCorrespondingSourceObject: {fileID: 2015434656898269652, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
-      insertIndex: 8
-      addedObject: {fileID: 1154647265}
-    - targetCorrespondingSourceObject: {fileID: 2015434656898269652, guid: 25a1b0efadb966e44889fce712c8ff8d,
-        type: 3}
       insertIndex: 9
-      addedObject: {fileID: 1154647262}
+      addedObject: {fileID: 1154647265}
     - targetCorrespondingSourceObject: {fileID: 2015434656898269652, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
       insertIndex: -1
@@ -7981,7 +7986,7 @@ PrefabInstance:
     - target: {fileID: 2497406903890568550, guid: 4e6a92c78485cca4397c4a26d4367682,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 28.37
+      value: 25.42
       objectReference: {fileID: 0}
     - target: {fileID: 2497406903890568550, guid: 4e6a92c78485cca4397c4a26d4367682,
         type: 3}
@@ -18781,7 +18786,7 @@ PrefabInstance:
     - target: {fileID: 2497406903890568550, guid: 4e6a92c78485cca4397c4a26d4367682,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -5.0199995
+      value: -3.94
       objectReference: {fileID: 0}
     - target: {fileID: 2497406903890568550, guid: 4e6a92c78485cca4397c4a26d4367682,
         type: 3}
@@ -19406,7 +19411,7 @@ PrefabInstance:
     - target: {fileID: 2497406903890568550, guid: 4e6a92c78485cca4397c4a26d4367682,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -13.65
+      value: -10.78
       objectReference: {fileID: 0}
     - target: {fileID: 2497406903890568550, guid: 4e6a92c78485cca4397c4a26d4367682,
         type: 3}
@@ -21294,7 +21299,7 @@ PrefabInstance:
     - target: {fileID: 2497406903890568550, guid: 4e6a92c78485cca4397c4a26d4367682,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 22.52
+      value: 21.15
       objectReference: {fileID: 0}
     - target: {fileID: 2497406903890568550, guid: 4e6a92c78485cca4397c4a26d4367682,
         type: 3}
@@ -22987,7 +22992,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1154647230}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 05d321610f52327408ece158d1054024, type: 3}
   m_Name: 
@@ -36543,6 +36548,7 @@ GameObject:
   - component: {fileID: 1737504308}
   - component: {fileID: 1737504310}
   - component: {fileID: 1737504311}
+  - component: {fileID: 1737504312}
   m_Layer: 0
   m_Name: LogManager
   m_TagString: Untagged
@@ -36606,6 +36612,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc4e5ec613ea34a4e9302f1c5f051caa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: fps.Game::Unity.FPS.Game.GameStatsLogManager
+--- !u!114 &1737504312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1737504307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8daa1b869c21297459a7994caf261520, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  WriteUnderAssets: 1
+  SubFolder: Logs/DebugLog
+  FileNamePrefix: ai_log_
+  ClearOnStart: 1
+  FlushEachWrite: 1
 --- !u!1001 &1754682452
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -46821,7 +46844,7 @@ PrefabInstance:
     - target: {fileID: 8746678193447392789, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 6.38
+      value: 2.24
       objectReference: {fileID: 0}
     - target: {fileID: 8746678193447392789, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}

@@ -68,6 +68,7 @@ namespace Unity.FPS.AI
             _detectionLayerMask = LayerMask.GetMask("Player");
         }
 
+
         public virtual void HandleTargetDetection(Actor selfActor, Collider[] selfColliders)
         {
             IsSeeingTarget = false;

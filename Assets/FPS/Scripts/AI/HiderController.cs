@@ -81,6 +81,13 @@ namespace Unity.FPS.AI
         [Tooltip("Chance, after scanning, to move to a new nearby cover spot")]
         public float IdleMoveCoverChance = 0.3f;
 
+        [Tooltip("Rotate Peek's extra distance beyond wall length to peek")]
+        public float extraPeekAlongWall = 2000f;
+
+        [Tooltip("How far the bot stands back from the wall while rotating in Rotate Peek")]
+        public float rotateBackDistance = 1000f; 
+
+
         bool _isUnknownRoutineRunning = false;
 
         // References
@@ -225,7 +232,10 @@ namespace Unity.FPS.AI
                             if (!_isPeeking)
                             {
                                 Log("State UnknownPlayer: starting UnknownPlayerRoutine");
-                                StartCoroutine(PeekRoutine());
+                                StartCoroutine(RotatePeekRoutine());
+
+                                //StartCoroutine(PeekRoutine());
+
                                 //StartCoroutine(UnknownPlayerRoutine());
                             }
                             break;
@@ -438,6 +448,23 @@ namespace Unity.FPS.AI
                 rightCorner = p;
             }
 
+            // Make look points farther apart along the wall so rotation is wider
+            //leftCorner -= tangent * extraPeekAlongWall;
+            //rightCorner += tangent * extraPeekAlongWall;
+
+            // compute wall length along the tangent direction
+            Vector3 size = bestWall.bounds.size;
+            float wallLength = Mathf.Abs(Vector3.Dot(size, tangent));
+
+            // dynamic extra distance based on wall size
+            float dynamicExtra = wallLength + extraPeekAlongWall;
+
+            // Make look points farther apart along the wall so rotation is wider
+            leftCorner -= tangent * dynamicExtra;
+            rightCorner += tangent * dynamicExtra;
+
+
+
             // 6. Peek points slightly outside wall, away from its surface
             Vector3 leftPeek = leftCorner - wallNormal * forwardOffset;
             Vector3 rightPeek = rightCorner - wallNormal * forwardOffset;
@@ -458,6 +485,96 @@ namespace Unity.FPS.AI
             Debug.DrawLine(origin, _peekLeftPos + Vector3.up * 0.1f, Color.green, 1f);
             Debug.DrawLine(origin, _peekRightPos + Vector3.up * 0.1f, Color.blue, 1f);
             //Debug.DrawRay(hitPoint, wallNormal, Color.red, 1f);
+        }
+
+        #endregion
+
+        #region Rotate Peek Logic
+        IEnumerator RotatePeekRoutine()
+        {
+            _isPeeking = true;
+            Log($"RotatePeekRoutine started from coverPos = {_coverPos}");
+
+            // Use existing logic to find wall + left/right peek positions
+            RecomputePeekPositions(_coverPos);
+
+            // stand farther from the wall
+            Vector3 standBack = _coverPos + _wallNormal * rotateBackDistance;
+            if (NavMesh.SamplePosition(standBack, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+                _coverPos = hit.position;
+            else
+                _coverPos = standBack;
+
+            if (!_hasValidPeekPositions)
+            {
+                Log("RotatePeekRoutine aborted – no valid peek positions");
+                _isPeeking = false;
+                yield break;
+            }
+
+            // 1. Make sure we are at the cover position once
+            NavMeshAgent.SetDestination(_coverPos);
+            while (NavMeshAgent.pathPending || NavMeshAgent.remainingDistance > reachThreshold)
+                yield return null;
+
+            Log("RotatePeekRoutine: reached coverPos, start rotating between edges");
+
+            while (_state == HiderState.UnknownPlayer)
+            {
+                // If we see the player at any time, switch to SeePlayer
+                if (DetectionModule != null && DetectionModule.IsSeeingTarget)
+                {
+                    _lastKnownPlayerPos = DetectionModule.LastSeenPosition;
+                    Log($"RotatePeekRoutine: PLAYER SPOTTED at {_lastKnownPlayerPos} -> State SeePlayer");
+                    _state = HiderState.SeePlayer;
+                    _isPeeking = false;
+                    yield break;
+                }
+
+                // --- Look toward LEFT edge ---
+                yield return RotateTowardPoint(_peekLeftPos, midDelay);
+                if (_state != HiderState.UnknownPlayer) break;
+
+                // --- Look toward RIGHT edge ---
+                yield return RotateTowardPoint(_peekRightPos, midDelay);
+                if (_state != HiderState.UnknownPlayer) break;
+            }
+
+            _isPeeking = false;
+            Log("RotatePeekRoutine finished");
+        }
+
+        IEnumerator RotateTowardPoint(Vector3 targetPos, float duration)
+        {
+            float timer = 0f;
+
+            while (timer < duration && _state == HiderState.UnknownPlayer)
+            {
+                timer += Time.deltaTime;
+
+                Vector3 dir = targetPos - transform.position;
+                dir.y = 0f;
+
+                if (dir.sqrMagnitude > 0.001f)
+                {
+                    Quaternion targetRot = Quaternion.LookRotation(dir.normalized);
+                    transform.rotation = Quaternion.Slerp(
+                        transform.rotation,
+                        targetRot,
+                        Time.deltaTime * OrientationSpeed);
+                }
+
+                // If we see the player mid-rotation, bail out immediately
+                if (DetectionModule != null && DetectionModule.IsSeeingTarget)
+                {
+                    _lastKnownPlayerPos = DetectionModule.LastSeenPosition;
+                    Log($"RotateTowardPoint: spotted target at {_lastKnownPlayerPos} -> SeePlayer");
+                    _state = HiderState.SeePlayer;
+                    yield break;
+                }
+
+                yield return null;
+            }
         }
 
         #endregion

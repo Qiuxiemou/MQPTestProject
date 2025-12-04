@@ -111,6 +111,7 @@ namespace Unity.FPS.AI
         RendererIndexData m_EyeRendererData;
         MaterialPropertyBlock m_EyeColorMaterialPropertyBlock;
 
+        public NodeWeight[] m_PatrolNodes;
         public PatrolPath PatrolPath { get; set; }
         public GameObject KnownDetectedTarget => DetectionModule.KnownDetectedTarget;
         public bool IsTargetInAttackRange => DetectionModule.IsTargetInAttackRange;
@@ -142,6 +143,7 @@ namespace Unity.FPS.AI
 
         void Start()
         {
+            
             m_EnemyManager = FindAnyObjectByType<EnemyManager>();
             DebugUtility.HandleErrorIfNullFindObject<EnemyManager, EnemyController>(m_EnemyManager, this);
 
@@ -220,12 +222,13 @@ namespace Unity.FPS.AI
                 m_EyeRendererData.Renderer.SetPropertyBlock(m_EyeColorMaterialPropertyBlock,
                     m_EyeRendererData.MaterialIndex);
             }
+            m_PatrolNodes = FindObjectsOfType<NodeWeight>();
         }
 
         void Update()
         {
             EnsureIsWithinLevelBounds();
-
+            UpdatePatrolNodeVisits();
             DetectionModule.HandleTargetDetection(m_Actor, m_SelfColliders);
             //HandleLookAroundWhileMoving();
 
@@ -298,6 +301,60 @@ namespace Unity.FPS.AI
         bool IsPathValid()
         {
             return PatrolPath && PatrolPath.PathNodes.Count > 0;
+        }
+
+        NodeWeight GetBestPatrolNode()
+        {
+            if (m_PatrolNodes == null || m_PatrolNodes.Length == 0)
+                return null;
+
+            NodeWeight best = null;
+            float bestWeight = float.NegativeInfinity;
+
+            foreach (var node in m_PatrolNodes)
+            {
+                if (!node) continue;
+
+                float w = node.GetWeight(transform.position);
+                if (w > bestWeight)
+                {
+                    bestWeight = w;
+                    best = node;
+                }
+            }
+
+            return best;
+        }
+
+        public Vector3 GetBestPatrolDestination()
+        {
+            if (m_PatrolNodes == null || m_PatrolNodes.Length == 0)
+            {
+                return GetVisibleDestinationOnPath();
+            }
+
+            NodeWeight bestNode = GetBestPatrolNode();
+            if (bestNode == null)
+                return transform.position;
+
+            return bestNode.transform.position;
+        }
+
+        void UpdatePatrolNodeVisits()
+        {
+            if (m_PatrolNodes == null || m_PatrolNodes.Length == 0)
+                return;
+
+            foreach (var node in m_PatrolNodes)
+            {
+                if (!node) continue;
+
+                float dist = Vector3.Distance(transform.position, node.transform.position);
+                if (dist <= PathReachingRadius)
+                {
+                    node.MarkVisited();
+                }
+            }
         }
 
         public void ResetPathDestination()

@@ -11,7 +11,6 @@ namespace Unity.FPS.AI
             Patrol,
             Follow,
             Attack,
-
             Search,
         }
 
@@ -115,8 +114,7 @@ namespace Unity.FPS.AI
             switch (AiState)
             {
                 case AIState.Patrol:
-                    m_EnemyController.UpdatePathDestination();
-                    Vector3 dest = m_EnemyController.GetVisibleDestinationOnPath();
+                    Vector3 dest = m_EnemyController.GetBestPatrolDestination();
                     m_EnemyController.SetNavDestination(dest);
                     break;
                 case AIState.Follow:
@@ -191,7 +189,8 @@ namespace Unity.FPS.AI
         {
             if (AiState == AIState.Follow || AiState == AIState.Attack)
             {
-                AiState = AIState.Patrol;
+                lastKnownPosition = m_EnemyController.DetectionModule.LastSeenPosition; 
+                AiState = AIState.Search;
             }
 
             for (int i = 0; i < OnDetectVfx.Length; i++)

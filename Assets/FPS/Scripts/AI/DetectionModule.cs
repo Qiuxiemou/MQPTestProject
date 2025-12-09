@@ -32,7 +32,7 @@ namespace Unity.FPS.AI
         public LayerMask ObstructionLayers;
 
         [Tooltip("Time before forgetting target completely")]
-        public float KnownTargetTimeout = 4f;
+        public float KnownTargetTimeout = 1f;
 
         public float missMaxRange=30f;
         public float missChanceAtMaxRange = 0.8f;
@@ -96,11 +96,11 @@ namespace Unity.FPS.AI
                 //Debug.Log("[Detection] Dist to " + other.name + " = " + dist.ToString("F2"));
 
                 // ---------- 360° Peripheral Alert Range ----------
-                if (sqrDist <= sqrPeripheralRange)
-                {
-                    LastSeenPosition = other.AimPoint.position;
-                    TimeLastSeenTarget = Time.time;
-                }
+                //if (sqrDist <= sqrPeripheralRange)
+                //{
+                //    LastSeenPosition = other.AimPoint.position;
+                //    TimeLastSeenTarget = Time.time;
+                //}
 
                 // ---------- Precision Vision Range ----------
                 if (sqrDist > sqrDetectionRange)
@@ -126,7 +126,7 @@ namespace Unity.FPS.AI
                 if (Physics.Raycast(ray, out RaycastHit hit, DetectionRange, ObstructionLayers))
                 {
                 
-                    Debug.DrawLine(DetectionSourcePoint.position, hit.point, Color.red, 0.1f);
+                    //Debug.DrawLine(DetectionSourcePoint.position, hit.point, Color.red, 0.1f);
 
                     //Debug.Log("[Detection] Raycast hit: " + hit.collider.name);
 
@@ -166,7 +166,7 @@ namespace Unity.FPS.AI
                     KnownDetectedTarget = other.AimPoint.gameObject;
                     LastSeenPosition = other.AimPoint.position;
                     TimeLastSeenTarget = Time.time;
-                    
+                   
                     IsSeeingTarget = true;
 
                     LM.write("[Detection] SEE player: " + KnownDetectedTarget.name);
@@ -187,7 +187,8 @@ namespace Unity.FPS.AI
 
             if (HadKnownTarget && KnownDetectedTarget == null){
                 LM.write("[Detection] LOST target");
-                onLostTarget?.Invoke();
+                LastSeenPosition = Vector3.zero;
+                //onLostTarget?.Invoke();
                 _nextDetectionTime = Time.time + DetectionInterval;
             }
                 

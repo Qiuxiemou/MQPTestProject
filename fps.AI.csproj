@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\FPS\Scripts\AI\EnemyMovement.cs" />
+    <Compile Include="Assets\FPS\Scripts\AI\WallGroup.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\BotDelayed.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\EnemyWayPoint.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\HiderController.cs" />

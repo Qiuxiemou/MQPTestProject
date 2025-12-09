@@ -49,10 +49,10 @@ namespace Unity.FPS.AI
         public float sideOffset = 0.7f;
 
         [Tooltip("Extra step out from the wall when fully peeking")]
-        public float forwardOffset = 10f;
+        public float forwardOffset = 20f;
 
         [Tooltip("How close to destination before we consider it reached")]
-        public float reachThreshold = 0.2f;
+        public float reachThreshold = 0.02f;
 
         [Tooltip("Pause duration while exposed (peeking) before returning to cover")]
         public float midDelay = 0.3f;
@@ -81,7 +81,16 @@ namespace Unity.FPS.AI
         [Tooltip("Chance, after scanning, to move to a new nearby cover spot")]
         public float IdleMoveCoverChance = 0.3f;
 
-        bool _isUnknownRoutineRunning = false;
+        [Tooltip("How many quick out-in peeks to do at the chosen corner")]
+        public int peekJiggleCount = 10;
+
+        [Tooltip("Pause time while back at the corner between jiggled peeks")]
+        public float betweenPeekDelay = 0.5f;
+
+        bool _isUnknownRoutineRunning;
+
+        [SerializeField]
+        public Transform[] PeekNodes;
 
         // References
         public NavMeshAgent NavMeshAgent { get; private set; }
@@ -157,6 +166,8 @@ namespace Unity.FPS.AI
 
             Log($"Start at {_coverPos} | Initial State = {_state}");
 
+            _lastKnownPlayerPos = new Vector3(72.8f, 2.24f, 17.34f);
+
             // Start FSM as a coroutine so peeking can use coroutines easily
             StartCoroutine(StateMachineLoop());
         }
@@ -169,17 +180,18 @@ namespace Unity.FPS.AI
                 DetectionModule.HandleTargetDetection(m_Actor, m_SelfColliders);
             }
 
-            
+
             // Always run detection every frame
 
-            // Rotate smoothly to movement direction when moving
-            Vector3 vel = NavMeshAgent.velocity;
-            if (vel.sqrMagnitude > 0.001f)
-            {
-                Vector3 lookDir = Vector3.ProjectOnPlane(vel, Vector3.up).normalized;
-                Quaternion targetRot = Quaternion.LookRotation(lookDir);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * OrientationSpeed);
-            }
+            // Lock to last see player position
+            Vector3 toLastSeen = _lastKnownPlayerPos - transform.position;
+
+            Vector3 lookDir = toLastSeen.normalized;
+            Quaternion targetRot = Quaternion.LookRotation(lookDir);
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                targetRot,
+                Time.deltaTime * OrientationSpeed);
 
             // Handle arrival at chosen cover (for SeePlayer state)
             if (_isChoosingCover && NavMeshAgent.remainingDistance <= PathReachingRadius && !NavMeshAgent.pathPending)
@@ -200,7 +212,7 @@ namespace Unity.FPS.AI
                 // 1. State transitions based on detection
                 if (DetectionModule != null)
                 {
-                    if (DetectionModule.IsSeeingTarget)
+                    if (DetectionModule.HadKnownTarget)
                     {
                         // We see the player right now
                         _lastKnownPlayerPos = DetectionModule.LastSeenPosition;
@@ -215,7 +227,12 @@ namespace Unity.FPS.AI
                     //{
                     //    _state = HiderState.UnknownPlayer;
                     //}
+                    else
+                    {
+                        _state = HiderState.UnknownPlayer;
+                    }
                 }
+                
 
                 // 2. State behaviour
                 switch (_state)
@@ -267,9 +284,10 @@ namespace Unity.FPS.AI
         IEnumerator PeekRoutine()
         {
             _isPeeking = true;
+            _coverPos = transform.position;
             Log($"PeekRoutine started from coverPos = {_coverPos}");
 
-            // Recompute peek positions around current cover location
+            // 1. Recompute peek positions around current cover location
             RecomputePeekPositions(_coverPos);
             if (!_hasValidPeekPositions)
             {
@@ -278,72 +296,93 @@ namespace Unity.FPS.AI
                 yield break;
             }
 
-            // Randomly choose left or right side
+            // 2. Randomly choose left or right corner ONCE for this whole jiggle sequence
             bool startLeft = (Random.value < 0.5f);
             Vector3 basePeek = startLeft ? _peekLeftPos : _peekRightPos;
-            //Log($"PeekRoutine: chosen side = {(startLeft ? "Left" : "Right")} | basePeek = {basePeek}");
+            Log($"PeekRoutine: chosen side = {(startLeft ? "Left" : "Right")} | basePeek = {basePeek}");
 
-            // 1. Go to exact cover position
-            //Log($"PeekRoutine: moving to coverPos {_coverPos}");
+            // 3. Go to exact cover position first (tuck in behind the wall)
             NavMeshAgent.SetDestination(_coverPos);
             while (NavMeshAgent.remainingDistance > reachThreshold && !NavMeshAgent.pathPending)
                 yield return null;
-            //Log("PeekRoutine: reached coverPos");
 
-            // 2. Move to base peek point near the corner
-            //Log($"PeekRoutine: moving to basePeek {basePeek}");
+            // 4. Move from cover to the chosen corner (still mostly safe)
             NavMeshAgent.SetDestination(basePeek);
             while (NavMeshAgent.remainingDistance > reachThreshold && !NavMeshAgent.pathPending)
                 yield return null;
-            //Log("PeekRoutine: reached basePeek position");
 
-            // 3. Step outward slightly (expose)
-            Vector3 outward = -_wallNormal; // wallNormal is wall->bot; outward is bot->exposed
+            // 5. Prepare outward direction and peekOut position
+            //    wallNormal is wall -> bot; outward is bot -> exposed
+            Vector3 outward = -_wallNormal;
             Vector3 peekOut = basePeek + outward * forwardOffset;
 
-            //Log($"PeekRoutine: stepping out to peekOut {peekOut} (outward={outward})");
-            NavMeshAgent.SetDestination(peekOut);
-            while (NavMeshAgent.remainingDistance > reachThreshold && !NavMeshAgent.pathPending)
-                yield return null;
-            //Log("PeekRoutine: reached peekOut, now exposed and scanning");
+            Log($"PeekRoutine: basePeek={basePeek}, outward={outward}, peekOut={peekOut}");
 
-            // 4. Wait a bit while exposed – detection module is running in Update
-            yield return new WaitForSeconds(midDelay);
-
-            bool sawDuringPeek = DetectionModule != null && DetectionModule.IsSeeingTarget;
-            //Log($"PeekRoutine: after midDelay={midDelay}, IsSeeingTarget = {sawDuringPeek}");
-
-            if (sawDuringPeek)
+            // 6. Jiggle peek: out-in-out-in for peekJiggleCount cycles
+            for (int i = 0; i < peekJiggleCount; i++)
             {
-                // We saw the player during peek -> switch to SeePlayer
-                _lastKnownPlayerPos = DetectionModule.LastSeenPosition;
-                Log($"PeekRoutine: PLAYER SPOTTED at {_lastKnownPlayerPos} -> State SeePlayer");
-                _state = HiderState.SeePlayer;
-                _isPeeking = false;
-                yield break;
+
+                Vector3 toLastSeen = _lastKnownPlayerPos - transform.position;
+                Vector3 lookDir = toLastSeen.normalized;
+                Quaternion targetRot = Quaternion.LookRotation(lookDir);
+                transform.rotation = Quaternion.Slerp(
+                    transform.rotation,
+                    targetRot,
+                    Time.deltaTime * OrientationSpeed);
+
+
+                // ---- STEP OUT (expose) ----
+                Log($"PeekRoutine: Jiggle #{i + 1}/{peekJiggleCount} -> STEP OUT to {peekOut}");
+                NavMeshAgent.SetDestination(peekOut);
+                while (NavMeshAgent.remainingDistance > reachThreshold && !NavMeshAgent.pathPending)
+                    yield return null;
+
+                // Wait out in the open for a short time — midDelay is your "exposed time"
+                yield return new WaitForSeconds(midDelay);
+
+                bool sawDuringPeek = DetectionModule != null && DetectionModule.IsSeeingTarget;
+                Log($"PeekRoutine: Jiggle #{i + 1} exposed, IsSeeingTarget={sawDuringPeek}");
+
+                if (sawDuringPeek)
+                {
+                    _lastKnownPlayerPos = DetectionModule.LastSeenPosition;
+                    Log($"PeekRoutine: PLAYER SPOTTED at {_lastKnownPlayerPos} -> State SeePlayer");
+                    _state = HiderState.SeePlayer;
+                    _isPeeking = false;
+                    yield break;
+                }
+
+                // ---- STEP BACK (safe again) ----
+                Log($"PeekRoutine: Jiggle #{i + 1} -> STEP BACK to basePeek {basePeek}");
+                NavMeshAgent.SetDestination(basePeek);
+                while (NavMeshAgent.remainingDistance > reachThreshold && !NavMeshAgent.pathPending)
+                    yield return null;
+
+                // Small delay behind cover before next jiggle (optional)
+                if (i < peekJiggleCount - 1 && betweenPeekDelay > 0f)
+                    yield return new WaitForSeconds(betweenPeekDelay);
             }
 
-
-            // 5. Return to cover
-            //Log("PeekRoutine: did not see player, returning to cover");
+            // 7. After all jiggling, go fully back to the main cover position
+            Log("PeekRoutine: finished all jiggle peeks, returning to _coverPos");
             NavMeshAgent.SetDestination(_coverPos);
             while (NavMeshAgent.remainingDistance > reachThreshold && !NavMeshAgent.pathPending)
                 yield return null;
 
-            //Log("PeekRoutine finished, back at cover");
             _isPeeking = false;
 
+            // 8. After peeking, possibly move to a new nearby cover (your existing behavior)
             float roll = Random.value;
-            Log($"UnknownPlayerRoutine: finished scan, roll={roll:F2}, moveChance={IdleMoveCoverChance:F2}");
+            Log($"PeekRoutine: finished, roll={roll:F2}, moveChance={IdleMoveCoverChance:F2}");
 
             if (roll < IdleMoveCoverChance)
             {
-                Log("UnknownPlayerRoutine: roll succeeded -> MoveToRandomNearbyCover");
+                Log("PeekRoutine: roll succeeded -> MoveToRandomNearbyCover");
                 MoveToRandomNearbyCover();
             }
             else
             {
-                Log("UnknownPlayerRoutine: staying at current cover");
+                Log("PeekRoutine: staying at current cover");
             }
         }
 
@@ -351,114 +390,183 @@ namespace Unity.FPS.AI
         /// Compute peek positions by finding the closest wall, its face normal,
         /// then detecting approximate left/right corners and peeking slightly past them.
         /// </summary>
+        //void RecomputePeekPositions(Vector3 origin)
+        //{
+        //    _hasValidPeekPositions = false;
+
+        //    Log($"RecomputePeekPositions: origin = {origin}, radius = {wallSearchRadius}");
+
+        //    // 1. Find nearby walls
+        //    Collider[] walls = Physics.OverlapSphere(origin, wallSearchRadius, wallMask);
+        //    if (walls.Length == 0)
+        //    {
+        //        Log("RecomputePeekPositions: no walls found");
+        //        return;
+        //    }
+
+        //    // 2. Find closest wall
+        //    Collider bestWall = null;
+        //    float bestDist = float.MaxValue;
+
+        //    foreach (Collider wall in walls)
+        //    {
+        //        Vector3 closest = wall.ClosestPoint(origin);
+        //        float sq = (closest - origin).sqrMagnitude;
+        //        if (sq < bestDist)
+        //        {
+        //            bestDist = sq;
+        //            bestWall = wall;
+        //        }
+        //    }
+
+        //    if (bestWall == null)
+        //    {
+        //        Log("RecomputePeekPositions: bestWall is null");
+        //        return;
+        //    }
+
+        //    // 3. Raycast from bot to wall center to get real face & normal
+        //    Vector3 originRay = origin + Vector3.up;
+        //    Vector3 wallCenter = bestWall.bounds.center + Vector3.up;
+
+        //    if (!Physics.Linecast(originRay, wallCenter, out RaycastHit faceHit, wallMask))
+        //    {
+        //        Log($"RecomputePeekPositions: linecast to wall {bestWall.name} failed");
+        //        return;
+        //    }
+
+        //    Vector3 hitPoint = faceHit.point;
+        //    Vector3 wallNormal = faceHit.normal;
+        //    wallNormal.y = 0f;
+        //    if (wallNormal.sqrMagnitude < 0.0001f)
+        //        wallNormal = -transform.forward;
+        //    wallNormal.Normalize();
+        //    _wallNormal = wallNormal;
+
+        //    // 4. Tangent along wall surface
+        //    Vector3 tangent = Vector3.Cross(Vector3.up, wallNormal).normalized;
+
+        //    // 5. Find approximate left/right corners by walking along tangent inside bounds
+        //    float cornerStep = 0.2f;
+        //    float maxCornerScan = 10f;
+
+        //    Vector3 leftCorner = hitPoint;
+        //    Vector3 rightCorner = hitPoint;
+
+        //    // LEFT corner
+        //    for (float t = 0; t < maxCornerScan; t += cornerStep)
+        //    {
+        //        Vector3 p = hitPoint - tangent * t;
+        //        if (!bestWall.bounds.Contains(p))
+        //        {
+        //            leftCorner = p - wallNormal * 0.1f;
+        //            break;
+        //        }
+        //        leftCorner = p;
+        //    }
+
+        //    // RIGHT corner
+        //    for (float t = 0; t < maxCornerScan; t += cornerStep)
+        //    {
+        //        Vector3 p = hitPoint + tangent * t;
+        //        if (!bestWall.bounds.Contains(p))
+        //        {
+        //            rightCorner = p - wallNormal * 0.1f;
+        //            break;
+        //        }
+        //        rightCorner = p;
+        //    }
+
+        //    // 6. Peek points slightly outside wall, away from its surface
+        //    Vector3 leftPeek = leftCorner - wallNormal * forwardOffset;
+        //    Vector3 rightPeek = rightCorner - wallNormal * forwardOffset;
+
+        //    // 7. NavMesh sampling
+        //    if (!NavMesh.SamplePosition(leftPeek, out NavMeshHit leftHit, 10f, NavMesh.AllAreas))
+        //        leftHit.position = leftPeek;
+        //    if (!NavMesh.SamplePosition(rightPeek, out NavMeshHit rightHit, 10f, NavMesh.AllAreas))
+        //        rightHit.position = rightPeek;
+
+        //    _peekLeftPos = leftHit.position;
+        //    _peekRightPos = rightHit.position;
+        //    _hasValidPeekPositions = true;
+
+        //    Log($"RecomputePeekPositions: wall={bestWall.name}, hitPoint={hitPoint}, normal={_wallNormal}");
+        //    Log($"RecomputePeekPositions: LEFT={_peekLeftPos}, RIGHT={_peekRightPos}");
+
+        //    Debug.DrawLine(origin, _peekLeftPos + Vector3.up * 0.1f, Color.green, 1f);
+        //    Debug.DrawLine(origin, _peekRightPos + Vector3.up * 0.1f, Color.blue, 1f);
+        //    //Debug.DrawRay(hitPoint, wallNormal, Color.red, 1f);
+        //}
+
         void RecomputePeekPositions(Vector3 origin)
         {
             _hasValidPeekPositions = false;
 
-            Log($"RecomputePeekPositions: origin = {origin}, radius = {wallSearchRadius}");
-
-            // 1. Find nearby walls
-            Collider[] walls = Physics.OverlapSphere(origin, wallSearchRadius, wallMask);
-            if (walls.Length == 0)
+            if (PeekNodes == null || PeekNodes.Length == 0)
             {
-                Log("RecomputePeekPositions: no walls found");
+                Log("RecomputePeekPositions: No PeekNodes assigned!");
                 return;
             }
 
-            // 2. Find closest wall
-            Collider bestWall = null;
-            float bestDist = float.MaxValue;
+            // -------------------------------
+            // 1. Sort peek nodes by distance
+            // -------------------------------
+            Transform closestA = null;
+            Transform closestB = null;
 
-            foreach (Collider wall in walls)
+            float bestA = float.MaxValue;
+            float bestB = float.MaxValue;
+
+            foreach (Transform node in PeekNodes)
             {
-                Vector3 closest = wall.ClosestPoint(origin);
-                float sq = (closest - origin).sqrMagnitude;
-                if (sq < bestDist)
+                float d = (node.position - origin).sqrMagnitude;
+
+                if (d < bestA)
                 {
-                    bestDist = sq;
-                    bestWall = wall;
+                    // push A down to B
+                    bestB = bestA;
+                    closestB = closestA;
+
+                    // update A
+                    bestA = d;
+                    closestA = node;
+                }
+                else if (d < bestB)
+                {
+                    bestB = d;
+                    closestB = node;
                 }
             }
 
-            if (bestWall == null)
+            if (closestA == null)
             {
-                Log("RecomputePeekPositions: bestWall is null");
+                Log("RecomputePeekPositions: Could not find closest node!");
                 return;
             }
 
-            // 3. Raycast from bot to wall center to get real face & normal
-            Vector3 originRay = origin + Vector3.up;
-            Vector3 wallCenter = bestWall.bounds.center + Vector3.up;
-
-            if (!Physics.Linecast(originRay, wallCenter, out RaycastHit faceHit, wallMask))
+            if (closestB == null)
             {
-                Log($"RecomputePeekPositions: linecast to wall {bestWall.name} failed");
-                return;
+                // Only 1 node exists -> use the same one twice
+                closestB = closestA;
             }
 
-            Vector3 hitPoint = faceHit.point;
-            Vector3 wallNormal = faceHit.normal;
-            wallNormal.y = 0f;
-            if (wallNormal.sqrMagnitude < 0.0001f)
-                wallNormal = -transform.forward;
-            wallNormal.Normalize();
-            _wallNormal = wallNormal;
+            // -------------------------------
+            // 2. Assign the 2 peek positions
+            // -------------------------------
+            _peekLeftPos = closestA.position;
+            _peekRightPos = closestB.position;
 
-            // 4. Tangent along wall surface
-            Vector3 tangent = Vector3.Cross(Vector3.up, wallNormal).normalized;
+            _wallNormal = (origin - closestA.position).normalized;
 
-            // 5. Find approximate left/right corners by walking along tangent inside bounds
-            float cornerStep = 0.2f;
-            float maxCornerScan = 5f;
-
-            Vector3 leftCorner = hitPoint;
-            Vector3 rightCorner = hitPoint;
-
-            // LEFT corner
-            for (float t = 0; t < maxCornerScan; t += cornerStep)
-            {
-                Vector3 p = hitPoint - tangent * t;
-                if (!bestWall.bounds.Contains(p))
-                {
-                    leftCorner = p - wallNormal * 0.1f;
-                    break;
-                }
-                leftCorner = p;
-            }
-
-            // RIGHT corner
-            for (float t = 0; t < maxCornerScan; t += cornerStep)
-            {
-                Vector3 p = hitPoint + tangent * t;
-                if (!bestWall.bounds.Contains(p))
-                {
-                    rightCorner = p - wallNormal * 0.1f;
-                    break;
-                }
-                rightCorner = p;
-            }
-
-            // 6. Peek points slightly outside wall, away from its surface
-            Vector3 leftPeek = leftCorner - wallNormal * forwardOffset;
-            Vector3 rightPeek = rightCorner - wallNormal * forwardOffset;
-
-            // 7. NavMesh sampling
-            if (!NavMesh.SamplePosition(leftPeek, out NavMeshHit leftHit, 10f, NavMesh.AllAreas))
-                leftHit.position = leftPeek;
-            if (!NavMesh.SamplePosition(rightPeek, out NavMeshHit rightHit, 10f, NavMesh.AllAreas))
-                rightHit.position = rightPeek;
-
-            _peekLeftPos = leftHit.position;
-            _peekRightPos = rightHit.position;
             _hasValidPeekPositions = true;
 
-            Log($"RecomputePeekPositions: wall={bestWall.name}, hitPoint={hitPoint}, normal={_wallNormal}");
-            Log($"RecomputePeekPositions: LEFT={_peekLeftPos}, RIGHT={_peekRightPos}");
+            Log($"RecomputePeekPositions: using NodeA={closestA.name}, NodeB={closestB.name}");
 
-            Debug.DrawLine(origin, _peekLeftPos + Vector3.up * 0.1f, Color.green, 1f);
-            Debug.DrawLine(origin, _peekRightPos + Vector3.up * 0.1f, Color.blue, 1f);
-            //Debug.DrawRay(hitPoint, wallNormal, Color.red, 1f);
+            Debug.DrawLine(origin, _peekLeftPos, Color.green, 2f);
+            Debug.DrawLine(origin, _peekRightPos, Color.blue, 2f);
         }
+
 
         #endregion
 
@@ -688,25 +796,25 @@ namespace Unity.FPS.AI
         //{
         //    Vector3 botPos = transform.position;
 
-        //    Collider[] walls = Physics.OverlapSphere(botPos, 70f, wallMask);
+        //    Collider[] walls = Physics.OverlapSphere(botPos, 30f, wallMask);
 
         //    Vector3 bestCoverPos = Vector3.zero;
-        //    //Vector3 secondCoverPos = Vector3.zero;
-        //    //Vector3 thirdCoverPos = Vector3.zero;
+        //    Vector3 secondCoverPos = Vector3.zero;
+        //    Vector3 thirdCoverPos = Vector3.zero;
 
-        //    float bestScore = float.NegativeInfinity;
-        //    //float secondScore = float.NegativeInfinity;
-        //    //float thirdScore = float.NegativeInfinity;
+        //    float bestScore = float.MinValue;
+        //    float secondScore = float.MinValue;
+        //    float thirdScore = float.MinValue;
 
         //    foreach (Collider wall in walls)
         //    {
-        //        if (wall.attachedRigidbody && wall.attachedRigidbody.transform == transform)
-        //            continue; // skip self
+        //        //if (wall.attachedRigidbody && wall.attachedRigidbody.transform == transform)
+        //        //    continue; // skip self
 
         //        // Skip floors (mostly horizontal)
-        //        float upDot = Vector3.Dot(Vector3.up, wall.transform.up);
-        //        if (upDot > 0.8f)
-        //            continue;
+        //        //float upDot = Vector3.Dot(Vector3.up, wall.transform.up);
+        //        //if (upDot > 0.8f)
+        //        //    continue;
 
         //        Vector3 dirPlayerToObstacle = (wall.transform.position - playerPos).normalized;
         //        Vector3 coverPos = wall.transform.position + dirPlayerToObstacle * coverOffset;
@@ -724,42 +832,40 @@ namespace Unity.FPS.AI
 
         //        float score = distPlayer - distBot; // prefer far from player but near bot
 
-        //        if (score > bestScore)
-        //        {
-        //            bestScore = score;
-        //            bestCoverPos = coverPos;
-        //        }
-
-
-
-        //        //LM.write("score" + score);
-
-        //        //// --- Maintain top 3 scores ---
         //        //if (score > bestScore)
         //        //{
-        //        //    // shift down
-        //        //    thirdScore = secondScore;
-        //        //    thirdCoverPos = secondCoverPos;
-
-        //        //    secondScore = bestScore;
-        //        //    secondCoverPos = bestCoverPos;
-
         //        //    bestScore = score;
         //        //    bestCoverPos = coverPos;
         //        //}
-        //        //else if (score > secondScore)
-        //        //{
-        //        //    thirdScore = secondScore;
-        //        //    thirdCoverPos = secondCoverPos;
 
-        //        //    secondScore = score;
-        //        //    secondCoverPos = coverPos;
-        //        //}
-        //        //else if (score > thirdScore)
-        //        //{
-        //        //    thirdScore = score;
-        //        //    thirdCoverPos = coverPos;
-        //        //}
+
+
+        //        // --- Maintain top 3 scores ---
+        //        if (score > bestScore)
+        //        {
+        //            // shift down
+        //            thirdScore = secondScore;
+        //            thirdCoverPos = secondCoverPos;
+
+        //            secondScore = bestScore;
+        //            secondCoverPos = bestCoverPos;
+
+        //            bestScore = score;
+        //            bestCoverPos = coverPos;
+        //        }
+        //        else if (score > secondScore)
+        //        {
+        //            thirdScore = secondScore;
+        //            thirdCoverPos = secondCoverPos;
+
+        //            secondScore = score;
+        //            secondCoverPos = coverPos;
+        //        }
+        //        else if (score > thirdScore)
+        //        {
+        //            thirdScore = score;
+        //            thirdCoverPos = coverPos;
+        //        }
 
         //        //Debug.DrawLine(playerPos + Vector3.up, coverPos + Vector3.up, Color.blue, 0.2f);
         //    }
@@ -771,39 +877,44 @@ namespace Unity.FPS.AI
         //    //    return;
         //    //}
 
-        //    //// ----- Weighted random pick -----
-        //    //Vector3 chosenPos;
+        //    Debug.DrawLine(playerPos + Vector3.up, bestCoverPos + Vector3.up, Color.red, 0.2f);
+        //    Debug.DrawLine(playerPos + Vector3.up, secondCoverPos + Vector3.up, Color.green, 0.2f);
+        //    Debug.DrawLine(playerPos + Vector3.up, thirdCoverPos + Vector3.up, Color.yellow, 0.2f);
 
-        //    //if (thirdScore == float.NegativeInfinity)
-        //    //{
-        //    //    // Only 1 or 2 covers available -> simple fallback
-        //    //    if (secondScore == float.NegativeInfinity)
-        //    //    {
-        //    //        chosenPos = bestCoverPos; // only one choice
-        //    //    }
-        //    //    else
-        //    //    {
-        //    //        // 2 choices -> give a bit more weight to best
-        //    //        float r = Random.value;
-        //    //        chosenPos = (r < 0.6f) ? bestCoverPos : secondCoverPos;
-        //    //    }
-        //    //}
-        //    //else
-        //    //{
-        //    //    // Full top-3: best 0.4, second 0.3, third 0.3
-        //    //    float r = Random.value;
-        //    //    if (r < 0.4f)
-        //    //        chosenPos = bestCoverPos;
-        //    //    else if (r < 0.7f) // 0.7–0.4 => 0.3
-        //    //        chosenPos = secondCoverPos;
-        //    //    else              // 1-0.7 => 0.3
-        //    //        chosenPos = thirdCoverPos;
-        //    //}
+        //    // ----- Weighted random pick -----
+        //    Vector3 chosenPos;
 
-        //    Vector3 chosenPos = bestCoverPos;
+        //    if (thirdScore == float.NegativeInfinity)
+        //    {
+        //        // Only 1 or 2 covers available -> simple fallback
+        //        if (secondScore == float.NegativeInfinity)
+        //        {
+        //            chosenPos = bestCoverPos; // only one choice
+        //        }
+        //        else
+        //        {
+        //            // 2 choices -> give a bit more weight to best
+        //            float r = Random.value;
+        //            chosenPos = (r < 0.6f) ? bestCoverPos : secondCoverPos;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        // Full top-3: best 0.4, second 0.3, third 0.3
+        //        float r = Random.value;
+        //        if (r < 0.4f)
+        //            chosenPos = bestCoverPos;
+        //        else if (r < 0.7f) // 0.7–0.4 => 0.3
+        //            chosenPos = secondCoverPos;
+        //        else              // 1-0.7 => 0.3
+        //            chosenPos = thirdCoverPos;
+        //    }
+
+        //    //Vector3 chosenPos = bestCoverPos;
+        //    LM.write($"chosenPos = {chosenPos}");
 
         //    // ----- Move to chosen cover -----
-        //    if (NavMesh.SamplePosition(bestCoverPos, out NavMeshHit navHit, 2f, NavMesh.AllAreas))
+        //    if (NavMesh.SamplePosition(chosenPos, out NavMeshHit navHit, 2f, NavMesh.AllAreas))
         //    {
         //        NavMeshAgent.SetDestination(navHit.position);
         //        Debug.DrawLine(transform.position + Vector3.up, navHit.position + Vector3.up, Color.blue, 1f);
@@ -813,71 +924,162 @@ namespace Unity.FPS.AI
         //    {
         //        LM.write($"[HIDER] ChooseCoverAndMove: no NavMesh near chosen cover {chosenPos}");
         //    }
-        //}
 
+
+        //}
 
         void ChooseCoverAndMove(Vector3 playerPos)
         {
-            _isChoosingCover = true;
             Vector3 botPos = transform.position;
 
-            Collider[] walls = Physics.OverlapSphere(botPos, 70f, wallMask);
+            Collider[] walls = Physics.OverlapSphere(botPos, 30f, wallMask);
 
-            Transform bestWall = null;
-            Vector3 bestCoverPos = Vector3.zero;
-            float bestScore = float.MinValue;
+            // key = WallGroup transform, value = best (score, coverPos) for that group
+            var groupBest = new Dictionary<Transform, (float score, Vector3 coverPos)>();
 
             foreach (Collider wall in walls)
             {
-                if (wall.attachedRigidbody && wall.attachedRigidbody.transform == transform)
-                    continue; // skip self
+                if (wall == null) continue;
 
-                // Skip likely floors
-                Vector3 up = Vector3.up;
-                float upDot = Vector3.Dot(up, wall.transform.up);
+                // 1) Find which wall group this collider belongs to
+                WallGroup wg = wall.GetComponentInParent<WallGroup>();
+                Transform groupKey = wg != null ? wg.transform : wall.transform;
 
+                // -------- scoring for this collider ----------
                 Vector3 dirPlayerToObstacle = (wall.transform.position - playerPos).normalized;
                 Vector3 coverPos = wall.transform.position + dirPlayerToObstacle * coverOffset;
 
-                // Check if obstacle blocks line of sight
+                // must actually block line of sight
                 bool blocked = Physics.Linecast(playerPos + Vector3.up,
                                                 coverPos + Vector3.up,
                                                 out RaycastHit hit,
                                                 wallMask);
-                if (!blocked) continue;
+                if (!blocked)
+                    continue;
 
                 float distBot = Vector3.Distance(botPos, coverPos);
                 float distPlayer = Vector3.Distance(playerPos, coverPos);
+                float score = distPlayer - distBot; // far from player, close to bot
 
-                float score = distPlayer - distBot; // prefer far from player but near bot
-
-                if (score > bestScore)
+                // 2) For this WallGroup, keep only the BEST collider
+                if (!groupBest.TryGetValue(groupKey, out var current) || score > current.score)
                 {
-                    bestScore = score;
-                    bestCoverPos = coverPos;
-                    bestWall = wall.transform;
+                    groupBest[groupKey] = (score, coverPos);
                 }
-
-                    Debug.DrawLine(playerPos + Vector3.up, bestCoverPos + Vector3.up, Color.red, 0.2f);
             }
 
-            //if (bestScore == float.MinValue)
-            //{
-            //    if (showDebugLines) Debug.Log("[Hide] No valid cover found.");
-            //    agent.ResetPath();
-            //    return;
-            //}
-
-            if (NavMesh.SamplePosition(bestCoverPos, out NavMeshHit navHit, 2f, NavMesh.AllAreas))
+            if (groupBest.Count == 0)
             {
-                NavMeshAgent.SetDestination(navHit.position);
-                    Debug.DrawLine(transform.position + Vector3.up, navHit.position + Vector3.up, Color.blue, 1f);
+                LM.write("[HIDER] ChooseCoverAndMove: no valid covers found");
+                return;
+            }
+
+            // 3) Sort groups by score and take top 3 distinct walls
+            var topGroups = groupBest.Values
+                .OrderByDescending(g => g.score)
+                .Take(3)
+                .ToList();
+
+            // Debug – each color = different wall group
+            if (topGroups.Count > 0) Debug.DrawLine(playerPos + Vector3.up, topGroups[0].coverPos + Vector3.up, Color.red, 0.5f);
+            if (topGroups.Count > 1) Debug.DrawLine(playerPos + Vector3.up, topGroups[1].coverPos + Vector3.up, Color.yellow, 0.5f);
+            if (topGroups.Count > 2) Debug.DrawLine(playerPos + Vector3.up, topGroups[2].coverPos + Vector3.up, Color.cyan, 0.5f);
+
+            // 4) Weighted random pick across **different walls**
+            Vector3 chosenPos;
+            if (topGroups.Count == 1)
+            {
+                chosenPos = topGroups[0].coverPos;
+            }
+            else if (topGroups.Count == 2)
+            {
+                float r = Random.value;
+                chosenPos = (r < 0.6f) ? topGroups[0].coverPos : topGroups[1].coverPos;
             }
             else
             {
-                 Debug.LogWarning($"[Hide] No NavMesh near cover {bestCoverPos}");
+                float r = Random.value;
+                if (r < 0.4f) chosenPos = topGroups[0].coverPos;
+                else if (r < 0.7f) chosenPos = topGroups[1].coverPos;
+                else chosenPos = topGroups[2].coverPos;
+            }
+
+            // 5) Move there on NavMesh
+            if (NavMesh.SamplePosition(chosenPos, out NavMeshHit navHit, 2f, NavMesh.AllAreas))
+            {
+                NavMeshAgent.SetDestination(navHit.position);
+                Debug.DrawLine(transform.position + Vector3.up, navHit.position + Vector3.up, Color.blue, 1f);
+                LM.write($"[HIDER] ChooseCoverAndMove: chosen cover = {navHit.position}");
+            }
+            else
+            {
+                LM.write($"[HIDER] ChooseCoverAndMove: no NavMesh near chosen cover {chosenPos}");
             }
         }
+
+
+        //void ChooseCoverAndMove(Vector3 playerPos)
+        //{
+        //    _isChoosingCover = true;
+        //    Vector3 botPos = transform.position;
+
+        //    Collider[] walls = Physics.OverlapSphere(botPos, 70f, wallMask);
+
+        //    Transform bestWall = null;
+        //    Vector3 bestCoverPos = Vector3.zero;
+        //    float bestScore = float.MinValue;
+
+        //    foreach (Collider wall in walls)
+        //    {
+        //        if (wall.attachedRigidbody && wall.attachedRigidbody.transform == transform)
+        //            continue; // skip self
+
+        //        // Skip likely floors
+        //        Vector3 up = Vector3.up;
+        //        float upDot = Vector3.Dot(up, wall.transform.up);
+
+        //        Vector3 dirPlayerToObstacle = (wall.transform.position - playerPos).normalized;
+        //        Vector3 coverPos = wall.transform.position + dirPlayerToObstacle * coverOffset;
+
+        //        // Check if obstacle blocks line of sight
+        //        bool blocked = Physics.Linecast(playerPos + Vector3.up,
+        //                                        coverPos + Vector3.up,
+        //                                        out RaycastHit hit,
+        //                                        wallMask);
+        //        if (!blocked) continue;
+
+        //        float distBot = Vector3.Distance(botPos, coverPos);
+        //        float distPlayer = Vector3.Distance(playerPos, coverPos);
+
+        //        float score = distPlayer - distBot; // prefer far from player but near bot
+
+        //        if (score > bestScore)
+        //        {
+        //            bestScore = score;
+        //            bestCoverPos = coverPos;
+        //            bestWall = wall.transform;
+        //        }
+
+        //            Debug.DrawLine(playerPos + Vector3.up, bestCoverPos + Vector3.up, Color.red, 0.2f);
+        //    }
+
+        //if (bestScore == float.MinValue)
+        //{
+        //    if (showDebugLines) Debug.Log("[Hide] No valid cover found.");
+        //    agent.ResetPath();
+        //    return;
+        //}
+
+        //    if (NavMesh.SamplePosition(bestCoverPos, out NavMeshHit navHit, 2f, NavMesh.AllAreas))
+        //    {
+        //        NavMeshAgent.SetDestination(navHit.position);
+        //            Debug.DrawLine(transform.position + Vector3.up, navHit.position + Vector3.up, Color.blue, 1f);
+        //    }
+        //    else
+        //    {
+        //         Debug.LogWarning($"[Hide] No NavMesh near cover {bestCoverPos}");
+        //    }
+        //}
 
 
         #endregion

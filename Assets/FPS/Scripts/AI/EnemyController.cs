@@ -305,9 +305,6 @@ namespace Unity.FPS.AI
 
         NodeWeight GetBestPatrolNode()
         {
-            if (m_PatrolNodes == null || m_PatrolNodes.Length == 0)
-                return null;
-
             NodeWeight best = null;
             float bestWeight = float.NegativeInfinity;
 
@@ -315,7 +312,8 @@ namespace Unity.FPS.AI
             {
                 if (!node) continue;
 
-                float w = node.GetWeight(transform.position);
+                float w = node.GetTotalWeight(transform.position); // dynamic + heatmap
+
                 if (w > bestWeight)
                 {
                     bestWeight = w;

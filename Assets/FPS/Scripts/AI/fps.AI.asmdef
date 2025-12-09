@@ -1,6 +1,7 @@
 {
     "name": "fps.AI",
     "references": [
+        "Assembly-CSharp",
         "GUID:9c5543eabb73a6249ac07b2c065ee8b4"
     ],
     "includePlatforms": [],

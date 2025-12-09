@@ -1,0 +1,11 @@
+{
+    "name": "Editor",
+    "references": [
+        "UnityEditor",
+        "fps.AI"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "autoReferenced": false
+}

@@ -61,23 +61,23 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.2.2f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\FPS\Scripts\AI\Heatmap\HeatmapManager.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\EnemyMovement.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\BotDelayed.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\EnemyWayPoint.cs" />
-    <Compile Include="Assets\FPS\Scripts\AI\HeatmapManager.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\NodeWeitght.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\HiderController.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\ChaseTest.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\EnemyController.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\EnemyMobile.cs" />
-    <Compile Include="Assets\FPS\Scripts\AI\HeatmapData.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\EnemyManager.cs" />
-    <Compile Include="Assets\FPS\Scripts\AI\HeatmapProcessor.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\PatrolPath.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\PlayerInput.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\DetectionModule.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\EnemyDebugProbe.cs" />
+    <Compile Include="Assets\FPS\Scripts\AI\Heatmap\HeatmapData.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\NavigationModule.cs" />
+    <Compile Include="Assets\FPS\Scripts\AI\Heatmap\HeatmapProcessor.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\FollowPlayer.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\AISeek.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\EnemyTurret.cs" />

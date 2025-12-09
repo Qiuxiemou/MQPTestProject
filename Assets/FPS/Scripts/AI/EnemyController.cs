@@ -347,13 +347,40 @@ namespace Unity.FPS.AI
             {
                 if (!node) continue;
 
-                float dist = Vector3.Distance(transform.position, node.transform.position);
-                if (dist <= PathReachingRadius)
+                // float dist = Vector3.Distance(transform.position, node.transform.position);
+                // if (dist <= PathReachingRadius)
+                // {
+                //     node.MarkVisited();
+                // }
+
+                // NEW: mark node visited only if visible
+                if (CanSeeNode(node))
                 {
                     node.MarkVisited();
                 }
             }
         }
+
+        bool CanSeeNode(NodeWeight node)
+        {
+            if (!node) return false;
+
+            Vector3 dir = node.transform.position - DetectionModule.DetectionSourcePoint.position;
+            float distance = dir.magnitude;
+
+            // Raycast to node
+            if (Physics.Raycast(DetectionModule.DetectionSourcePoint.position, dir.normalized, out RaycastHit hit, distance, ~0))
+            {
+                if ((hit.point - node.transform.position).sqrMagnitude < 0.1f)
+                    return true;
+
+                return false; // blocked
+            }
+
+            return true; // no hit, node is visible
+        }
+
+
 
         public void ResetPathDestination()
         {

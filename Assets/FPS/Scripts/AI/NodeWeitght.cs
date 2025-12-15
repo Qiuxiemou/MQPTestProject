@@ -9,11 +9,17 @@ public class NodeWeight : MonoBehaviour
     [Header("Dynamic Weight Factors")]
     public float TimeFactor = 1f;
     public float DistanceFactor = 0.1f;
-    public float randomFactor = Random.Range(0f, 2f);
+    public float randomFactor = 0f;
 
     // This will store the static heat applied from historical player positions
     [HideInInspector]
     public float HeatmapWeight = 1f;
+
+    void Awake()
+    {
+        randomFactor = Random.Range(0f, 2f);
+        LastVisitTime = Time.time;
+    }
 
     public void MarkVisited()
     {

@@ -6,7 +6,6 @@ using Unity.FPS.Game;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
-using static Codice.Client.Common.WebApi.WebApiEndpoints;
 
 namespace Unity.FPS.AI
 {
@@ -17,8 +16,8 @@ namespace Unity.FPS.AI
     {
         public enum HiderState
         {
-            UnknownPlayer,   // doesn’t know where player is – peeks to gain info
-            SeePlayer,        // has a LastSeenPosition – runs to best cover
+            UnknownPlayer,   // doesnï¿½t know where player is ï¿½ peeks to gain info
+            SeePlayer,        // has a LastSeenPosition ï¿½ runs to best cover
             LostPlayerRecent // not seen player for 3 sec
         }
 
@@ -69,7 +68,7 @@ namespace Unity.FPS.AI
 
         [Header("Idle Scan (UnknownPlayer)")]
         [Tooltip("Half angle for look-around (total sweep is 2 * IdleScanHalfAngle)")]
-        public float IdleScanHalfAngle = 90f;   // 180° total
+        public float IdleScanHalfAngle = 90f;   // 180ï¿½ total
 
         [Tooltip("Time (seconds) for one left-right sweep")]
         public float IdleScanDuration = 2f;
@@ -273,7 +272,7 @@ namespace Unity.FPS.AI
         {
             if (transform.position.y < SelfDestructYHeight)
             {
-                Log($"Below SelfDestructYHeight ({SelfDestructYHeight}) – destroying hider");
+                Log($"Below SelfDestructYHeight ({SelfDestructYHeight}) ï¿½ destroying hider");
                 Destroy(gameObject);
                 return;
             }
@@ -291,7 +290,7 @@ namespace Unity.FPS.AI
             RecomputePeekPositions(_coverPos);
             if (!_hasValidPeekPositions)
             {
-                Log("PeekRoutine aborted – no valid peek positions");
+                Log("PeekRoutine aborted ï¿½ no valid peek positions");
                 _isPeeking = false;
                 yield break;
             }
@@ -337,7 +336,7 @@ namespace Unity.FPS.AI
                 while (NavMeshAgent.remainingDistance > reachThreshold && !NavMeshAgent.pathPending)
                     yield return null;
 
-                // Wait out in the open for a short time — midDelay is your "exposed time"
+                // Wait out in the open for a short time ï¿½ midDelay is your "exposed time"
                 yield return new WaitForSeconds(midDelay);
 
                 bool sawDuringPeek = DetectionModule != null && DetectionModule.IsSeeingTarget;
@@ -584,7 +583,7 @@ namespace Unity.FPS.AI
         {
             _isUnknownRoutineRunning = true;
 
-            // remember the “center” yaw we scan around
+            // remember the ï¿½centerï¿½ yaw we scan around
             float baseYaw = transform.eulerAngles.y;
 
             Log($"UnknownPlayerRoutine: starting idle scan at yaw={baseYaw:F1}");
@@ -904,7 +903,7 @@ namespace Unity.FPS.AI
         //        float r = Random.value;
         //        if (r < 0.4f)
         //            chosenPos = bestCoverPos;
-        //        else if (r < 0.7f) // 0.7–0.4 => 0.3
+        //        else if (r < 0.7f) // 0.7ï¿½0.4 => 0.3
         //            chosenPos = secondCoverPos;
         //        else              // 1-0.7 => 0.3
         //            chosenPos = thirdCoverPos;
@@ -980,7 +979,7 @@ namespace Unity.FPS.AI
                 .Take(3)
                 .ToList();
 
-            // Debug – each color = different wall group
+            // Debug ï¿½ each color = different wall group
             if (topGroups.Count > 0) Debug.DrawLine(playerPos + Vector3.up, topGroups[0].coverPos + Vector3.up, Color.red, 0.5f);
             if (topGroups.Count > 1) Debug.DrawLine(playerPos + Vector3.up, topGroups[1].coverPos + Vector3.up, Color.yellow, 0.5f);
             if (topGroups.Count > 2) Debug.DrawLine(playerPos + Vector3.up, topGroups[2].coverPos + Vector3.up, Color.cyan, 0.5f);

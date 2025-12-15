@@ -126,7 +126,7 @@ namespace Unity.FPS.AI
                 if (Physics.Raycast(ray, out RaycastHit hit, DetectionRange, ObstructionLayers))
                 {
                 
-                    Debug.DrawLine(DetectionSourcePoint.position, hit.point, Color.red, 0.1f);
+                    //Debug.DrawLine(DetectionSourcePoint.position, hit.point, Color.red, 0.1f);
 
                     //Debug.Log("[Detection] Raycast hit: " + hit.collider.name);
 

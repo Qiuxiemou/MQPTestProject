@@ -12,6 +12,19 @@ namespace Unity.FPS.AI
     //[RequireComponent(typeof(Health), typeof(Actor), typeof(NavMeshAgent), typeof(DetectionModule))]
     [RequireComponent(typeof(Health), typeof(Actor), typeof(NavMeshAgent))]
     //[RequireComponent(typeof(DetectionModule))]
+
+    class CoverCandidate
+    {
+        public Transform group;     // WallGroup root
+        public Vector3 pos;         // cover position
+        public float distBot;       // distance from bot
+        public float distPlayer;    // distance from player
+        public float retreatScore;  // �safe retreat�
+        public float quickScore;    // �fast to reach�
+        public float flankScore;    // �good flank angle�
+    }
+
+
     public class HiderController : MonoBehaviour
     {
         public enum HiderState
@@ -114,6 +127,7 @@ namespace Unity.FPS.AI
         Vector3 _coverPos;          // current "behind cover" anchor
         Vector3 _peekLeftPos;       // dynamic peek position (left corner)
         Vector3 _peekRightPos;      // dynamic peek position (right corner)
+        Vector3 _peekThirdPos;      
         Vector3 _wallNormal;        // outward normal of the wall
         bool _hasValidPeekPositions = false;
 
@@ -296,10 +310,17 @@ namespace Unity.FPS.AI
             }
 
             // 2. Randomly choose left or right corner ONCE for this whole jiggle sequence
-            bool startLeft = (Random.value < 0.5f);
-            Vector3 basePeek = startLeft ? _peekLeftPos : _peekRightPos;
-            Log($"PeekRoutine: chosen side = {(startLeft ? "Left" : "Right")} | basePeek = {basePeek}");
-
+            Vector3 basePeek = Vector3.zero;
+            if (Random.value >0.66)
+            {
+                basePeek = _peekLeftPos;
+            } else if (Random.value > 0.33)
+            {
+                basePeek = _peekRightPos;
+            } else
+            {
+                basePeek = _peekThirdPos;
+            }
             // 3. Go to exact cover position first (tuck in behind the wall)
             NavMeshAgent.SetDestination(_coverPos);
             while (NavMeshAgent.remainingDistance > reachThreshold && !NavMeshAgent.pathPending)
@@ -508,33 +529,38 @@ namespace Unity.FPS.AI
                 return;
             }
 
-            // -------------------------------
-            // 1. Sort peek nodes by distance
-            // -------------------------------
             Transform closestA = null;
             Transform closestB = null;
+            Transform closestC = null;
 
             float bestA = float.MaxValue;
             float bestB = float.MaxValue;
+            float bestC = float.MaxValue;
 
             foreach (Transform node in PeekNodes)
             {
+                if (node == null) continue;
+
                 float d = (node.position - origin).sqrMagnitude;
 
                 if (d < bestA)
                 {
-                    // push A down to B
-                    bestB = bestA;
-                    closestB = closestA;
+                    // shift A -> B -> C
+                    bestC = bestB; closestC = closestB;
+                    bestB = bestA; closestB = closestA;
 
-                    // update A
-                    bestA = d;
-                    closestA = node;
+                    bestA = d; closestA = node;
                 }
                 else if (d < bestB)
                 {
-                    bestB = d;
-                    closestB = node;
+                    // shift B -> C
+                    bestC = bestB; closestC = closestB;
+
+                    bestB = d; closestB = node;
+                }
+                else if (d < bestC)
+                {
+                    bestC = d; closestC = node;
                 }
             }
 
@@ -544,26 +570,25 @@ namespace Unity.FPS.AI
                 return;
             }
 
-            if (closestB == null)
-            {
-                // Only 1 node exists -> use the same one twice
-                closestB = closestA;
-            }
+            // Fallbacks if you have fewer than 3 nodes
+            if (closestB == null) closestB = closestA;
+            if (closestC == null) closestC = closestB;
 
-            // -------------------------------
-            // 2. Assign the 2 peek positions
-            // -------------------------------
+            // Assign
             _peekLeftPos = closestA.position;
             _peekRightPos = closestB.position;
+            _peekThirdPos = closestC.position;
 
+            // A simple "outward" direction based on the closest node
             _wallNormal = (origin - closestA.position).normalized;
 
             _hasValidPeekPositions = true;
 
-            Log($"RecomputePeekPositions: using NodeA={closestA.name}, NodeB={closestB.name}");
+            Log($"RecomputePeekPositions: A={closestA.name}, B={closestB.name}, C={closestC.name}");
 
             Debug.DrawLine(origin, _peekLeftPos, Color.green, 2f);
             Debug.DrawLine(origin, _peekRightPos, Color.blue, 2f);
+            Debug.DrawLine(origin, _peekThirdPos, Color.yellow, 2f);
         }
 
 
@@ -927,43 +952,162 @@ namespace Unity.FPS.AI
 
         //}
 
+        //void ChooseCoverAndMove(Vector3 playerPos)
+        //{
+        //    Vector3 botPos = transform.position;
+
+        //    Collider[] walls = Physics.OverlapSphere(botPos, 30f, wallMask);
+
+        //    // key = WallGroup transform, value = best (score, coverPos) for that group
+        //    var groupBest = new Dictionary<Transform, (float score, Vector3 coverPos)>();
+
+        //    foreach (Collider wall in walls)
+        //    {
+        //        if (wall == null) continue;
+
+        //        // 1) Find which wall group this collider belongs to
+        //        WallGroup wg = wall.GetComponentInParent<WallGroup>();
+        //        Transform groupKey = wg != null ? wg.transform : wall.transform;
+
+        //        // -------- scoring for this collider ----------
+        //        Vector3 dirPlayerToObstacle = (wall.transform.position - playerPos).normalized;
+        //        Vector3 coverPos = wall.transform.position + dirPlayerToObstacle * coverOffset;
+
+        //        // must actually block line of sight
+        //        bool blocked = Physics.Linecast(playerPos + Vector3.up,
+        //                                        coverPos + Vector3.up,
+        //                                        out RaycastHit hit,
+        //                                        wallMask);
+        //        if (!blocked)
+        //            continue;
+
+        //        float distBot = Vector3.Distance(botPos, coverPos);
+        //        float distPlayer = Vector3.Distance(playerPos, coverPos);
+        //        float score = distPlayer - distBot; // far from player, close to bot
+
+        //        // 2) For this WallGroup, keep only the BEST collider
+        //        if (!groupBest.TryGetValue(groupKey, out var current) || score > current.score)
+        //        {
+        //            groupBest[groupKey] = (score, coverPos);
+        //        }
+        //    }
+
+        //    if (groupBest.Count == 0)
+        //    {
+        //        LM.write("[HIDER] ChooseCoverAndMove: no valid covers found");
+        //        return;
+        //    }
+
+        //    // 3) Sort groups by score and take top 3 distinct walls
+        //    var topGroups = groupBest.Values
+        //        .OrderByDescending(g => g.score)
+        //        .Take(3)
+        //        .ToList();
+
+        //    // Debug � each color = different wall group
+        //    if (topGroups.Count > 0) Debug.DrawLine(playerPos + Vector3.up, topGroups[0].coverPos + Vector3.up, Color.red, 0.5f);
+        //    if (topGroups.Count > 1) Debug.DrawLine(playerPos + Vector3.up, topGroups[1].coverPos + Vector3.up, Color.yellow, 0.5f);
+        //    if (topGroups.Count > 2) Debug.DrawLine(playerPos + Vector3.up, topGroups[2].coverPos + Vector3.up, Color.cyan, 0.5f);
+
+        //    // 4) Weighted random pick across **different walls**
+        //    Vector3 chosenPos;
+        //    if (topGroups.Count == 1)
+        //    {
+        //        chosenPos = topGroups[0].coverPos;
+        //    }
+        //    else if (topGroups.Count == 2)
+        //    {
+        //        float r = Random.value;
+        //        chosenPos = (r < 0.6f) ? topGroups[0].coverPos : topGroups[1].coverPos;
+        //    }
+        //    else
+        //    {
+        //        float r = Random.value;
+        //        if (r < 0.4f) chosenPos = topGroups[0].coverPos;
+        //        else if (r < 0.7f) chosenPos = topGroups[1].coverPos;
+        //        else chosenPos = topGroups[2].coverPos;
+        //    }
+
+        //    // 5) Move there on NavMesh
+        //    if (NavMesh.SamplePosition(chosenPos, out NavMeshHit navHit, 2f, NavMesh.AllAreas))
+        //    {
+        //        NavMeshAgent.SetDestination(navHit.position);
+        //        Debug.DrawLine(transform.position + Vector3.up, navHit.position + Vector3.up, Color.blue, 1f);
+        //        LM.write($"[HIDER] ChooseCoverAndMove: chosen cover = {navHit.position}");
+        //    }
+        //    else
+        //    {
+        //        LM.write($"[HIDER] ChooseCoverAndMove: no NavMesh near chosen cover {chosenPos}");
+        //    }
+        //}
+
         void ChooseCoverAndMove(Vector3 playerPos)
         {
             Vector3 botPos = transform.position;
 
             Collider[] walls = Physics.OverlapSphere(botPos, 30f, wallMask);
 
-            // key = WallGroup transform, value = best (score, coverPos) for that group
-            var groupBest = new Dictionary<Transform, (float score, Vector3 coverPos)>();
+            // best cover per WallGroup
+            var groupBest = new Dictionary<Transform, CoverCandidate>();
 
             foreach (Collider wall in walls)
             {
                 if (wall == null) continue;
 
-                // 1) Find which wall group this collider belongs to
+                // 1) Which wall group?
                 WallGroup wg = wall.GetComponentInParent<WallGroup>();
                 Transform groupKey = wg != null ? wg.transform : wall.transform;
 
-                // -------- scoring for this collider ----------
+                // ---------- candidate cover pos for THIS collider ----------
                 Vector3 dirPlayerToObstacle = (wall.transform.position - playerPos).normalized;
                 Vector3 coverPos = wall.transform.position + dirPlayerToObstacle * coverOffset;
 
-                // must actually block line of sight
-                bool blocked = Physics.Linecast(playerPos + Vector3.up,
-                                                coverPos + Vector3.up,
-                                                out RaycastHit hit,
-                                                wallMask);
+                // Must actually block line of sight
+                bool blocked = Physics.Linecast(
+                    playerPos + Vector3.up,
+                    coverPos + Vector3.up,
+                    out RaycastHit hit,
+                    wallMask);
+
                 if (!blocked)
                     continue;
 
                 float distBot = Vector3.Distance(botPos, coverPos);
                 float distPlayer = Vector3.Distance(playerPos, coverPos);
-                float score = distPlayer - distBot; // far from player, close to bot
 
-                // 2) For this WallGroup, keep only the BEST collider
-                if (!groupBest.TryGetValue(groupKey, out var current) || score > current.score)
+                // ---------- 3 different �human� scores ----------
+
+                // 1. Retreat: far from player, but don�t punish bot distance as much
+                float retreatScore = distPlayer - 0.5f * distBot;
+
+                // 2. Quick: just how fast to reach (closer is better)
+                float quickScore = -distBot;   // smaller dist => larger score
+
+                // 3. Flank: want roughly 90� off the player, not straight back
+                Vector3 toPlayer = (playerPos - botPos).normalized;
+                Vector3 toCover = (coverPos - botPos).normalized;
+                float angle = Vector3.Angle(toPlayer, toCover); // 0 = in front, 180 = behind
+                                                                // value in [0,1], 1 when angle = 90�, 0 when = 0 or 180
+                float flankAngleScore = 1f - Mathf.Abs(angle - 90f) / 90f;
+                // small bonus for being a bit away from the player
+                float flankScore = flankAngleScore + 0.2f * (distPlayer / (coverSearchRadius + 0.001f));
+
+                var cand = new CoverCandidate
                 {
-                    groupBest[groupKey] = (score, coverPos);
+                    group = groupKey,
+                    pos = coverPos,
+                    distBot = distBot,
+                    distPlayer = distPlayer,
+                    retreatScore = retreatScore,
+                    quickScore = quickScore,
+                    flankScore = flankScore
+                };
+
+                // For each WallGroup, keep the **best retreat** candidate (as baseline)
+                if (!groupBest.TryGetValue(groupKey, out var current) ||
+                    cand.retreatScore > current.retreatScore)
+                {
+                    groupBest[groupKey] = cand;
                 }
             }
 
@@ -973,37 +1117,49 @@ namespace Unity.FPS.AI
                 return;
             }
 
-            // 3) Sort groups by score and take top 3 distinct walls
-            var topGroups = groupBest.Values
-                .OrderByDescending(g => g.score)
-                .Take(3)
-                .ToList();
+            var list = groupBest.Values.ToList();
 
-            // Debug � each color = different wall group
-            if (topGroups.Count > 0) Debug.DrawLine(playerPos + Vector3.up, topGroups[0].coverPos + Vector3.up, Color.red, 0.5f);
-            if (topGroups.Count > 1) Debug.DrawLine(playerPos + Vector3.up, topGroups[1].coverPos + Vector3.up, Color.yellow, 0.5f);
-            if (topGroups.Count > 2) Debug.DrawLine(playerPos + Vector3.up, topGroups[2].coverPos + Vector3.up, Color.cyan, 0.5f);
+            // ---------- pick 3 �styles� from different walls if possible ----------
 
-            // 4) Weighted random pick across **different walls**
+            // safest retreat
+            CoverCandidate safest =
+                list.OrderByDescending(c => c.retreatScore).First();
+
+            // fastest to reach (different wall if we can)
+            CoverCandidate fastest =
+                list.Where(c => c.group != safest.group)
+                    .OrderByDescending(c => c.quickScore)
+                    .DefaultIfEmpty(safest)
+                    .First();
+
+            // best flank (different from others if possible)
+            CoverCandidate flanker =
+                list.Where(c => c.group != safest.group && c.group != fastest.group)
+                    .OrderByDescending(c => c.flankScore)
+                    .DefaultIfEmpty(safest)
+                    .First();
+
+            // Debug lines: red = safest, yellow = fastest, cyan = flanker
+            Debug.DrawLine(playerPos + Vector3.up, safest.pos + Vector3.up, Color.red, 0.5f);
+            if (fastest != safest)
+                Debug.DrawLine(playerPos + Vector3.up, fastest.pos + Vector3.up, Color.yellow, 0.5f);
+            if (flanker != safest && flanker != fastest)
+                Debug.DrawLine(playerPos + Vector3.up, flanker.pos + Vector3.up, Color.cyan, 0.5f);
+
+            // ---------- weighted random between these three �styles� ----------
+
             Vector3 chosenPos;
-            if (topGroups.Count == 1)
-            {
-                chosenPos = topGroups[0].coverPos;
-            }
-            else if (topGroups.Count == 2)
-            {
-                float r = Random.value;
-                chosenPos = (r < 0.6f) ? topGroups[0].coverPos : topGroups[1].coverPos;
-            }
-            else
-            {
-                float r = Random.value;
-                if (r < 0.4f) chosenPos = topGroups[0].coverPos;
-                else if (r < 0.7f) chosenPos = topGroups[1].coverPos;
-                else chosenPos = topGroups[2].coverPos;
-            }
+            float r = Random.value;
 
-            // 5) Move there on NavMesh
+            if (r < 0.4f)          // 40% safest
+                chosenPos = safest.pos;
+            else if (r < 0.7f)     // 30% fastest
+                chosenPos = fastest.pos;
+            else                   // 30% flanker
+                chosenPos = flanker.pos;
+
+            // ---------- move there on NavMesh ----------
+
             if (NavMesh.SamplePosition(chosenPos, out NavMeshHit navHit, 2f, NavMesh.AllAreas))
             {
                 NavMeshAgent.SetDestination(navHit.position);
@@ -1017,68 +1173,7 @@ namespace Unity.FPS.AI
         }
 
 
-        //void ChooseCoverAndMove(Vector3 playerPos)
-        //{
-        //    _isChoosingCover = true;
-        //    Vector3 botPos = transform.position;
 
-        //    Collider[] walls = Physics.OverlapSphere(botPos, 70f, wallMask);
-
-        //    Transform bestWall = null;
-        //    Vector3 bestCoverPos = Vector3.zero;
-        //    float bestScore = float.MinValue;
-
-        //    foreach (Collider wall in walls)
-        //    {
-        //        if (wall.attachedRigidbody && wall.attachedRigidbody.transform == transform)
-        //            continue; // skip self
-
-        //        // Skip likely floors
-        //        Vector3 up = Vector3.up;
-        //        float upDot = Vector3.Dot(up, wall.transform.up);
-
-        //        Vector3 dirPlayerToObstacle = (wall.transform.position - playerPos).normalized;
-        //        Vector3 coverPos = wall.transform.position + dirPlayerToObstacle * coverOffset;
-
-        //        // Check if obstacle blocks line of sight
-        //        bool blocked = Physics.Linecast(playerPos + Vector3.up,
-        //                                        coverPos + Vector3.up,
-        //                                        out RaycastHit hit,
-        //                                        wallMask);
-        //        if (!blocked) continue;
-
-        //        float distBot = Vector3.Distance(botPos, coverPos);
-        //        float distPlayer = Vector3.Distance(playerPos, coverPos);
-
-        //        float score = distPlayer - distBot; // prefer far from player but near bot
-
-        //        if (score > bestScore)
-        //        {
-        //            bestScore = score;
-        //            bestCoverPos = coverPos;
-        //            bestWall = wall.transform;
-        //        }
-
-        //            Debug.DrawLine(playerPos + Vector3.up, bestCoverPos + Vector3.up, Color.red, 0.2f);
-        //    }
-
-        //if (bestScore == float.MinValue)
-        //{
-        //    if (showDebugLines) Debug.Log("[Hide] No valid cover found.");
-        //    agent.ResetPath();
-        //    return;
-        //}
-
-        //    if (NavMesh.SamplePosition(bestCoverPos, out NavMeshHit navHit, 2f, NavMesh.AllAreas))
-        //    {
-        //        NavMeshAgent.SetDestination(navHit.position);
-        //            Debug.DrawLine(transform.position + Vector3.up, navHit.position + Vector3.up, Color.blue, 1f);
-        //    }
-        //    else
-        //    {
-        //         Debug.LogWarning($"[Hide] No NavMesh near cover {bestCoverPos}");
-        //    }
-        //}
 
 
         #endregion

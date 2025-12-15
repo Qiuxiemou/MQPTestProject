@@ -32,7 +32,7 @@ namespace Unity.FPS.AI
         public LayerMask ObstructionLayers;
 
         [Tooltip("Time before forgetting target completely")]
-        public float KnownTargetTimeout = 1f;
+        public float KnownTargetTimeout = 5f;
 
         public float missMaxRange=30f;
         public float missChanceAtMaxRange = 0.8f;

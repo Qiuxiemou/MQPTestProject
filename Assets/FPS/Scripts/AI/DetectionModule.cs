@@ -147,6 +147,9 @@ namespace Unity.FPS.AI
             if (!IsSeeingTarget && Time.time - TimeLastSeenTarget > KnownTargetTimeout)
             {
                 KnownDetectedTarget = null;
+
+                 onLostTarget?.Invoke();
+                 
                 _isReacting = false;
                 _pendingTarget = null;
                 _reactionEndTime = 0f;

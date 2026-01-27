@@ -29,6 +29,15 @@ namespace Unity.FPS.AI
         [Header("Sound")] public AudioClip MovementSound;
         public MinMaxFloat PitchDistortionMovementSpeed;
 
+        [Header("Search / Look Around")]
+        public float SearchWaitTime = 1.5f;
+        public float SearchLookAroundDuration = 2.0f;
+        public float SearchLookAroundSpeed = 90f;
+        public float SearchLookAroundAngle = 60f;
+        public float SearchArriveDistance = 4.0f;
+
+        Coroutine m_SearchRoutine;
+        bool m_SearchRoutineRunning = false;
         public AIState AiState { get; private set; }
         EnemyController m_EnemyController;
         AudioSource m_AudioSource;
@@ -100,10 +109,6 @@ namespace Unity.FPS.AI
 
                     break;
                 case AIState.Search:
-                    if (Vector3.Distance(transform.position, lastKnownPosition) < 1.0f)
-                    {
-                        AiState = AIState.Patrol;
-                    }
                     break;
             }
         }
@@ -114,10 +119,12 @@ namespace Unity.FPS.AI
             switch (AiState)
             {
                 case AIState.Patrol:
+                    StopSearchRoutine();
                     Vector3 dest = m_EnemyController.GetBestPatrolDestination();
                     m_EnemyController.SetNavDestination(dest);
                     break;
                 case AIState.Follow:
+                    StopSearchRoutine();
                     if (m_EnemyController.KnownDetectedTarget == null)
                     {
                         AiState = AIState.Patrol;   // or some LostTarget state
@@ -130,6 +137,7 @@ namespace Unity.FPS.AI
                     break;
 
                 case AIState.Attack:
+                    StopSearchRoutine();
                     if (m_EnemyController.KnownDetectedTarget == null ||
                         m_EnemyController.DetectionModule == null ||
                         m_EnemyController.DetectionModule.DetectionSourcePoint == null)
@@ -154,8 +162,7 @@ namespace Unity.FPS.AI
                     m_EnemyController.TryAtack(m_EnemyController.KnownDetectedTarget.transform.position);
                     break;
                 case AIState.Search:
-                    m_EnemyController.SetNavDestination(lastKnownPosition);
-                    m_EnemyController.OrientTowards(lastKnownPosition);
+                    StartSearchRoutine();
                     break;
             }
         }
@@ -187,6 +194,7 @@ namespace Unity.FPS.AI
 
         void OnLostTarget()
         {
+            StopSearchRoutine();
             if (AiState == AIState.Follow || AiState == AIState.Attack)
             {
                 lastKnownPosition = m_EnemyController.DetectionModule.LastSeenPosition; 
@@ -211,5 +219,97 @@ namespace Unity.FPS.AI
 
             Animator.SetTrigger(k_AnimOnDamagedParameter);
         }
+
+        void StartSearchRoutine()
+        {
+            if (m_SearchRoutineRunning) return;
+            m_SearchRoutine = StartCoroutine(SearchLookAroundRoutine());
+        }
+
+        void StopSearchRoutine()
+        {
+            if (m_SearchRoutine != null)
+                StopCoroutine(m_SearchRoutine);
+
+            m_SearchRoutine = null;
+            m_SearchRoutineRunning = false;
+        }
+
+        System.Collections.IEnumerator SearchLookAroundRoutine()
+        {
+            m_SearchRoutineRunning = true;
+            while (AiState == AIState.Search)
+            {
+                Debug.Log("Searching: moving to last known position");
+
+                if (m_EnemyController.IsSeeingTarget && m_EnemyController.KnownDetectedTarget != null)
+                {
+                    AiState = (m_EnemyController.IsTargetInAttackRange) ? AIState.Attack : AIState.Follow;
+                    m_SearchRoutineRunning = false;
+                    yield break;
+                }
+
+                m_EnemyController.SetNavDestination(lastKnownPosition);
+                Vector2 a = new Vector2(transform.position.x, transform.position.z);
+                Vector2 b = new Vector2(lastKnownPosition.x, lastKnownPosition.z);
+                Debug.Log("Searching: distance to last known position: " + Vector2.Distance(a, b));
+                Debug.Log("Searching: SearchArriveDistance: " + SearchArriveDistance);
+                if (Vector2.Distance(a, b) <= SearchArriveDistance)
+                {
+                    Debug.Log("Arrived at last known position");
+                    break;
+                }
+                    
+
+                yield return null;
+            }
+            Debug.Log("Searching: arrived at last known position, looking around");
+            m_EnemyController.SetNavDestination(transform.position);
+
+
+            float waitEnd = Time.time + SearchWaitTime;
+            while (AiState == AIState.Search && Time.time < waitEnd)
+            {
+                if (m_EnemyController.IsSeeingTarget && m_EnemyController.KnownDetectedTarget != null)
+                {
+                    AiState = (m_EnemyController.IsTargetInAttackRange) ? AIState.Attack : AIState.Follow;
+                    m_SearchRoutineRunning = false;
+                    yield break;
+                }
+                yield return null;
+            }
+
+            // Disable NavMeshAgent rotation
+            var agent = m_EnemyController.NavMeshAgent;
+            bool oldUpdateRotation = agent.updateRotation;
+            agent.updateRotation = false;
+
+            Quaternion baseRot = transform.rotation;
+            float t = 0f;
+            while (AiState == AIState.Search && t < SearchLookAroundDuration)
+            {
+                if (m_EnemyController.IsSeeingTarget && m_EnemyController.KnownDetectedTarget != null)
+                {
+                    AiState = (m_EnemyController.IsTargetInAttackRange) ? AIState.Attack : AIState.Follow;
+                    m_SearchRoutineRunning = false;
+                    yield break;
+                }
+
+                t += Time.deltaTime;
+                float yaw = Mathf.Sin(t * Mathf.Deg2Rad * SearchLookAroundSpeed) * SearchLookAroundAngle;
+                transform.rotation = baseRot * Quaternion.Euler(0f, yaw, 0f);
+
+                yield return null;
+            }
+
+            // Restore NavMeshAgent rotation
+            agent.updateRotation = oldUpdateRotation;
+
+            if (AiState == AIState.Search)
+                AiState = AIState.Patrol;
+
+            m_SearchRoutineRunning = false;
+        }
+
     }
 }

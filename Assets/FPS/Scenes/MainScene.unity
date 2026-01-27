@@ -573,7 +573,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1209454863}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &37240239
 GameObject:
@@ -604,7 +604,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1209454863}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &38220157 stripped
 MonoBehaviour:
@@ -805,7 +805,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 40893898}
-  - component: {fileID: 40893899}
   m_Layer: 0
   m_Name: Wall
   m_TagString: Untagged
@@ -1444,7 +1443,7 @@ PrefabInstance:
     - target: {fileID: 6809973363424661249, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
       propertyPath: MinReactionTime
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6809973363424661249, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
@@ -2952,7 +2951,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 174556134}
-  - component: {fileID: 174556135}
   m_Layer: 0
   m_Name: Corner
   m_TagString: Untagged
@@ -4218,7 +4216,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 218903814}
-  - component: {fileID: 218903815}
   m_Layer: 0
   m_Name: Wall_B
   m_TagString: Untagged
@@ -4708,7 +4705,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1209454863}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &270740725 stripped
 Transform:
@@ -8090,7 +8087,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1209454863}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &472502255
 GameObject:
@@ -8410,7 +8407,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 481799645}
-  - component: {fileID: 481799646}
   m_Layer: 0
   m_Name: Wall
   m_TagString: Untagged
@@ -8622,7 +8618,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 499856827}
-  - component: {fileID: 499856828}
   m_Layer: 0
   m_Name: Wall
   m_TagString: Untagged
@@ -9760,7 +9755,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 607448057}
-  - component: {fileID: 607448058}
   m_Layer: 0
   m_Name: Corner
   m_TagString: Untagged
@@ -12592,7 +12586,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1209454863}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &752681345
 PrefabInstance:
@@ -23605,6 +23599,7 @@ MonoBehaviour:
   PitchDistortionMovementSpeed:
     Min: 0
     Max: 0
+  WatchTurnSpeed: 450
 --- !u!114 &1154647273 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 9087143436424816424, guid: 25a1b0efadb966e44889fce712c8ff8d,
@@ -23647,6 +23642,9 @@ MonoBehaviour:
   IdleScanDuration: 2
   IdleScanCycles: 1
   IdleMoveCoverChance: 0.3
+  peekJiggleCount: 10
+  betweenPeekDelay: 0.5
+  PeekNodes: []
 --- !u!1001 &1179334124
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -31733,7 +31731,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1209454863}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1430161402
 PrefabInstance:
@@ -35264,7 +35262,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1618090442}
-  - component: {fileID: 1618090443}
   m_Layer: 0
   m_Name: Square
   m_TagString: Untagged
@@ -41067,7 +41064,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1209454863}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &1944356614
 Mesh:
@@ -43924,7 +43921,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1209454863}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2080890078
 PrefabInstance:
@@ -48271,7 +48268,7 @@ PrefabInstance:
     - target: {fileID: 8746678193447392789, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 54.2
+      value: 74.23
       objectReference: {fileID: 0}
     - target: {fileID: 8746678193447392789, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}
@@ -48281,7 +48278,7 @@ PrefabInstance:
     - target: {fileID: 8746678193447392789, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 16.6
+      value: 17.54
       objectReference: {fileID: 0}
     - target: {fileID: 8746678193447392789, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}
@@ -50247,3 +50244,11 @@ SceneRoots:
   - {fileID: 1792537429247717267}
   - {fileID: 2040849014490921907}
   - {fileID: 764614200}
+  - {fileID: 23659087}
+  - {fileID: 37240240}
+  - {fileID: 264321864}
+  - {fileID: 470898243}
+  - {fileID: 745045214}
+  - {fileID: 1414168531}
+  - {fileID: 1936744330}
+  - {fileID: 2073641500}

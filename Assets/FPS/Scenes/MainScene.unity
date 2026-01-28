@@ -24116,7 +24116,7 @@ MonoBehaviour:
   sideOffset: 0.2
   forwardOffset: 10
   reachThreshold: 0.2
-  midDelay: 0.3
+  midDelay: 1
   coverSearchRadius: 20
   coverOffset: 2.94
   showDebugCover: 1

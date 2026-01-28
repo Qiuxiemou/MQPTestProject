@@ -608,6 +608,8 @@ namespace Unity.FPS.AI
         {
             _isUnknownRoutineRunning = true;
 
+            Debug.Log("LookAlongWallRoutine started");
+
             // Directions toward left & right wall edges
             Vector3 leftDir = (_peekLeftPos - transform.position).normalized;
             Vector3 rightDir = (_peekRightPos - transform.position).normalized;
@@ -628,6 +630,11 @@ namespace Unity.FPS.AI
                     targetRot,
                     Time.deltaTime * OrientationSpeed);
 
+                Debug.DrawRay(transform.position + Vector3.up, lookDir * 2f, Color.yellow);
+                Debug.DrawRay(transform.position + Vector3.up, leftDir * 2f, Color.green);
+                Debug.DrawRay(transform.position + Vector3.up, rightDir * 2f, Color.blue);
+
+
                 // Immediately stop scanning if player is seen
                 if (DetectionModule != null && DetectionModule.IsSeeingTarget)
                 {
@@ -639,69 +646,70 @@ namespace Unity.FPS.AI
                 yield return null;
             }
 
+
             _isUnknownRoutineRunning = false;
         }
 
 
         #region Looking around
 
-        IEnumerator UnknownPlayerRoutine()
-        {
-            _isUnknownRoutineRunning = true;
+        //IEnumerator UnknownPlayerRoutine()
+        //{
+        //    _isUnknownRoutineRunning = true;
 
-            // remember the �center� yaw we scan around
-            float baseYaw = transform.eulerAngles.y;
+        //    // remember the �center� yaw we scan around
+        //    float baseYaw = transform.eulerAngles.y;
 
-            Log($"UnknownPlayerRoutine: starting idle scan at yaw={baseYaw:F1}");
+        //    Log($"UnknownPlayerRoutine: starting idle scan at yaw={baseYaw:F1}");
 
-            for (int cycle = 0; cycle < IdleScanCycles; cycle++)
-            {
-                float timer = 0f;
-                while (timer < IdleScanDuration)
-                {
-                    timer += Time.deltaTime;
-                    float t = timer / IdleScanDuration; // 0..1
+        //    for (int cycle = 0; cycle < IdleScanCycles; cycle++)
+        //    {
+        //        float timer = 0f;
+        //        while (timer < IdleScanDuration)
+        //        {
+        //            timer += Time.deltaTime;
+        //            float t = timer / IdleScanDuration; // 0..1
 
-                    // Ping-pong from -1 to +1
-                    float normalized = Mathf.PingPong(t * 2f, 1f) * 2f - 1f; // -1..1
-                    float targetYaw = baseYaw + normalized * IdleScanHalfAngle;
+        //            // Ping-pong from -1 to +1
+        //            float normalized = Mathf.PingPong(t * 2f, 1f) * 2f - 1f; // -1..1
+        //            float targetYaw = baseYaw + normalized * IdleScanHalfAngle;
 
-                    Quaternion targetRot = Quaternion.Euler(0f, targetYaw, 0f);
-                    transform.rotation = Quaternion.Slerp(
-                        transform.rotation,
-                        targetRot,
-                        Time.deltaTime * OrientationSpeed);
+        //            Quaternion targetRot = Quaternion.Euler(0f, targetYaw, 0f);
+        //            transform.rotation = Quaternion.Slerp(
+        //                transform.rotation,
+        //                targetRot,
+        //                Time.deltaTime * OrientationSpeed);
 
-                    // If we see player while scanning, bail out
-                    if (DetectionModule != null && DetectionModule.IsSeeingTarget)
-                    {
-                        _lastKnownPlayerPos = DetectionModule.LastSeenPosition;
-                        Log($"UnknownPlayerRoutine: spotted target while scanning at {_lastKnownPlayerPos} -> SeePlayer");
-                        _state = HiderState.SeePlayer;
-                        _isUnknownRoutineRunning = false;
-                        yield break;
-                    }
+        //            // If we see player while scanning, bail out
+        //            if (DetectionModule != null && DetectionModule.IsSeeingTarget)
+        //            {
+        //                _lastKnownPlayerPos = DetectionModule.LastSeenPosition;
+        //                Log($"UnknownPlayerRoutine: spotted target while scanning at {_lastKnownPlayerPos} -> SeePlayer");
+        //                _state = HiderState.SeePlayer;
+        //                _isUnknownRoutineRunning = false;
+        //                yield break;
+        //            }
 
-                    yield return null;
-                }
-            }
+        //            yield return null;
+        //        }
+        //    }
 
-            // After scanning, maybe move to a new nearby cover
-            float roll = Random.value;
-            Log($"UnknownPlayerRoutine: finished scan, roll={roll:F2}, moveChance={IdleMoveCoverChance:F2}");
+        //    // After scanning, maybe move to a new nearby cover
+        //    float roll = Random.value;
+        //    Log($"UnknownPlayerRoutine: finished scan, roll={roll:F2}, moveChance={IdleMoveCoverChance:F2}");
 
-            if (roll < IdleMoveCoverChance)
-            {
-                Log("UnknownPlayerRoutine: roll succeeded -> MoveToRandomNearbyCover");
-                MoveToRandomNearbyCover();
-            }
-            else
-            {
-                Log("UnknownPlayerRoutine: staying at current cover");
-            }
+        //    if (roll < IdleMoveCoverChance)
+        //    {
+        //        Log("UnknownPlayerRoutine: roll succeeded -> MoveToRandomNearbyCover");
+        //        MoveToRandomNearbyCover();
+        //    }
+        //    else
+        //    {
+        //        Log("UnknownPlayerRoutine: staying at current cover");
+        //    }
 
-            _isUnknownRoutineRunning = false;
-        }
+        //    _isUnknownRoutineRunning = false;
+        //}
 
         #endregion
 

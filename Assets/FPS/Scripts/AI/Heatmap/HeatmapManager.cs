@@ -17,10 +17,13 @@ public class HeatmapManager : MonoBehaviour
     [Header("How much weight each recorded position adds")]
     public float HeatFactor = 1f;
 
+    private int count = 0;
+
     void Awake()
     {
         // Singleton setup
         Instance = this;
+        count = 0;
 
         // Find all nodes in the scene if not manually assigned
         if (AllNodes == null || AllNodes.Length == 0)
@@ -33,6 +36,7 @@ public class HeatmapManager : MonoBehaviour
         {
             foreach (var entry in HeatmapSource.Positions)
             {
+                count++;
                 NodeWeight closestNode = null;
                 float closestDist = float.PositiveInfinity;
 
@@ -59,6 +63,6 @@ public class HeatmapManager : MonoBehaviour
     {
         if (node == null) return 0f;
 
-        return heatByNode.TryGetValue(node, out float heat) ? heat : 0f;
+        return heatByNode.TryGetValue(node, out float heat) ? heat / count : 0f;
     }
 }

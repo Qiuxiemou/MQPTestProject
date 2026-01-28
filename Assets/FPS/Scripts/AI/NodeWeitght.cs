@@ -25,7 +25,7 @@ public class NodeWeight : MonoBehaviour
     {
         if (Time.time - LastVisitTime >= 5f)
         {
-            randomFactor = Random.Range(0.0f, 5f);
+            randomFactor = Random.Range(0.0f, 2f);
         }
         LastVisitTime = Time.time;
     }
@@ -40,7 +40,7 @@ public class NodeWeight : MonoBehaviour
     // Get total weight (dynamic + heatmap)
     public float GetTotalWeight(Vector3 botPosition)
     {
-        return GetDynamicWeight(botPosition) + HeatmapWeight + randomFactor;
+        return GetDynamicWeight(botPosition) * (1 + HeatmapWeight * randomFactor);
     }
 
     void OnDrawGizmos()

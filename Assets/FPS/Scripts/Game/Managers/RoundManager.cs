@@ -10,6 +10,7 @@ public class RoundManager : MonoBehaviour
 {
     public static RoundManager Instance { get; private set; }
 
+    // ---------------- ROUND SETTINGS ----------------
     [Header("Round Settings")]
     [Tooltip("Length of each round (seconds).")]
     public float roundLengthSeconds = 60f;
@@ -17,38 +18,47 @@ public class RoundManager : MonoBehaviour
     [Tooltip("Components to disable while the survey is up (movement, shooting, etc.).")]
     public Behaviour[] disableWhilePaused;
 
+    // ---------------- UI ----------------
     [Header("UI References")]
     public TimerUI timerUI;
     public SurveyUI surveyUI;
 
+    // ---------------- ROLE SWITCHING ----------------
     [Header("Role Switching (Prototype)")]
-    [Tooltip("Minimum seconds before a role switch is allowed (must be >= 10).")]
+    [Tooltip("Minimum seconds before a role switch is allowed.")]
     public float minRoleSwitchSeconds = 10f;
 
-    [Tooltip("Maximum seconds before a role switch (should be <= round length).")]
+    [Tooltip("Maximum seconds before a role switch.")]
     public float maxRoleSwitchSeconds = 25f;
 
-    // ---- public state ----
+    // ---------------- ENEMY PREFABS ----------------
+    [Header("Enemy Prefabs")]
+    public GameObject hiderBotPrefab;
+    public GameObject seekerBotPrefab;
+
+    [Tooltip("Spawn location for the enemy.")]
+    public Transform enemySpawnPoint;
+
+    GameObject _currentEnemy;
+
+    // ---------------- PUBLIC STATE ----------------
     public int CurrentRound { get; private set; } = 1;
     public bool RoundRunning { get; private set; }
     public float TimeRemaining => Mathf.Max(0f, _timeRemaining);
-    public bool IsSeeker => _isSeeker;          // true = seeker, false = hider
+    public bool IsSeeker => _isSeeker;
 
-    // Timer event for TimerUI
     public event Action<float> OnTimerTick;
 
-    // ---- internals ----
+    // ---------------- INTERNALS ----------------
     float _timeRemaining;
-    readonly List<SurveyData> _buffer = new();   // store all round results in memory
-    string _surveyCsvPath;
-
-    // role switching internals
     bool _isSeeker;
     float _roleSwitchTimer;
+
+    readonly List<SurveyData> _buffer = new();
+    string _surveyCsvPath;
     string _roleLogPath;
 
-    // ---------------- Unity lifecycle ----------------
-
+    // ---------------- UNITY ----------------
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -60,25 +70,27 @@ public class RoundManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        // Prepare logs folder: <ProjectRoot>/Logs/SurveyLogs/
-        var logsDir = GetProjectLogsPath();
+        string logsDir = GetProjectLogsPath();
 
-        var surveyFile = $"survey_log_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.csv";
-        _surveyCsvPath = Path.Combine(logsDir, surveyFile);
+        _surveyCsvPath = Path.Combine(
+            logsDir,
+            $"survey_log_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.csv"
+        );
 
-        var roleFile = $"role_log_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.csv";
-        _roleLogPath = Path.Combine(logsDir, roleFile);
+        _roleLogPath = Path.Combine(
+            logsDir,
+            $"role_log_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.csv"
+        );
 
-        // Write headers
         File.WriteAllText(_surveyCsvPath,
             "timestamp,round,smoothness,responsiveness,fairness,qoe,fun,notes\n");
+
         File.WriteAllText(_roleLogPath,
             "timestamp,round,timeRemaining,role\n");
     }
 
     void Start()
     {
-        // First time the game starts (initial MainScene)
         BindUIIfNeeded();
         StartRound();
     }
@@ -100,7 +112,6 @@ public class RoundManager : MonoBehaviour
 
     void LateUpdate()
     {
-        // Ensure cursor is usable while the survey is visible
         if (!RoundRunning)
         {
             Cursor.lockState = CursorLockMode.None;
@@ -108,21 +119,21 @@ public class RoundManager : MonoBehaviour
         }
     }
 
-    // ---------------- Round flow ----------------
-
+    // ---------------- ROUND FLOW ----------------
     public void StartRound()
     {
-        BindUIIfNeeded();
+        if (RoundRunning) return;
 
-        if (RoundRunning) return;    // avoid double-start
+        BindUIIfNeeded();
 
         RoundRunning = true;
         _timeRemaining = roundLengthSeconds;
 
-        // Random initial role for this round
         _isSeeker = UnityEngine.Random.value > 0.5f;
         _roleSwitchTimer = GetNextRoleInterval();
-        LogRoleChange();             // log initial role
+        LogRoleChange();
+
+        SpawnEnemyForCurrentRole();
 
         SetGameplayPause(false);
         if (surveyUI) surveyUI.Hide();
@@ -137,13 +148,8 @@ public class RoundManager : MonoBehaviour
         while (_timeRemaining > 0f)
         {
             _timeRemaining -= Time.deltaTime;
-
-            // Handle potential mid-round role switch
             HandleRoleTimer();
-
-            // Notify TimerUI
             OnTimerTick?.Invoke(TimeRemaining);
-
             yield return null;
         }
 
@@ -156,83 +162,43 @@ public class RoundManager : MonoBehaviour
         RoundRunning = false;
 
         SetGameplayPause(true);
+
+        if (_currentEnemy != null)
+        {
+            Destroy(_currentEnemy);
+            _currentEnemy = null;
+        }
+
         if (timerUI) timerUI.Hide();
         if (surveyUI) surveyUI.Show(CurrentRound);
     }
 
-    // Called by SurveyUI when the player presses Submit
-    public void SubmitSurvey(SurveyData data)
-    {
-        _buffer.Add(data);          // no file I/O yet
-        CurrentRound += 1;
-
-        // Reload MainScene; RoundManager persists and will re-bind UI + start next round
-        SceneManager.LoadScene("MainScene");
-    }
-
-    public void ExitGame()
-    {
-        FlushBuffer();
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
-    }
-
-    // ---------------- Scene loading helpers ----------------
-
-    void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        // Only care when MainScene has just been loaded for a new round
-        if (scene.name != "MainScene") return;
-
-        // Wait one frame so all scene objects (TimerUI, SurveyUI) are fully created
-        StartCoroutine(DelayedBindAndStart());
-    }
-
-    IEnumerator DelayedBindAndStart()
-    {
-        yield return null;          // wait 1 frame
-
-        BindUIIfNeeded();
-
-        // Make sure we treat this as a fresh round
-        RoundRunning = false;
-        StartRound();
-    }
-
-    void BindUIIfNeeded()
-    {
-        if (timerUI == null || !timerUI.gameObject)
-        {
-            timerUI = FindFirstObjectByType<TimerUI>(FindObjectsInactive.Include);
-        }
-
-        if (surveyUI == null || !surveyUI.gameObject)
-        {
-            surveyUI = FindFirstObjectByType<SurveyUI>(FindObjectsInactive.Include);
-        }
-    }
-
-    // ---------------- Role switching helpers ----------------
-
-    void HandleRoleTimer()
+    public void EndRoundOnPlayerDeath()
     {
         if (!RoundRunning) return;
+        RoundRunning = false;
 
-        // Ensure minimum of 10 seconds
-        float min = Mathf.Max(10f, minRoleSwitchSeconds);
-        if (min <= 0f) return;
+        SetGameplayPause(true);
 
+        if (_currentEnemy != null)
+        {
+            Destroy(_currentEnemy);
+            _currentEnemy = null;
+        }
+
+        if (timerUI) timerUI.Hide();
+        if (surveyUI) surveyUI.Show(CurrentRound);
+    }
+
+    // ---------------- ROLE SWITCHING ----------------
+    void HandleRoleTimer()
+    {
         _roleSwitchTimer -= Time.deltaTime;
         if (_roleSwitchTimer <= 0f)
         {
-            // Toggle role
             _isSeeker = !_isSeeker;
             LogRoleChange();
-
-            // Schedule next switch
+            SpawnEnemyForCurrentRole();
             _roleSwitchTimer = GetNextRoleInterval();
         }
     }
@@ -241,22 +207,92 @@ public class RoundManager : MonoBehaviour
     {
         float min = Mathf.Max(10f, minRoleSwitchSeconds);
         float max = Mathf.Max(min + 0.01f, maxRoleSwitchSeconds);
-
-        // You can tune these in the Inspector; if max < min, we fix it above.
         return UnityEngine.Random.Range(min, max);
     }
 
-    void LogRoleChange()
+    void SpawnEnemyForCurrentRole()
     {
-        if (string.IsNullOrEmpty(_roleLogPath)) return;
+        if (_currentEnemy != null)
+            Destroy(_currentEnemy);
 
-        var roleStr = _isSeeker ? "Seeker" : "Hider";
-        var line = $"{DateTime.Now:o},{CurrentRound},{TimeRemaining:F2},{roleStr}\n";
-        File.AppendAllText(_roleLogPath, line, Encoding.UTF8);
+        GameObject prefab = _isSeeker ? seekerBotPrefab : hiderBotPrefab;
+        _currentEnemy = Instantiate(prefab, enemySpawnPoint.position, enemySpawnPoint.rotation);
+
+        if (!_isSeeker)
+            AssignPeekNodes(_currentEnemy);
     }
 
-    // ---------------- Misc helpers ----------------
+    void AssignPeekNodes(GameObject hider)
+    {
+        // Find ANY component on this object that has a "peekNodes" field
+        var behaviours = hider.GetComponents<MonoBehaviour>();
 
+        foreach (var b in behaviours)
+        {
+            var field = b.GetType().GetField(
+                "PeekNodes",
+                System.Reflection.BindingFlags.Public |
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Instance
+            );
+
+            if (field != null)
+            {
+                GameObject[] nodes = GameObject.FindGameObjectsWithTag("PeekNode");
+
+                Transform[] transforms = new Transform[nodes.Length];
+                for (int i = 0; i < nodes.Length; i++)
+                    transforms[i] = nodes[i].transform;
+
+                field.SetValue(b, transforms);
+
+                // Wake up the AI (optional but recommended)
+                b.SendMessage("SetPeekNodes", transforms, SendMessageOptions.DontRequireReceiver);
+
+                Debug.Log("[RoundManager] Peek nodes injected into hider.");
+                return;
+            }
+        }
+
+        Debug.LogWarning("[RoundManager] No peekNodes field found on hider.");
+    }
+
+
+
+    void LogRoleChange()
+    {
+        string role = _isSeeker ? "Seeker" : "Hider";
+        File.AppendAllText(
+            _roleLogPath,
+            $"{DateTime.Now:o},{CurrentRound},{TimeRemaining:F2},{role}\n"
+        );
+    }
+
+    // ---------------- SCENE / UI ----------------
+    void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name != "MainScene") return;
+        StartCoroutine(DelayedBindAndStart());
+    }
+
+    IEnumerator DelayedBindAndStart()
+    {
+        yield return null;
+        BindUIIfNeeded();
+        RoundRunning = false;
+        StartRound();
+    }
+
+    void BindUIIfNeeded()
+    {
+        if (!timerUI)
+            timerUI = FindFirstObjectByType<TimerUI>(FindObjectsInactive.Include);
+
+        if (!surveyUI)
+            surveyUI = FindFirstObjectByType<SurveyUI>(FindObjectsInactive.Include);
+    }
+
+    // ---------------- PAUSE / LOGGING ----------------
     void SetGameplayPause(bool paused)
     {
         Time.timeScale = paused ? 0f : 1f;
@@ -271,6 +307,23 @@ public class RoundManager : MonoBehaviour
         Cursor.visible = paused;
     }
 
+    public void SubmitSurvey(SurveyData data)
+    {
+        _buffer.Add(data);
+        CurrentRound += 1;
+        SceneManager.LoadScene("MainScene");
+    }
+
+    public void ExitGame()
+    {
+        FlushBuffer();
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
+
     public void FlushBuffer()
     {
         if (_buffer.Count == 0) return;
@@ -282,42 +335,22 @@ public class RoundManager : MonoBehaviour
         {
             var notes = (d.notes ?? "").Replace(",", ";");
             sb.AppendLine(
-                $"{DateTime.Now:o},{d.round},{d.smoothness},{d.responsiveness},{d.fairness},{d.qoe},{d.fun},{notes}");
+                $"{DateTime.Now:o},{d.round},{d.smoothness},{d.responsiveness}," +
+                $"{d.fairness},{d.qoe},{d.fun},{notes}");
         }
 
         File.WriteAllText(_surveyCsvPath, sb.ToString(), Encoding.UTF8);
-        Debug.Log($"[RoundManager] Wrote {_buffer.Count} survey rows → {_surveyCsvPath}");
         _buffer.Clear();
     }
 
-    // <ProjectRoot>/Logs/SurveyLogs
     static string GetProjectLogsPath()
     {
-        var projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
-        var logsDir = Path.Combine(projectRoot, "Logs", "SurveyLogs");
-        if (!Directory.Exists(logsDir)) Directory.CreateDirectory(logsDir);
-        return logsDir;
+        string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+        string dir = Path.Combine(root, "Logs", "SurveyLogs");
+        if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+        return dir;
     }
-
-    // ----- If player dies, end round immediately -----
-    public void EndRoundOnPlayerDeath()
-    {
-        if (!RoundRunning) return;     // already ended
-        RoundRunning = false;
-
-        // stop gameplay (freeze movement, unlock cursor)
-        SetGameplayPause(true);
-
-        // stop timer UI
-        if (timerUI) timerUI.Hide();
-
-        // immediately show survey UI
-        if (surveyUI) surveyUI.Show(CurrentRound);
-    }
-
 }
-
-// ---------------- Data struct ----------------
 
 [Serializable]
 public struct SurveyData

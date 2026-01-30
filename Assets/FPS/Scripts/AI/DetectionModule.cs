@@ -65,7 +65,7 @@ namespace Unity.FPS.AI
         protected virtual void Start()
         {
             m_ActorsManager = FindAnyObjectByType<ActorsManager>();
-            _detectionLayerMask = LayerMask.GetMask("Player");
+            _detectionLayerMask = LayerMask.GetMask("Enemy");
         }
 
 

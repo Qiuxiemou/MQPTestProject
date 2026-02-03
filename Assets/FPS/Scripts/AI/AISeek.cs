@@ -26,6 +26,7 @@ namespace Unity.FPS.AI
 
         public ParticleSystem[] OnDetectVfx;
         public AudioClip OnDetectSfx;
+        public bool m_HasDetected = false;
 
         [Header("Sound")] public AudioClip MovementSound;
         public MinMaxFloat PitchDistortionMovementSpeed;
@@ -228,6 +229,11 @@ namespace Unity.FPS.AI
 
         void OnDetectedTarget()
         {
+            if (m_HasDetected)
+                return;
+            m_HasDetected = true;
+
+            Debug.Log("Playing enemy detect sound");
             if (AiState == AIState.Patrol)
             {
                 AiState = AIState.Follow;
@@ -240,6 +246,7 @@ namespace Unity.FPS.AI
 
             if (OnDetectSfx)
             {
+
                 AudioUtility.CreateSFX(OnDetectSfx, transform.position, AudioUtility.AudioGroups.EnemyDetection, 1f);
             }
 
@@ -248,6 +255,7 @@ namespace Unity.FPS.AI
 
         void OnLostTarget()
         {
+            m_HasDetected = false;
             if (AiState == AIState.Follow || AiState == AIState.Attack)
             {
                 lastKnownPosition = m_EnemyController.DetectionModule.LastSeenPosition;

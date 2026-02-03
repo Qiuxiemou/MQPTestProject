@@ -185,6 +185,7 @@ namespace Unity.FPS.UI
                 SetVisualsVisible(FutureBotRoot.transform, visible);
                 FutureBotRoot.GetComponent<WorldspaceHealthBar>().setHealthVisibility(visible);
             }
+            //SetAllBotVisualsVisible(visible);
         }
 
         void OnDelayedBotToggleChanged(bool visible)
@@ -194,6 +195,7 @@ namespace Unity.FPS.UI
                 SetVisualsVisible(ServerBotRoot.transform, visible);
                 ServerBotRoot.GetComponent<WorldspaceHealthBar>().setHealthVisibility(visible);
             }
+            //SetAllBotVisualsVisible(visible);
         }
 
         void OnTimeWarpChanged(bool enabled)
@@ -240,7 +242,7 @@ namespace Unity.FPS.UI
         {
             //if (DelayedBot) DelayedBot.SetLatency(newMs);
             //if (DelayedBotHealthProxy) DelayedBotHealthProxy.SetDelay(newMs);
-            UpdateLatencyLabel(newMs);
+            //UpdateLatencyLabel(newMs);
         }
 
         void UpdateLatencyLabel(float ms)
@@ -339,5 +341,21 @@ namespace Unity.FPS.UI
         {
             ControlImage.SetActive(show);
         }
+
+        void SetAllBotVisualsVisible(bool visible)
+        {
+            // find ALL bots currently in the scene
+            var bots = GameObject.FindGameObjectsWithTag("Bot");
+
+            foreach (var bot in bots)
+            {
+                SetVisualsVisible(bot.transform, visible);
+
+                // also hide worldspace health bars if present
+                var hb = bot.GetComponentInChildren<WorldspaceHealthBar>(true);
+                if (hb) hb.setHealthVisibility(visible);
+            }
+        }
+
     }
 }

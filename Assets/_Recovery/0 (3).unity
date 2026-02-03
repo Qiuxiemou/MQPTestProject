@@ -9459,22 +9459,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e27364eefd6dd0341ba72a3bfc0d9727, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &518152785
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 518152766}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1888c4db54be7214197af392439d27b7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: fps.AI::Unity.FPS.Game.BotHealthProxy
-  pastHealth: {fileID: 518152776}
-  serverHealth: {fileID: 1981720681}
-  futureHealth: {fileID: 5307370915343899274}
-  destroyBufferAfterClientDeathMs: 100
 --- !u!4 &532875369 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8681807311835176270, guid: b3c2ead0272f13f4bba963ffcfc8ebc9,
@@ -28341,10 +28325,6 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 518152767}
-    - targetCorrespondingSourceObject: {fileID: 2015434656898269652, guid: 25a1b0efadb966e44889fce712c8ff8d,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 518152785}
   m_SourcePrefab: {fileID: 100100000, guid: 25a1b0efadb966e44889fce712c8ff8d, type: 3}
 --- !u!1001 &1309092876
 PrefabInstance:
@@ -53165,7 +53145,7 @@ PrefabInstance:
         type: 3}
       propertyPath: DelayedBot
       value: 
-      objectReference: {fileID: 1371730123}
+      objectReference: {fileID: 518152769}
     - target: {fileID: 1567544279954943050, guid: c996b53e9f849234393d1e90f68d1679,
         type: 3}
       propertyPath: OrigBotRoot

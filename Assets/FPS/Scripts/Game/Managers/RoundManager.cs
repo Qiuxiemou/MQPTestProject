@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Unity.FPS.Game;
 
 public class RoundManager : MonoBehaviour
 {
@@ -30,6 +31,15 @@ public class RoundManager : MonoBehaviour
 
     [Tooltip("Maximum seconds before a role switch.")]
     public float maxRoleSwitchSeconds = 25f;
+
+    public event Action<bool> OnPlayerRoleChanged;
+
+
+    // ---------------- PLAYER ----------------
+    [Header("Player Spawn")]
+    public GameObject player;
+    //public GameObject playerHealth;
+    public Transform playerSpawnPoint;
 
     // ---------------- ENEMY PREFABS ----------------
     [Header("Enemy Prefabs")]
@@ -134,6 +144,9 @@ public class RoundManager : MonoBehaviour
         LogRoleChange();
 
         SpawnEnemyForCurrentRole();
+        RespawnPlayer();
+
+        OnPlayerRoleChanged?.Invoke(_isSeeker);
 
         SetGameplayPause(false);
         if (surveyUI) surveyUI.Hide();
@@ -199,6 +212,8 @@ public class RoundManager : MonoBehaviour
             _isSeeker = !_isSeeker;
             LogRoleChange();
             SpawnEnemyForCurrentRole();
+            RespawnPlayer();
+            OnPlayerRoleChanged?.Invoke(_isSeeker);
             _roleSwitchTimer = GetNextRoleInterval();
         }
     }
@@ -255,6 +270,38 @@ public class RoundManager : MonoBehaviour
         }
 
         Debug.LogWarning("[RoundManager] No peekNodes field found on hider.");
+    }
+
+    public void RespawnPlayer()
+    {
+        if (!playerSpawnPoint) return;
+
+        var controller = player.GetComponent<CharacterController>();
+        if (controller) controller.enabled = false;
+
+        player.transform.SetPositionAndRotation(
+            playerSpawnPoint.position,
+            playerSpawnPoint.rotation
+        );
+
+        //player.ResetVelocity();
+
+        if (controller) controller.enabled = true;
+
+        ResetPlayerHealth();
+    }
+
+    void ResetPlayerHealth()
+    {
+        var health = player.GetComponent<Unity.FPS.Game.Health>();
+        if (!health)
+        {
+            Debug.LogWarning("[RoundManager] Player has no Health component.");
+            return;
+        }
+
+        // Heal up to full
+        health.Heal(health.MaxHealth);
     }
 
 

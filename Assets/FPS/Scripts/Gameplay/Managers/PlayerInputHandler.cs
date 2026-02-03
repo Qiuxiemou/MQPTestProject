@@ -34,6 +34,9 @@ namespace Unity.FPS.Gameplay
         private InputAction m_CrouchAction;
         private InputAction m_ReloadAction;
         private InputAction m_NextWeaponAction;
+        
+        private bool _inputReady;
+        private bool isSeeker;
 
         void Start()
         {
@@ -55,17 +58,63 @@ namespace Unity.FPS.Gameplay
             m_CrouchAction = InputSystem.actions.FindAction("Player/Crouch");
             m_ReloadAction = InputSystem.actions.FindAction("Player/Reload");
             m_NextWeaponAction = InputSystem.actions.FindAction("Player/NextWeapon");
-            
+
+            _inputReady = true;
+
             m_MoveAction.Enable();
             m_LookAction.Enable();
+
             m_JumpAction.Disable();
-            m_FireAction.Disable();
-            m_AimAction.Disable();
             m_SprintAction.Disable();
             m_CrouchAction.Disable();
+
+            m_FireAction.Disable();
+            m_AimAction.Disable();
             m_ReloadAction.Disable();
             m_NextWeaponAction.Disable();
+
+            if (RoundManager.Instance != null)
+            {
+                isSeeker = !RoundManager.Instance.IsSeeker;
+                SetSeekerControls(isSeeker);
+            }
         }
+
+        public void Update()
+        {
+            if (RoundManager.Instance != null)
+            {
+                //if (RoundManager.Instance.IsSeeker == isSeeker)
+                //{
+                    isSeeker = !RoundManager.Instance.IsSeeker;
+                    SetSeekerControls(isSeeker);
+                
+            }
+        }
+
+        public void SetSeekerControls(bool isSeeker)
+        {
+            if (isSeeker)
+            {
+                m_FireAction.Enable();
+                m_AimAction.Enable();
+                m_ReloadAction.Enable();
+                m_NextWeaponAction.Enable();
+                //m_JumpAction.Enable();
+                //m_SprintAction.Enable();
+            }
+            else
+            {
+                m_FireAction.Disable();
+                m_AimAction.Disable();
+                m_ReloadAction.Disable();
+                m_NextWeaponAction.Disable();
+                //m_JumpAction.Disable();
+                //m_SprintAction.Disable();
+            }
+        }
+
+       
 
         void LateUpdate()
         {

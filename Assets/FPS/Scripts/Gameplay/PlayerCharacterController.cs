@@ -474,5 +474,11 @@ namespace Unity.FPS.Gameplay
             IsCrouching = crouched;
             return true;
         }
+
+        //public void ResetVelocity()
+        //{
+        //    m_VerticalVelocity = 0f;
+        //    m_GroundSpeed = Vector3.zero;
+        //}
     }
 }

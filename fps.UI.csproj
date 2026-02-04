@@ -73,6 +73,7 @@
     <Compile Include="Assets\FPS\Scripts\UI\InGameMenuManager.cs" />
     <Compile Include="Assets\FPS\Scripts\UI\StanceHUD.cs" />
     <Compile Include="Assets\FPS\Scripts\UI\WorldspaceHealthBar.cs" />
+    <Compile Include="Assets\FPS\Scripts\UI\PlayerScoreBoard.cs" />
     <Compile Include="Assets\FPS\Scripts\UI\DisplayMessageManager.cs" />
     <Compile Include="Assets\FPS\Scripts\UI\PlayerHealthBar.cs" />
     <Compile Include="Assets\FPS\Scripts\UI\Compass.cs" />

@@ -134,6 +134,10 @@ namespace Unity.FPS.AI
         WeaponController[] m_Weapons;
         NavigationModule m_NavigationModule;
 
+        public Vector3 LastSeenPlayerPosition;
+        public bool HasLastSeenPlayer = false;
+        public float TimeSinceLastSeenPlayer = 0f;
+
 
         // -------- Look Around internal state --------
         bool m_IsLookingAround = false;
@@ -278,6 +282,12 @@ namespace Unity.FPS.AI
         {
             onDetectedTarget.Invoke();
 
+            if (KnownDetectedTarget != null)
+            {
+                LastSeenPlayerPosition = KnownDetectedTarget.transform.position;
+                HasLastSeenPlayer = true;
+            }
+
             // Set the eye default color and property block if the eye renderer is set
             if (m_EyeRendererData.Renderer != null)
             {
@@ -311,8 +321,10 @@ namespace Unity.FPS.AI
             foreach (var node in m_PatrolNodes)
             {
                 if (!node) continue;
+                float w;
 
-                float w = node.GetTotalWeight(transform.position); // dynamic + heatmap
+                if (HasLastSeenPlayer) { w = node.GetTotalWeight(transform.position, LastSeenPlayerPosition, Time.time - TimeSinceLastSeenPlayer); }   
+                else {w = node.GetTotalWeight(transform.position);}
 
                 if (w > bestWeight)
                 {
@@ -357,6 +369,7 @@ namespace Unity.FPS.AI
                 if (CanSeeNode(node))
                 {
                     node.MarkVisited();
+                    TimeSinceLastSeenPlayer = Time.time;
                 }
             }
         }

@@ -149,10 +149,17 @@ namespace Unity.FPS.AI
 
         Coroutine _peekCoroutine;
 
+        
+
 
         void Start()
         {
             Debug.Log("[HIDER] Debug.Log is working and Start() ran");
+            if (PeekNodes == null || PeekNodes.Length == 0)
+            {
+                PeekNodes = FindPeekNodesInScene();
+                Debug.Log($"[HIDER] Found {PeekNodes.Length} peek nodes at spawn");
+            }
 
             // Managers
             m_EnemyManager = FindAnyObjectByType<EnemyManager>();
@@ -948,6 +955,20 @@ namespace Unity.FPS.AI
         }
 
         #endregion
+
+
+        Transform[] FindPeekNodesInScene()
+        {
+            GameObject[] nodes = GameObject.FindGameObjectsWithTag("PeekNode");
+
+            Transform[] result = new Transform[nodes.Length];
+            for (int i = 0; i < nodes.Length; i++)
+                result[i] = nodes[i].transform;
+
+            return result;
+        }
+
+
 
         #region Damage / Death (minimal)
         void OnDamaged(float damage, GameObject source)

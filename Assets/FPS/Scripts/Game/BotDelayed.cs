@@ -46,19 +46,22 @@ namespace Unity.FPS.Game
                 targetRot = state.rot;
             }
 
-            // Step 3: Move toward target instead of snapping
-            float distance = Vector3.Distance(transform.position, targetPos);
+            // Move toward target instead of snapping
+            //float distance = Vector3.Distance(transform.position, targetPos);
 
-            // Increase speed if we’re far behind
-            float moveSpeed = baseMoveSpeed;
-            if (distance > 0.1f)
-            {
-                // scale speed based on how far we are behind
-                moveSpeed += distance * catchupMultiplier;
-            }
+            //// Increase speed if we’re far behind
+            //float moveSpeed = baseMoveSpeed;
+            //if (distance > 0.1f)
+            //{
+            //    // scale speed based on how far we are behind
+            //    moveSpeed += distance * catchupMultiplier;
+            //}
 
-            transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 10f);
+            //transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
+            //transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 10f);
+
+            transform.position = targetPos;
+            transform.rotation = targetRot;
         }
 
         public void SetLatency(float ms)

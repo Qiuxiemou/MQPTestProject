@@ -40737,7 +40737,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1806669476
 Transform:
   m_ObjectHideFlags: 0
@@ -40760,7 +40760,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1806669475}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 853de719f359e67459e1e3ed0f46a52c, type: 3}
   m_Name: 
@@ -44998,7 +44998,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c7747893f578244ebf571f0db1588b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: fps.Game::RoundManager
-  roundLengthSeconds: 15
+  roundLengthSeconds: 45
   disableWhilePaused:
   - {fileID: 2729281214152228945}
   - {fileID: 2729281214152228942}
@@ -45009,17 +45009,21 @@ MonoBehaviour:
   - 100
   - 150
   - 200
+  - 500
+  - 1000
+  randomizeTimeWarp: 0
+  defaultTimeWarpEnabled: 0
   timerUI: {fileID: 925943784}
   surveyUI: {fileID: 1298435347}
   player: {fileID: 2729281214152228921}
   playerSpawnPoint: {fileID: 1880157105}
+  seekerBotPrefab: {fileID: 6163822215945196408, guid: 504df3be75ea8ed449e61ed2e5877d1b,
+    type: 3}
   hiderBotPrefab: {fileID: 5469839216697517205, guid: b121d0988953b2a42b10879cd510a295,
     type: 3}
   hiderTrueBotPrefab: {fileID: 2677989293437629138, guid: 03862f19d17b69e43b6ed80eebc91154,
     type: 3}
   hiderPastBotPrefab: {fileID: 5402154131380086054, guid: 434141f8b2355f64281847a1c55a59d8,
-    type: 3}
-  seekerBotPrefab: {fileID: 6163822215945196408, guid: 504df3be75ea8ed449e61ed2e5877d1b,
     type: 3}
   enemySpawnPoint: {fileID: 1036273494}
 --- !u!4 &2021164507
@@ -50737,7 +50741,7 @@ PrefabInstance:
     - target: {fileID: 8746678193447392789, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 57.31
+      value: 73.9
       objectReference: {fileID: 0}
     - target: {fileID: 8746678193447392789, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}
@@ -50747,7 +50751,7 @@ PrefabInstance:
     - target: {fileID: 8746678193447392789, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.8
+      value: 12.71
       objectReference: {fileID: 0}
     - target: {fileID: 8746678193447392789, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}

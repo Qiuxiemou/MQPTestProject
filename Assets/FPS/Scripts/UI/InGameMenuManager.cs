@@ -59,6 +59,9 @@ namespace Unity.FPS.UI
         [Tooltip("Toggle to enable/disable timewarp")]
         public Toggle TimeWarpToggle;
 
+        [Tooltip("Toggle to enable/disable conditional timewarp")]
+        public Toggle ConditionalTimeWarpToggle;
+
         [Tooltip("Root object of Future Bot (e.g., Enemy_OrigBot)")]
         public GameObject FutureBotRoot;
 
@@ -77,6 +80,8 @@ namespace Unity.FPS.UI
         private InputAction m_CancelAction;
         private InputAction m_NavigateAction;
         private InputAction m_MenuAction;
+
+        //public static bool ConditionalTimeWarpEnabled { get; private set; }
 
         void Start()
         {
@@ -145,6 +150,13 @@ namespace Unity.FPS.UI
             TimeWarpToggle.onValueChanged.AddListener(OnTimeWarpChanged);
             TimeWarpToggle.isOn = true;
             OnTimeWarpChanged(true);
+
+            if (ConditionalTimeWarpToggle)
+            {
+                ConditionalTimeWarpToggle.isOn = true;
+                ConditionalTimeWarpToggle.onValueChanged.AddListener(OnConditionalTimeWarpChanged);
+            }
+
 
         }
 
@@ -237,6 +249,11 @@ namespace Unity.FPS.UI
                 }
             }
                 TimeWarpToggle.isOn = enabled;
+        }
+        void OnConditionalTimeWarpChanged(bool enabled)
+        {
+            //ConditionalTimeWarpEnabled = enabled;
+            Unity.FPS.Game.TimewarpSettings.ConditionalTimeWarpEnabled = enabled;
         }
 
         ///END Bot visibility toggle setup (ADD) 

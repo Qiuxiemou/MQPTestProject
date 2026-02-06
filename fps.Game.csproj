@@ -86,6 +86,7 @@
     <Compile Include="Assets\FPS\Scripts\Game\DebugUtility.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Shared\Health.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\TimedSelfDestruct.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\TimewarpSettings.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\ViewSampler.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\GameStatsLogManager.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\MinMaxParameters.cs" />

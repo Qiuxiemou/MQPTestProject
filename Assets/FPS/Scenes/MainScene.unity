@@ -24597,6 +24597,9 @@ MonoBehaviour:
     Min: 0
     Max: 0
   WatchTurnSpeed: 720
+  PatrolHeadYawAmplitude: 10
+  PatrolHeadYawSpeed: 1.2
+  PatrolBodyTurnSpeed: 8
 --- !u!114 &1154647273 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 9087143436424816424, guid: 25a1b0efadb966e44889fce712c8ff8d,
@@ -26953,7 +26956,7 @@ PrefabInstance:
     - target: {fileID: 6163822215945196408, guid: 504df3be75ea8ed449e61ed2e5877d1b,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6163822215945196408, guid: 504df3be75ea8ed449e61ed2e5877d1b,
         type: 3}
@@ -44993,7 +44996,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2021164505}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1c7747893f578244ebf571f0db1588b1, type: 3}
   m_Name: 
@@ -47128,7 +47131,7 @@ PrefabInstance:
     - target: {fileID: 5469839216697517205, guid: b121d0988953b2a42b10879cd510a295,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6034925979308823399, guid: b121d0988953b2a42b10879cd510a295,
         type: 3}
@@ -50722,7 +50725,7 @@ PrefabInstance:
     - target: {fileID: 8746678193447392789, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 57.31
+      value: 54.44
       objectReference: {fileID: 0}
     - target: {fileID: 8746678193447392789, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}
@@ -50732,7 +50735,7 @@ PrefabInstance:
     - target: {fileID: 8746678193447392789, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.8
+      value: 16.57
       objectReference: {fileID: 0}
     - target: {fileID: 8746678193447392789, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}
@@ -52751,7 +52754,7 @@ PrefabInstance:
     - target: {fileID: 5402154131380086054, guid: 434141f8b2355f64281847a1c55a59d8,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5404990913696761157, guid: 434141f8b2355f64281847a1c55a59d8,
         type: 3}
@@ -52789,7 +52792,7 @@ PrefabInstance:
     - target: {fileID: 2677989293437629138, guid: 03862f19d17b69e43b6ed80eebc91154,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3619801982246500614, guid: 03862f19d17b69e43b6ed80eebc91154,
         type: 3}

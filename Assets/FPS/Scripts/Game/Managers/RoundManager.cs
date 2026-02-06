@@ -19,6 +19,14 @@ public class RoundManager : MonoBehaviour
     [Tooltip("Components to disable while the survey is up (movement, shooting, etc.).")]
     public Behaviour[] disableWhilePaused;
 
+    // --------------- LATENCY ------------------
+    [Header("Latency Settings")]
+    public float[] latencyOptionsMs = { 0f, 50f, 100f, 150f, 200f };
+
+    // Current round latency (read-only for others)
+    public float CurrentLatencyMs { get; private set; }
+
+
     // ---------------- UI ----------------
     [Header("UI References")]
     public TimerUI timerUI;
@@ -43,6 +51,12 @@ public class RoundManager : MonoBehaviour
     // ---------------- ENEMY PREFABS ----------------
     [Header("Enemy Prefabs")]
     public GameObject hiderBotPrefab;
+    public GameObject hiderTrueBotPrefab;
+    public GameObject hiderPastBotPrefab;
+
+    GameObject _currentPastBot;
+    GameObject _currentTrueBot;
+
     public GameObject seekerBotPrefab;
 
     [Tooltip("Spawn location for the enemy.")]
@@ -128,6 +142,15 @@ public class RoundManager : MonoBehaviour
         }
     }
 
+    void PickLatencyForRound()
+    {
+        int index = UnityEngine.Random.Range(0, latencyOptionsMs.Length);
+        CurrentLatencyMs = latencyOptionsMs[index];
+
+        Debug.Log($"[RoundManager] Latency this round: {CurrentLatencyMs} ms");
+    }
+
+
     // ---------------- ROUND FLOW ----------------
     public void StartRound()
     {
@@ -137,6 +160,9 @@ public class RoundManager : MonoBehaviour
 
         RoundRunning = true;
         _timeRemaining = roundLengthSeconds;
+
+        PickLatencyForRound();
+
 
         _isSeeker = UnityEngine.Random.value > 0.5f;
         //_roleSwitchTimer = GetNextRoleInterval();
@@ -203,6 +229,33 @@ public class RoundManager : MonoBehaviour
         if (surveyUI) surveyUI.Show(CurrentRound);
     }
 
+    void BindSceneReferences()
+    {
+        // Player
+        if (!player)
+            player = GameObject.FindGameObjectWithTag("Player");
+
+        // Player spawn
+        if (!playerSpawnPoint)
+            playerSpawnPoint = GameObject.FindGameObjectWithTag("PlayerSpawn")?.transform;
+
+        // Enemy spawn
+        if (!enemySpawnPoint)
+            enemySpawnPoint = GameObject.FindGameObjectWithTag("EnemySpawn")?.transform;
+    }
+
+    IEnumerator DelayedBindAndStart()
+    {
+        yield return null; // wait one frame so scene objects exist
+
+        BindUIIfNeeded();
+        BindSceneReferences();
+
+        RoundRunning = false;
+        StartRound();
+    }
+
+
     // ---------------- ROLE SWITCHING ----------------
     //void HandleRoleTimer()
     //{
@@ -227,15 +280,98 @@ public class RoundManager : MonoBehaviour
 
     void SpawnEnemyForCurrentRole()
     {
-        if (_currentEnemy != null)
-            Destroy(_currentEnemy);
+        // Cleanup old bots
+        if (_currentEnemy) Destroy(_currentEnemy);
+        if (_currentTrueBot) Destroy(_currentTrueBot);
+        if (_currentPastBot) Destroy(_currentPastBot);
 
-        GameObject prefab = _isSeeker ? seekerBotPrefab : hiderBotPrefab;
-        _currentEnemy = Instantiate(prefab, enemySpawnPoint.position, enemySpawnPoint.rotation);
+        //GameObject prefab = _isSeeker ? seekerBotPrefab : hiderBotPrefab;
+        //_currentEnemy = Instantiate(prefab, enemySpawnPoint.position, enemySpawnPoint.rotation);
 
-        if (!_isSeeker)
+        if (_isSeeker)
+        {
+            // Player is Hider → Enemy is SEEKER
+            _currentEnemy = Instantiate(
+                seekerBotPrefab,
+                enemySpawnPoint.position,
+                enemySpawnPoint.rotation
+            );
+        }
+        else
+        {
+
+            // Player is Seeker → Enemy is HIDER
+            _currentEnemy = Instantiate(
+                hiderBotPrefab,
+                enemySpawnPoint.position,
+                enemySpawnPoint.rotation
+            );
+
             AssignPeekNodes(_currentEnemy);
+
+            SpawnHiderTimelineBots(_currentEnemy);
+        }
+
+        //if (_isSeeker)
+        //    AssignPeekNodes(_currentEnemy);
     }
+
+    void SpawnHiderTimelineBots(GameObject futureHider)
+    {
+        Vector3 pos = futureHider.transform.position;
+        Quaternion rot = futureHider.transform.rotation;
+
+        // Spawn TRUE bot (follows Future)
+        _currentTrueBot = Instantiate(hiderTrueBotPrefab, pos, rot);
+        var trueDelayed = _currentTrueBot.GetComponent<BotDelayed>();
+        if (trueDelayed != null)
+        {
+            trueDelayed.firstBot = futureHider.transform;
+            trueDelayed.SetLatency(RoundManager.Instance.CurrentLatencyMs);
+        }
+
+        // Spawn PAST bot (follows True)
+        _currentPastBot = Instantiate(hiderPastBotPrefab, pos, rot);
+        var pastDelayed = _currentPastBot.GetComponent<BotDelayed>();
+        if (pastDelayed != null)
+        {
+            pastDelayed.firstBot = _currentTrueBot.transform;
+            pastDelayed.SetLatency(RoundManager.Instance.CurrentLatencyMs);
+        }
+
+
+        Health futureHealth = futureHider.GetComponent<Health>();
+        Health serverHealth = _currentTrueBot.GetComponent<Health>();
+        Health pastHealth = _currentPastBot.GetComponent<Health>();
+
+        AssignHealthProxy(futureHider, pastHealth, serverHealth, futureHealth);
+        AssignHealthProxy(_currentTrueBot, pastHealth, serverHealth, futureHealth);
+        AssignHealthProxy(_currentPastBot, pastHealth, serverHealth, futureHealth);
+
+        Debug.Log("Health wired: "
+        + $"Past={pastHealth.gameObject.name}, "
+        + $"Server={serverHealth.gameObject.name}, "
+        + $"Future={futureHealth.gameObject.name}");
+    }
+
+    void AssignHealthProxy(
+    GameObject bot,
+    Health past,
+    Health server,
+    Health future)
+    {
+        var proxy = bot.GetComponent<BotHealthProxy>();
+        if (proxy == null)
+        {
+            Debug.LogWarning($"No BotHealthProxy on {bot.name}");
+            return;
+        }
+
+        proxy.pastHealth = past;
+        proxy.serverHealth = server;
+        proxy.futureHealth = future;
+    }
+
 
     void AssignPeekNodes(GameObject hider)
     {
@@ -322,13 +458,13 @@ public class RoundManager : MonoBehaviour
         StartCoroutine(DelayedBindAndStart());
     }
 
-    IEnumerator DelayedBindAndStart()
-    {
-        yield return null;
-        BindUIIfNeeded();
-        RoundRunning = false;
-        StartRound();
-    }
+    //IEnumerator DelayedBindAndStart()
+    //{
+    //    yield return null;
+    //    BindUIIfNeeded();
+    //    RoundRunning = false;
+    //    StartRound();
+    //}
 
     void BindUIIfNeeded()
     {

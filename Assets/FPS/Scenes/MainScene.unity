@@ -22476,7 +22476,7 @@ GameObject:
   - component: {fileID: 1036273494}
   m_Layer: 0
   m_Name: EnemySpawn
-  m_TagString: Untagged
+  m_TagString: EnemySpawn
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -41990,7 +41990,7 @@ GameObject:
   - component: {fileID: 1880157105}
   m_Layer: 0
   m_Name: PlayerSpawn
-  m_TagString: Untagged
+  m_TagString: PlayerSpawn
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -44985,7 +44985,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &2021164506
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -45003,11 +45003,21 @@ MonoBehaviour:
   - {fileID: 2729281214152228945}
   - {fileID: 2729281214152228942}
   - {fileID: 2729281214152228944}
+  latencyOptionsMs:
+  - 0
+  - 50
+  - 100
+  - 150
+  - 200
   timerUI: {fileID: 925943784}
   surveyUI: {fileID: 1298435347}
   player: {fileID: 2729281214152228921}
   playerSpawnPoint: {fileID: 1880157105}
   hiderBotPrefab: {fileID: 5469839216697517205, guid: b121d0988953b2a42b10879cd510a295,
+    type: 3}
+  hiderTrueBotPrefab: {fileID: 2677989293437629138, guid: 03862f19d17b69e43b6ed80eebc91154,
+    type: 3}
+  hiderPastBotPrefab: {fileID: 5402154131380086054, guid: 434141f8b2355f64281847a1c55a59d8,
     type: 3}
   seekerBotPrefab: {fileID: 6163822215945196408, guid: 504df3be75ea8ed449e61ed2e5877d1b,
     type: 3}
@@ -47128,7 +47138,7 @@ PrefabInstance:
     - target: {fileID: 5469839216697517205, guid: b121d0988953b2a42b10879cd510a295,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6034925979308823399, guid: b121d0988953b2a42b10879cd510a295,
         type: 3}
@@ -50684,6 +50694,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 14
       objectReference: {fileID: 0}
+    - target: {fileID: 7253983127304857660, guid: 761cdc9e4e883334cbdcea062d0befa7,
+        type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: 7267769575523271762, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}
       propertyPath: m_Materials.Array.size
@@ -52751,7 +52766,7 @@ PrefabInstance:
     - target: {fileID: 5402154131380086054, guid: 434141f8b2355f64281847a1c55a59d8,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5404990913696761157, guid: 434141f8b2355f64281847a1c55a59d8,
         type: 3}
@@ -52789,7 +52804,7 @@ PrefabInstance:
     - target: {fileID: 2677989293437629138, guid: 03862f19d17b69e43b6ed80eebc91154,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3619801982246500614, guid: 03862f19d17b69e43b6ed80eebc91154,
         type: 3}

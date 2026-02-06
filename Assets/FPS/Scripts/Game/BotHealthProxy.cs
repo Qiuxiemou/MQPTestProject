@@ -79,7 +79,9 @@ namespace Unity.FPS.Game
         public IEnumerator DamageBackwards(float damage, GameObject source)
         {
             Debug.Log("Health Propagating backwards");
-            futureHealth.TakeDamage(damage, source);
+            LM.write("Health pass backwards");
+
+            //futureHealth.TakeDamage(damage, source);
 
             if (forwardDelayMs > 0f)
                 yield return new WaitForSeconds(forwardDelayMs / 1000f);
@@ -97,7 +99,10 @@ namespace Unity.FPS.Game
         public IEnumerator DamageForwards(float damage, GameObject source) // Back propagate = false; time warp = true
         {
             Debug.Log("Health Propagating forwards");
-            pastHealth.TakeDamage(damage, source);
+            LM.write("Health pass forward");
+
+            //pastHealth.TakeDamage(damage, source);
+
             if (futureHealth != null) futureHealth.TakeDamage(damage, source);
 
             if (forwardDelayMs > 0f)
@@ -114,6 +119,9 @@ namespace Unity.FPS.Game
 
             //if (serverHealth != null)
             //    StartCoroutine(ForwardToServerAfterDelay(damage, source));
+
+            LM.write($"{transform.root.name} takeDamege");
+
             Debug.Log(propagateBackwards);
             if (propagateBackwards && futureHealth != null)
                 StartCoroutine(DamageBackwards(damage, source));

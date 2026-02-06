@@ -37,7 +37,7 @@ namespace Unity.FPS.AI
         // Small helper so we don't repeat LM.write formatting
         void Log(string msg)
         {
-            LM.write($"[HIDER] {msg}");
+            //LM.write($"[HIDER] {msg}");
         }
 
         [Header("General")]
@@ -154,18 +154,18 @@ namespace Unity.FPS.AI
 
         void Start()
         {
-            Debug.Log("[HIDER] Debug.Log is working and Start() ran");
+            //Debug.////Log("[HIDER] Debug.Log is working and Start() ran");
             if (PeekNodes == null || PeekNodes.Length == 0)
             {
                 PeekNodes = FindPeekNodesInScene();
-                Debug.Log($"[HIDER] Found {PeekNodes.Length} peek nodes at spawn");
+                //Debug.////Log($"[HIDER] Found {PeekNodes.Length} peek nodes at spawn");
             }
 
             // Managers
             m_EnemyManager = FindAnyObjectByType<EnemyManager>();
             m_GameFlowManager = FindAnyObjectByType<GameFlowManager>();
             m_Actor = GetComponent<Actor>();
-            m_Health = GetComponent<Health>();
+            //m_Health = GetComponent<Health>();
             NavMeshAgent = GetComponent<NavMeshAgent>();
 
 
@@ -183,21 +183,19 @@ namespace Unity.FPS.AI
             {
                 // optional: if you use EnemyManager just for counting, you can pass null
                 m_EnemyManager.RegisterEnemy(null);
-                Log("Registered with EnemyManager");
+                ////Log("Registered with EnemyManager");
             }
 
             // Subscribe to health events
-            if (m_Health != null)
-            {
-                m_Health.OnDie += OnDie;
-                m_Health.OnDamaged += OnDamaged;
-            }
+            //m_Health.OnDie += OnDie;
+            //m_Health.OnDamaged += OnDamaged;
+            
 
             // Initial state  cover position (start where the bot spawns)
             _state = HiderState.UnknownPlayer;
             _coverPos = transform.position;
 
-            Log($"Start at {_coverPos} | Initial State = {_state}");
+            ////Log($"Start at {_coverPos} | Initial State = {_state}");
 
             _lastKnownPlayerPos = new Vector3(72.8f, 2.24f, 17.34f);
 
@@ -244,7 +242,7 @@ namespace Unity.FPS.AI
             // Handle arrival at chosen cover (for SeePlayer state)
             if (_isChoosingCover && NavMeshAgent.remainingDistance <= PathReachingRadius && !NavMeshAgent.pathPending)
             {
-                Log($"Reached new cover at {transform.position} | switching to UnknownPlayer + will peek again");
+                //Log($"Reached new cover at {transform.position} | switching to UnknownPlayer + will peek again");
                 // Reached new cover
                 _coverPos = transform.position;
                 _isChoosingCover = false;
@@ -253,12 +251,12 @@ namespace Unity.FPS.AI
                 //_state = HiderState.UnknownPlayer;
                 if (_state == HiderState.SeePlayer)
                 {
-                    Log($"Reached cover in SeePlayer -> UnknownPlayer (peek again)");
+                    //Log($"Reached cover in SeePlayer -> UnknownPlayer (peek again)");
                     _state = HiderState.UnknownPlayer;
                 }
                 else if (_state == HiderState.LostPlayerRecent)
                 {
-                    Log($"Reached cover in LostPlayerRecent -> will wait then Unknown");
+                    //Log($"Reached cover in LostPlayerRecent -> will wait then Unknown");
                     // stay in LostPlayerRecent; the state will handle the wait->Unknown
                 }
 
@@ -281,7 +279,7 @@ namespace Unity.FPS.AI
 
                         if (_state != HiderState.SeePlayer)
                         {
-                            Debug.Log($"DetectionModule sees target at {_lastKnownPlayerPos} -> State SeePlayer");
+                            //Debug.Log($"DetectionModule sees target at {_lastKnownPlayerPos} -> State SeePlayer");
                             _state = HiderState.SeePlayer;
                             _lostRecentEntered = false;
 
@@ -299,15 +297,15 @@ namespace Unity.FPS.AI
                         if (sinceSeen >= TimeToForget)
                         {
                             if (_state != HiderState.UnknownPlayer)
-                                Debug.Log($"No sight for {sinceSeen:F1}s -> UnknownPlayer (forget)");
+                                //Debug.//Log($"No sight for {sinceSeen:F1}s -> UnknownPlayer (forget)");
                             _state = HiderState.UnknownPlayer;
                             _lostRecentEntered = false;
-                            Debug.Log("State UnknownPlayer");
+                            //Debug.//Log("State UnknownPlayer");
                         }
                         else if (sinceSeen >= TimeToLostRecent)
                         {
                             if (_state != HiderState.LostPlayerRecent)
-                                Debug.Log($"No sight for {sinceSeen:F1}s -> LostPlayerRecent");
+                                //Debug.//Log($"No sight for {sinceSeen:F1}s -> LostPlayerRecent");
                             _state = HiderState.LostPlayerRecent;
                         }
                         // else: still in SeePlayer for a short “grace” window
@@ -320,10 +318,10 @@ namespace Unity.FPS.AI
                 {
                     case HiderState.UnknownPlayer:
                         {
-                            Debug.Log("State UnknownPlayer2");
+                            //Debug.//Log("State UnknownPlayer2");
                             if (!_isPeeking)
                             {
-                                Debug.Log("State UnknownPlayer: starting UnknownPlayerRoutine");
+                                //Debug.//Log("State UnknownPlayer: starting UnknownPlayerRoutine");
                                 StartCoroutine(PeekRoutine());
                                 //StartCoroutine(UnknownPlayerRoutine());
                             }
@@ -340,7 +338,7 @@ namespace Unity.FPS.AI
                             // Find cover based on lastKnownPlayerPos and move there
                             if (!_isChoosingCover)
                             {
-                                Debug.Log($"State SeePlayer: choosing cover vs player at {_lastKnownPlayerPos}");
+                                //Debug.//Log($"State SeePlayer: choosing cover vs player at {_lastKnownPlayerPos}");
                                 if (ReachedDestination())
                                 {
                                     ChooseCoverAndMove(_lastKnownPlayerPos);
@@ -356,7 +354,7 @@ namespace Unity.FPS.AI
                             if (!_lostRecentEntered && !_isChoosingCover)
                             {
                                 _lostRecentEntered = true;
-                                Debug.Log($"State LostPlayerRecent: relocate using lastKnown={_lastKnownPlayerPos}");
+                                //Debug.//Log($"State LostPlayerRecent: relocate using lastKnown={_lastKnownPlayerPos}");
 
                                 if (ReachedDestination())
                                     ChooseCoverAndMove(_lastKnownPlayerPos);
@@ -401,7 +399,7 @@ namespace Unity.FPS.AI
         {
             if (transform.position.y < SelfDestructYHeight)
             {
-                Log($"Below SelfDestructYHeight ({SelfDestructYHeight}) � destroying hider");
+                //Log($"Below SelfDestructYHeight ({SelfDestructYHeight}) � destroying hider");
                 Destroy(gameObject);
                 return;
             }
@@ -411,18 +409,18 @@ namespace Unity.FPS.AI
 
         IEnumerator PeekRoutine()
         {
-            Debug.Log($"[HIDER] >>> PeekRoutine ENTER (state={_state})");
+            //Debug.//Log($"[HIDER] >>> PeekRoutine ENTER (state={_state})");
             _isPeeking = true;
             _coverPos = transform.position;
-            Log($"PeekRoutine started from coverPos = {_coverPos}");
+            //Log($"PeekRoutine started from coverPos = {_coverPos}");
 
-            Debug.Log("peek");
+            //Debug.//Log("peek");
             // 1. Recompute peek positions around current cover location
             RecomputePeekPositions(_coverPos);
 
             if (!_hasValidPeekPositions)
             {
-                Log("PeekRoutine aborted, no valid peek positions");
+                //Log("PeekRoutine aborted, no valid peek positions");
                 _isPeeking = false;
                 yield break;
             }
@@ -456,7 +454,7 @@ namespace Unity.FPS.AI
             Vector3 outward = -_wallNormal;
             Vector3 peekOut = basePeek + outward * forwardOffset;
 
-            Log($"PeekRoutine: basePeek={basePeek}, outward={outward}, peekOut={peekOut}");
+            //Log($"PeekRoutine: basePeek={basePeek}, outward={outward}, peekOut={peekOut}");
 
             // 6. Jiggle peek: out-in-out-in for peekJiggleCount cycles
             peekJiggleCount = Random.Range(0, 15);
@@ -473,7 +471,7 @@ namespace Unity.FPS.AI
 
 
                 // ---- STEP OUT (expose) ----
-                Log($"PeekRoutine: Jiggle #{i + 1}/{peekJiggleCount} -> STEP OUT to {peekOut}");
+                //Log($"PeekRoutine: Jiggle #{i + 1}/{peekJiggleCount} -> STEP OUT to {peekOut}");
                 NavMeshAgent.SetDestination(peekOut);
                 while (NavMeshAgent.remainingDistance > reachThreshold && !NavMeshAgent.pathPending)
                     yield return null;
@@ -482,19 +480,19 @@ namespace Unity.FPS.AI
                 yield return new WaitForSeconds(midDelay);
 
                 bool sawDuringPeek = DetectionModule != null && DetectionModule.IsSeeingTarget;
-                Log($"PeekRoutine: Jiggle #{i + 1} exposed, IsSeeingTarget={sawDuringPeek}");
+                //Log($"PeekRoutine: Jiggle #{i + 1} exposed, IsSeeingTarget={sawDuringPeek}");
 
                 if (sawDuringPeek)
                 {
                     _lastKnownPlayerPos = DetectionModule.LastSeenPosition;
-                    Log($"PeekRoutine: PLAYER SPOTTED at {_lastKnownPlayerPos} -> State SeePlayer");
+                    //Log($"PeekRoutine: PLAYER SPOTTED at {_lastKnownPlayerPos} -> State SeePlayer");
                     _state = HiderState.SeePlayer;
                     _isPeeking = false;
                     yield break;
                 }
 
                 // ---- STEP BACK (safe again) ----
-                Log($"PeekRoutine: Jiggle #{i + 1} -> STEP BACK to basePeek {basePeek}");
+                //Log($"PeekRoutine: Jiggle #{i + 1} -> STEP BACK to basePeek {basePeek}");
                 NavMeshAgent.SetDestination(basePeek);
                 while (NavMeshAgent.remainingDistance > reachThreshold && !NavMeshAgent.pathPending)
                     yield return null;
@@ -505,26 +503,26 @@ namespace Unity.FPS.AI
             }
 
             // 7. After all jiggling, go fully back to the main cover position
-            Log("PeekRoutine: finished all jiggle peeks, returning to _coverPos");
+            //Log("PeekRoutine: finished all jiggle peeks, returning to _coverPos");
             NavMeshAgent.SetDestination(_coverPos);
             while (NavMeshAgent.remainingDistance > reachThreshold && !NavMeshAgent.pathPending)
                 yield return null;
 
-            Debug.Log($"[HIDER] <<< PeekRoutine EXIT (state={_state})");
+            //Debug.//Log($"[HIDER] <<< PeekRoutine EXIT (state={_state})");
             _isPeeking = false;
 
             // 8. After peeking, possibly move to a new nearby cover (your existing behavior)
             float roll = Random.value;
-            Log($"PeekRoutine: finished, roll={roll:F2}, moveChance={IdleMoveCoverChance:F2}");
+            //Log($"PeekRoutine: finished, roll={roll:F2}, moveChance={IdleMoveCoverChance:F2}");
 
             if (roll < IdleMoveCoverChance)
             {
-                Log("PeekRoutine: roll succeeded -> MoveToRandomNearbyCover");
+                //Log("PeekRoutine: roll succeeded -> MoveToRandomNearbyCover");
                 MoveToRandomNearbyCover();
             }
             else
             {
-                Log("PeekRoutine: staying at current cover");
+                //Log("PeekRoutine: staying at current cover");
             }
         }
         void RecomputePeekPositions(Vector3 origin)
@@ -533,7 +531,7 @@ namespace Unity.FPS.AI
 
             if (PeekNodes == null || PeekNodes.Length == 0)
             {
-                Log("RecomputePeekPositions: No PeekNodes assigned!");
+                //Log("RecomputePeekPositions: No PeekNodes assigned!");
                 return;
             }
 
@@ -574,7 +572,7 @@ namespace Unity.FPS.AI
 
             if (closestA == null)
             {
-                Log("RecomputePeekPositions: Could not find closest node!");
+                //Log("RecomputePeekPositions: Could not find closest node!");
                 return;
             }
 
@@ -592,7 +590,7 @@ namespace Unity.FPS.AI
 
             _hasValidPeekPositions = true;
 
-            Log($"RecomputePeekPositions: A={closestA.name}, B={closestB.name}, C={closestC.name}");
+            //Log($"RecomputePeekPositions: A={closestA.name}, B={closestB.name}, C={closestC.name}");
 
             Debug.DrawLine(origin, _peekLeftPos, Color.green, 2f);
             Debug.DrawLine(origin, _peekRightPos, Color.blue, 2f);
@@ -615,7 +613,7 @@ namespace Unity.FPS.AI
         {
             _isUnknownRoutineRunning = true;
 
-            Debug.Log("LookAlongWallRoutine started");
+            //Debug.//Log("LookAlongWallRoutine started");
 
             // Directions toward left & right wall edges
             Vector3 leftDir = (_peekLeftPos - transform.position).normalized;
@@ -657,69 +655,6 @@ namespace Unity.FPS.AI
             _isUnknownRoutineRunning = false;
         }
 
-
-        #region Looking around
-
-        //IEnumerator UnknownPlayerRoutine()
-        //{
-        //    _isUnknownRoutineRunning = true;
-
-        //    // remember the �center� yaw we scan around
-        //    float baseYaw = transform.eulerAngles.y;
-
-        //    Log($"UnknownPlayerRoutine: starting idle scan at yaw={baseYaw:F1}");
-
-        //    for (int cycle = 0; cycle < IdleScanCycles; cycle++)
-        //    {
-        //        float timer = 0f;
-        //        while (timer < IdleScanDuration)
-        //        {
-        //            timer += Time.deltaTime;
-        //            float t = timer / IdleScanDuration; // 0..1
-
-        //            // Ping-pong from -1 to +1
-        //            float normalized = Mathf.PingPong(t * 2f, 1f) * 2f - 1f; // -1..1
-        //            float targetYaw = baseYaw + normalized * IdleScanHalfAngle;
-
-        //            Quaternion targetRot = Quaternion.Euler(0f, targetYaw, 0f);
-        //            transform.rotation = Quaternion.Slerp(
-        //                transform.rotation,
-        //                targetRot,
-        //                Time.deltaTime * OrientationSpeed);
-
-        //            // If we see player while scanning, bail out
-        //            if (DetectionModule != null && DetectionModule.IsSeeingTarget)
-        //            {
-        //                _lastKnownPlayerPos = DetectionModule.LastSeenPosition;
-        //                Log($"UnknownPlayerRoutine: spotted target while scanning at {_lastKnownPlayerPos} -> SeePlayer");
-        //                _state = HiderState.SeePlayer;
-        //                _isUnknownRoutineRunning = false;
-        //                yield break;
-        //            }
-
-        //            yield return null;
-        //        }
-        //    }
-
-        //    // After scanning, maybe move to a new nearby cover
-        //    float roll = Random.value;
-        //    Log($"UnknownPlayerRoutine: finished scan, roll={roll:F2}, moveChance={IdleMoveCoverChance:F2}");
-
-        //    if (roll < IdleMoveCoverChance)
-        //    {
-        //        Log("UnknownPlayerRoutine: roll succeeded -> MoveToRandomNearbyCover");
-        //        MoveToRandomNearbyCover();
-        //    }
-        //    else
-        //    {
-        //        Log("UnknownPlayerRoutine: staying at current cover");
-        //    }
-
-        //    _isUnknownRoutineRunning = false;
-        //}
-
-        #endregion
-
         #region Cover Selection 
 
         /// <summary>
@@ -755,7 +690,7 @@ namespace Unity.FPS.AI
 
             if (candidates.Count == 0)
             {
-                Log("MoveToRandomNearbyCover: no nearby walls");
+                ////Log("MoveToRandomNearbyCover: no nearby walls");
                 return;
             }
 
@@ -771,7 +706,7 @@ namespace Unity.FPS.AI
                 _isChoosingCover = true;        // reuse arrival logic in Update()
                 NavMeshAgent.SetDestination(_currentCoverTarget);
 
-                Log($"MoveToRandomNearbyCover: moving to idle cover index={idx} at {_currentCoverTarget}");
+                ////Log($"MoveToRandomNearbyCover: moving to idle cover index={idx} at {_currentCoverTarget}");
                 if (showDebugCover)
                     Debug.DrawLine(transform.position + Vector3.up,
                                    _currentCoverTarget + Vector3.up,
@@ -779,7 +714,7 @@ namespace Unity.FPS.AI
             }
             else
             {
-                Log($"MoveToRandomNearbyCover: NavMesh.SamplePosition failed near {chosenPos}");
+                ////Log($"MoveToRandomNearbyCover: NavMesh.SamplePosition failed near {chosenPos}");
             }
         }
 
@@ -823,18 +758,18 @@ namespace Unity.FPS.AI
                 // 1. Retreat: far from player, but don't punish bot distance as much
                 float retreatScore = distPlayer - 0.5f * distBot;
 
-                // 2. Quick: just how fast to reach (closer is better)
-                float quickScore = -distBot;
+                //// 2. Quick: just how fast to reach (closer is better)
+                //float quickScore = -distBot;
 
-                // 3. Flank: want roughly 90Â° off the player, not straight back
-                Vector3 toPlayer = (playerPos - botPos).normalized;
-                Vector3 toCover = (coverPos - botPos).normalized;
-                float angle = Vector3.Angle(toPlayer, toCover);
-                float flankAngleScore = 1f - Mathf.Abs(angle - 90f) / 90f;
-                float flankScore = flankAngleScore + 0.2f * (distPlayer / (coverSearchRadius + 0.001f));
+                //// 3. Flank: want roughly 90Â° off the player, not straight back
+                //Vector3 toPlayer = (playerPos - botPos).normalized;
+                //Vector3 toCover = (coverPos - botPos).normalized;
+                //float angle = Vector3.Angle(toPlayer, toCover);
+                //float flankAngleScore = 1f - Mathf.Abs(angle - 90f) / 90f;
+                //float flankScore = flankAngleScore + 0.2f * (distPlayer / (coverSearchRadius + 0.001f));
 
                 // Combined score (you can weight these differently)
-                float finalScore = retreatScore * 1.0f + quickScore * 0.3f + flankScore * 0.5f;
+                float finalScore = retreatScore * 1.0f; //+ quickScore * 0.3f + flankScore * 0.5f;
 
                 var cand = new CoverCandidate
                 {
@@ -843,8 +778,8 @@ namespace Unity.FPS.AI
                     distBot = distBot,
                     distPlayer = distPlayer,
                     retreatScore = retreatScore,
-                    quickScore = quickScore,
-                    flankScore = flankScore
+                    //quickScore = quickScore,
+                    //flankScore = flankScore
                 };
 
                 // Store in candidates list - we'll keep ALL of them for weighted selection
@@ -868,7 +803,7 @@ namespace Unity.FPS.AI
 
             if (candidates.Count == 0)
             {
-                LM.write("[HIDER] ChooseCoverAndMove: no valid covers found");
+                //LM.write("[HIDER] ChooseCoverAndMove: no valid covers found");
                 return;
             }
 
@@ -893,7 +828,7 @@ namespace Unity.FPS.AI
             // If all scores are 0 or negative, just pick randomly
             if (totalScore <= 0f)
             {
-                LM.write("[HIDER] All scores <= 0, picking random candidate");
+                //LM.write("[HIDER] All scores <= 0, picking random candidate");
                 int randomIdx = Random.Range(0, candidates.Count);
                 var randomChoice = candidates[randomIdx];
 
@@ -901,7 +836,7 @@ namespace Unity.FPS.AI
                 {
                     NavMeshAgent.SetDestination(navHit.position);
                     Debug.DrawLine(transform.position + Vector3.up, navHit.position + Vector3.up, Color.magenta, 1f);
-                    LM.write($"[HIDER] Random chosen cover = {navHit.position}");
+                    //LM.write($"[HIDER] Random chosen cover = {navHit.position}");
                 }
                 return;
             }
@@ -927,12 +862,12 @@ namespace Unity.FPS.AI
             }
 
             // Log the probabilities for debugging
-            LM.write($"[HIDER] Cover selection probabilities (Total Score: {totalScore:F2}):");
+            //LM.write($"[HIDER] Cover selection probabilities (Total Score: {totalScore:F2}):");
             for (int i = 0; i < candidates.Count; i++)
             {
                 float probability = (scores[i] / totalScore) * 100f;
                 string marker = (i == chosenIndex) ? " <- CHOSEN" : "";
-                LM.write($"  Candidate {i}: Score={scores[i]:F2}, Probability={probability:F1}%{marker}");
+                //LM.write($"  Candidate {i}: Score={scores[i]:F2}, Probability={probability:F1}%{marker}");
 
                 // Draw debug lines - chosen one is bright blue, others are dim
                 Color debugColor = (i == chosenIndex) ? Color.blue : new Color(0.5f, 0.5f, 0.5f, 0.3f);
@@ -946,11 +881,11 @@ namespace Unity.FPS.AI
             {
                 NavMeshAgent.SetDestination(finalHit.position);
                 Debug.DrawLine(transform.position + Vector3.up, finalHit.position + Vector3.up, Color.cyan, 1f);
-                LM.write($"[HIDER] Weighted random chosen cover = {finalHit.position}");
+                //LM.write($"[HIDER] Weighted random chosen cover = {finalHit.position}");
             }
             else
             {
-                LM.write($"[HIDER] ChooseCoverAndMove: no NavMesh near chosen cover {chosenPos}");
+                //LM.write($"[HIDER] ChooseCoverAndMove: no NavMesh near chosen cover {chosenPos}");
             }            
         }
 
@@ -968,35 +903,44 @@ namespace Unity.FPS.AI
             return result;
         }
 
-
-
         #region Damage / Death (minimal)
-        void OnDamaged(float damage, GameObject source)
+        void OnDamaged(float damage, GameObject damageSource)
         {
-            Log($"OnDamaged: damage={damage}, source={(source ? source.name : "null")}");
+            //Log($"OnDamaged: damage={damage}, source={(source ? source.name : "null")}");
 
             // Optional: you could make hider immediately switch to SeePlayer when shot
-            if (source != null && !source.GetComponent<HiderController>())
+            //if (source != null && !source.GetComponent<HiderController>())
+            //{
+            //    if (DetectionModule != null)
+            //    {
+            //        DetectionModule.OnDamaged(source);
+            //        ////Log("OnDamaged: forwarded to DetectionModule.OnDamaged");
+            //    }
+            //}
+
+            if (damageSource && !damageSource.GetComponent<HiderController>())
             {
-                if (DetectionModule != null)
-                {
-                    DetectionModule.OnDamaged(source);
-                    Log("OnDamaged: forwarded to DetectionModule.OnDamaged");
-                }
+                // pursue the player
+                DetectionModule.OnDamaged(damageSource);
+
+                //onDamaged?.Invoke();
             }
         }
 
+        
         void OnDie()
         {
-            Log("OnDie: unregistering and destroying hider");
+            ////Log("OnDie: unregistering and destroying hider");
 
             if (m_EnemyManager != null)
             {
                 m_EnemyManager.UnregisterEnemy(null);
             }
 
-            Destroy(gameObject);
+            
+            //Destroy(gameObject);
         }
+
 
         #endregion
     }

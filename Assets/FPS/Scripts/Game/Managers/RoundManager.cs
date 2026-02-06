@@ -25,12 +25,12 @@ public class RoundManager : MonoBehaviour
     public SurveyUI surveyUI;
 
     // ---------------- ROLE SWITCHING ----------------
-    [Header("Role Switching (Prototype)")]
-    [Tooltip("Minimum seconds before a role switch is allowed.")]
-    public float minRoleSwitchSeconds = 10f;
+    //[Header("Role Switching (Prototype)")]
+    //[Tooltip("Minimum seconds before a role switch is allowed.")]
+    //public float minRoleSwitchSeconds = 10f;
 
-    [Tooltip("Maximum seconds before a role switch.")]
-    public float maxRoleSwitchSeconds = 25f;
+    //[Tooltip("Maximum seconds before a role switch.")]
+    //public float maxRoleSwitchSeconds = 25f;
 
     public event Action<bool> OnPlayerRoleChanged;
 
@@ -38,7 +38,6 @@ public class RoundManager : MonoBehaviour
     // ---------------- PLAYER ----------------
     [Header("Player Spawn")]
     public GameObject player;
-    //public GameObject playerHealth;
     public Transform playerSpawnPoint;
 
     // ---------------- ENEMY PREFABS ----------------
@@ -140,7 +139,8 @@ public class RoundManager : MonoBehaviour
         _timeRemaining = roundLengthSeconds;
 
         _isSeeker = UnityEngine.Random.value > 0.5f;
-        _roleSwitchTimer = GetNextRoleInterval();
+        //_roleSwitchTimer = GetNextRoleInterval();
+        
         LogRoleChange();
 
         SpawnEnemyForCurrentRole();
@@ -161,7 +161,7 @@ public class RoundManager : MonoBehaviour
         while (_timeRemaining > 0f)
         {
             _timeRemaining -= Time.deltaTime;
-            HandleRoleTimer();
+            //HandleRoleTimer();
             OnTimerTick?.Invoke(TimeRemaining);
             yield return null;
         }
@@ -204,26 +204,26 @@ public class RoundManager : MonoBehaviour
     }
 
     // ---------------- ROLE SWITCHING ----------------
-    void HandleRoleTimer()
-    {
-        _roleSwitchTimer -= Time.deltaTime;
-        if (_roleSwitchTimer <= 0f)
-        {
-            _isSeeker = !_isSeeker;
-            LogRoleChange();
-            SpawnEnemyForCurrentRole();
-            RespawnPlayer();
-            OnPlayerRoleChanged?.Invoke(_isSeeker);
-            _roleSwitchTimer = GetNextRoleInterval();
-        }
-    }
+    //void HandleRoleTimer()
+    //{
+    //    _roleSwitchTimer -= Time.deltaTime;
+    //    if (_roleSwitchTimer <= 0f)
+    //    {
+    //        _isSeeker = !_isSeeker;
+    //        LogRoleChange();
+    //        SpawnEnemyForCurrentRole();
+    //        RespawnPlayer();
+    //        OnPlayerRoleChanged?.Invoke(_isSeeker);
+    //        _roleSwitchTimer = GetNextRoleInterval();
+    //    }
+    //}
 
-    float GetNextRoleInterval()
-    {
-        float min = Mathf.Max(10f, minRoleSwitchSeconds);
-        float max = Mathf.Max(min + 0.01f, maxRoleSwitchSeconds);
-        return UnityEngine.Random.Range(min, max);
-    }
+    //float GetNextRoleInterval()
+    //{
+    //    float min = Mathf.Max(10f, minRoleSwitchSeconds);
+    //    float max = Mathf.Max(min + 0.01f, maxRoleSwitchSeconds);
+    //    return UnityEngine.Random.Range(min, max);
+    //}
 
     void SpawnEnemyForCurrentRole()
     {

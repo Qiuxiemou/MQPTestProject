@@ -609,6 +609,7 @@ GameObject:
   - component: {fileID: 1854807761068444290}
   - component: {fileID: 2939234730662113011}
   - component: {fileID: 5016273369594690406}
+  - component: {fileID: 2238427797873513307}
   m_Layer: 9
   m_Name: EnemyHider
   m_TagString: Bot
@@ -696,7 +697,31 @@ MonoBehaviour:
   IdleMoveCoverChance: 0.3
   peekJiggleCount: 10
   betweenPeekDelay: 0.5
-  PeekNodes: []
+  PeekNodes:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   TimeToLostRecent: 2
   TimeToForget: 4
   LostToUnknownAfterHide: 2
@@ -729,7 +754,7 @@ MonoBehaviour:
   Health: {fileID: 6115438318695881059}
   HealthBarImage: {fileID: 3798446968670476091}
   HealthBarPivot: {fileID: 2647826278215713766}
-  HideFullHealthBar: 1
+  HideFullHealthBar: 0
   VisibleHealthBar: 1
 --- !u!195 &944632757919578044
 NavMeshAgent:
@@ -972,6 +997,22 @@ MonoBehaviour:
   MinPlayerDistance: 5
   MinObstacleHeight: 1.25
   UpdateFrequency: 0.25
+--- !u!114 &2238427797873513307
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5469839216697517205}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9ae5a008251a5f4490375201f7f2d66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: fps.Game::Unity.FPS.Game.BotHealthProxy
+  pastHealth: {fileID: 0}
+  serverHealth: {fileID: 0}
+  futureHealth: {fileID: 6115438318695881059}
+  destroyBufferAfterClientDeathMs: 100
 --- !u!1 &6074697690378557266
 GameObject:
   m_ObjectHideFlags: 0
@@ -1049,8 +1090,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 927ff0b4cb9a5dd4fb83c45166cffc50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MinReactionTime: 0.5
-  MaxReactionTime: 1.5
+  MinReactionTime: 0
+  MaxReactionTime: 0
   ViewAngle: 150
   DetectionRange: 9999
   CloseDetectionRange: 15

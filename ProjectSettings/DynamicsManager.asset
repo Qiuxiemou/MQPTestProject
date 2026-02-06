@@ -17,7 +17,7 @@ PhysicsManager:
   m_EnableAdaptiveForce: 0
   m_ClothInterCollisionDistance: 0
   m_ClothInterCollisionStiffness: 0
-  m_LayerCollisionMatrix: ffefffffffe7ffffffe7ffffffefffffffe7ffffffe7ffffffffffffffefffffffe7ffffffebffffffe5ffffc9e2ffff40e0ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+  m_LayerCollisionMatrix: f7effffff7e7fffff7e7ffff0080fffff7e7fffff7e7fffff7fffffff7effffff7e7fffff7fffffff7e7ffffc1e2ffff40e2fffff7fffffff7ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
   m_SimulationMode: 0
   m_AutoSyncTransforms: 0
   m_ReuseCollisionCallbacks: 0
@@ -33,5 +33,5 @@ PhysicsManager:
   m_SolverType: 0
   m_DefaultMaxAngularSpeed: 7
   m_ScratchBufferChunkCount: 4
-  m_CurrentBackendId: 4072204805
+  m_CurrentBackendId: 0
   m_FastMotionThreshold: 3.4028235e+38

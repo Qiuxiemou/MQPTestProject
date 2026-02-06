@@ -222,22 +222,27 @@ namespace Unity.FPS.Gameplay
 
         void OnHit(Vector3 point, Vector3 normal, Collider collider)
         {
+            LM.write($"[ProjectileStandard] OnHit Triggered");
+
             // damage
             if (AreaOfDamage)
             {
                 // area damage
+                LM.write($"[ProjectileStandard] OnHit AreaOfDamage");
                 AreaOfDamage.InflictDamageInArea(Damage, point, HittableLayers, k_TriggerInteraction,
                     m_ProjectileBase.Owner);
             }
             else
-            {
+            { 
                 var proxy = collider.GetComponentInParent<BotHealthProxy>();
                 if (proxy != null)
                 {
+                    LM.write($"[ProjectileStandard] OnHit proxy != null");
                     proxy.TakeDamage(Damage, m_ProjectileBase.Owner);
                 }
                 else
                 {
+                    LM.write($"[ProjectileStandard] OnHit else");
                     Damageable damageable = collider.GetComponent<Damageable>();
                     if (damageable)
                         damageable.InflictDamage(Damage, false, m_ProjectileBase.Owner);

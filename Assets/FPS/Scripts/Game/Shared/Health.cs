@@ -47,6 +47,9 @@ namespace Unity.FPS.Game
             if (Invincible)
                 return;
 
+            LM.write($"TakeDamage ENTER {transform.root.name} | frame {Time.frameCount}");
+
+
             float healthBefore = CurrentHealth;
             CurrentHealth -= damage;
             CurrentHealth = Mathf.Clamp(CurrentHealth, 0f, MaxHealth);
@@ -55,6 +58,7 @@ namespace Unity.FPS.Game
             float trueDamageAmount = healthBefore - CurrentHealth;
             if (trueDamageAmount > 0f)
             {
+                LM.write($"[{gameObject.name}] took {damage} damage");
                 OnDamaged?.Invoke(trueDamageAmount, damageSource);
             }
 

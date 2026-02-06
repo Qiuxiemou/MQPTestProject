@@ -68,10 +68,10 @@ namespace Unity.FPS.Gameplay
             m_SprintAction.Disable();
             m_CrouchAction.Disable();
 
-            m_FireAction.Disable();
-            m_AimAction.Disable();
-            m_ReloadAction.Disable();
-            m_NextWeaponAction.Disable();
+            m_FireAction.Enable();
+            m_AimAction.Enable();
+            m_ReloadAction.Enable();
+            m_NextWeaponAction.Enable();
 
             if (RoundManager.Instance != null)
             {

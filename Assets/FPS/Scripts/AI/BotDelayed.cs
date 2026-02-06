@@ -35,10 +35,10 @@ namespace Unity.FPS.Game
         {
             if (firstBot == null) return;
 
-            // Step 1: Record the current state of the leader
+            // Record the current state of the leader
             stateBuffer.Enqueue((firstBot.position, firstBot.rotation, Time.time + latencyMs * modifier / 1000f));
 
-            // Step 2: If there are states ready to apply, update target
+            // If there are states ready to apply, update target
             while (stateBuffer.Count > 0 && Time.time >= stateBuffer.Peek().applyTime)
             {
                 var state = stateBuffer.Dequeue();

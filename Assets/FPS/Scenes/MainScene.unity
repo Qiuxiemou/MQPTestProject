@@ -45011,8 +45011,9 @@ MonoBehaviour:
   - 200
   - 500
   - 1000
+  CurrentLatencyMs: 1000
   randomizeTimeWarp: 0
-  defaultTimeWarpEnabled: 0
+  defaultTimeWarpEnabled: 1
   timerUI: {fileID: 925943784}
   surveyUI: {fileID: 1298435347}
   player: {fileID: 2729281214152228921}

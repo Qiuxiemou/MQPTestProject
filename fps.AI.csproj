@@ -84,7 +84,6 @@
     <Compile Include="Assets\FPS\Scripts\AI\EnemyMobileHider.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\EnemyTurret.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\EnemyLineOfSightCheaker.cs" />
-    <Compile Include="Assets\FPS\Scripts\AI\PlayerLatency.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\BotMovement.cs" />
   </ItemGroup>
   <ItemGroup>

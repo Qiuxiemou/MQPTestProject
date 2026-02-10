@@ -88,8 +88,8 @@ public class RoundManager : MonoBehaviour
     // ================= LATENCY =================
     [Header("Latency Settings")]
     public float[] latencyOptionsMs = { 0f, 50f, 100f, 150f, 200f, 500f, 1000f };
-    public float CurrentLatencyMs { get; private set; }
-    //public float CurrentLatencyMs = 0f;
+    //public float CurrentLatencyMs { get; private set; }
+    public float CurrentLatencyMs = 0f;
 
     // ================= TIME WARP =================
     [Header("Time Warp Settings")]
@@ -202,7 +202,7 @@ public class RoundManager : MonoBehaviour
     void PickLatencyForRound()
     {
         int index = UnityEngine.Random.Range(0, latencyOptionsMs.Length);
-        CurrentLatencyMs = latencyOptionsMs[index];
+        //CurrentLatencyMs = latencyOptionsMs[index];
 
         Debug.Log($"[RoundManager] Latency this round: {CurrentLatencyMs} ms");
     }
@@ -227,12 +227,12 @@ public class RoundManager : MonoBehaviour
             delayedBotHealthProxy.SetLatency(CurrentLatencyMs);
         }
 
-        //delayedBotHealthProxy = _futureBot.GetComponent<BotHealthProxy>();
-        //if (delayedBotHealthProxy)
-        //{
-        //    delayedBotHealthProxy.PropagateBackwards(enabled);
-        //    delayedBotHealthProxy.SetLatency(CurrentLatencyMs);
-        //}
+        delayedBotHealthProxy = _futureBot.GetComponent<BotHealthProxy>();
+        if (delayedBotHealthProxy)
+        {
+            //delayedBotHealthProxy.PropagateBackwards(enabled);
+            delayedBotHealthProxy.SetLatency(CurrentLatencyMs);
+        }
 
         if (enabled)
         {
@@ -279,7 +279,7 @@ public class RoundManager : MonoBehaviour
         PickLatencyForRound();
         PickTimeWarpForRound();
 
-        _isSeeker = false;
+        _isSeeker = true;
             //UnityEngine.Random.value > 0.5f;
         //_roleSwitchTimer = GetNextRoleInterval();
         
@@ -439,6 +439,8 @@ public class RoundManager : MonoBehaviour
         Vector3 pos = futureHider.transform.position;
         Quaternion rot = futureHider.transform.rotation;
 
+        LM.write("RoundManager: " + CurrentLatencyMs);
+
         // Spawn TRUE bot (follows Future)
         _trueBot = Instantiate(hiderTrueBotPrefab, pos, rot);
         var trueDelayed = _trueBot.GetComponent<BotDelayed>();
@@ -543,6 +545,31 @@ public class RoundManager : MonoBehaviour
         if (controller) controller.enabled = true;
 
         ResetPlayerHealth();
+
+        if (IsSeeker) {
+            //var playerLatency = player.GetComponentInChildren<PlayerLatency>();
+            //if (playerLatency != null)
+            //{
+            //    playerLatency.latency = CurrentLatencyMs / 1000f;
+            //    Debug.Log($"[RoundManager] Player latency set to {CurrentLatencyMs} ms");
+            //}
+            //else
+            //{
+            //    Debug.LogWarning("[RoundManager] PlayerLatency component not found");
+            //}
+        } else
+        {
+            var playerLatency = player.GetComponentInChildren<PlayerLatency>();
+            if (playerLatency != null)
+            {
+                playerLatency.latency = 0;
+                Debug.Log($"[RoundManager] Player latency set to {CurrentLatencyMs} ms");
+            }
+            else
+            {
+                Debug.LogWarning("[RoundManager] PlayerLatency component not found");
+            }
+        }
     }
 
     void ResetPlayerHealth()

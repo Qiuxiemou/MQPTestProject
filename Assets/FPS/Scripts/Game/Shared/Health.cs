@@ -153,7 +153,7 @@ namespace Unity.FPS.Game
                 else
                 {
                     // red = blocked
-                    LM.write("red ray for blocked LOS is here");
+                    LM.write("RED: LOS is Blocked");
                     Debug.DrawRay(origin, dir, Color.red, 0.1f);
                     return false;
                 }

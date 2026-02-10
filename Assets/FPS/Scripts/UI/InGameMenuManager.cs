@@ -153,8 +153,11 @@ namespace Unity.FPS.UI
 
             if (ConditionalTimeWarpToggle)
             {
-                ConditionalTimeWarpToggle.isOn = true;
+                //ConditionalTimeWarpToggle.isOn = true;               
                 ConditionalTimeWarpToggle.onValueChanged.AddListener(OnConditionalTimeWarpChanged);
+                LM.write("Conditional TimeWarp toggle: "+ ConditionalTimeWarpToggle);
+                // initialize state manually
+                OnConditionalTimeWarpChanged(ConditionalTimeWarpToggle.isOn);
             }
 
 
@@ -254,11 +257,10 @@ namespace Unity.FPS.UI
         {
             //ConditionalTimeWarpEnabled = enabled;
             Unity.FPS.Game.TimewarpSettings.ConditionalTimeWarpEnabled = enabled;
+            LM.write($"Conditional TimeWarp set to: {enabled}");
         }
 
         ///END Bot visibility toggle setup (ADD) 
-
-
 
         void OnLatencyChanged(float newMs)
         {

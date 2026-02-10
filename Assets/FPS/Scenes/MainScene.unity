@@ -47350,6 +47350,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 225071796314100312, guid: b121d0988953b2a42b10879cd510a295,
         type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 225071796314100312, guid: b121d0988953b2a42b10879cd510a295,
+        type: 3}
       propertyPath: PeekNodes.Array.size
       value: 24
       objectReference: {fileID: 0}
@@ -47481,7 +47486,7 @@ PrefabInstance:
     - target: {fileID: 944632757919578044, guid: b121d0988953b2a42b10879cd510a295,
         type: 3}
       propertyPath: m_Speed
-      value: 5
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1806934879469178245, guid: b121d0988953b2a42b10879cd510a295,
         type: 3}
@@ -47558,6 +47563,16 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 2729281214152228946}
+    - target: {fileID: 6115438318695881059, guid: b121d0988953b2a42b10879cd510a295,
+        type: 3}
+      propertyPath: pastHealth
+      value: 
+      objectReference: {fileID: 6370966072019762466}
+    - target: {fileID: 6115438318695881059, guid: b121d0988953b2a42b10879cd510a295,
+        type: 3}
+      propertyPath: futureHealth
+      value: 
+      objectReference: {fileID: 5307370915343899274}
     - target: {fileID: 6480819256823784362, guid: b121d0988953b2a42b10879cd510a295,
         type: 3}
       propertyPath: MaxReactionTime
@@ -51107,6 +51122,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 14
       objectReference: {fileID: 0}
+    - target: {fileID: 7253983127304857660, guid: 761cdc9e4e883334cbdcea062d0befa7,
+        type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: 7267769575523271762, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}
       propertyPath: m_Materials.Array.size
@@ -53170,6 +53190,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1145171956207130619, guid: 434141f8b2355f64281847a1c55a59d8,
+        type: 3}
+      propertyPath: pastHealth
+      value: 
+      objectReference: {fileID: 6370966072019762466}
+    - target: {fileID: 1145171956207130619, guid: 434141f8b2355f64281847a1c55a59d8,
+        type: 3}
+      propertyPath: futureHealth
+      value: 
+      objectReference: {fileID: 5307370915343899274}
     - target: {fileID: 5402154131380086054, guid: 434141f8b2355f64281847a1c55a59d8,
         type: 3}
       propertyPath: m_Name
@@ -53268,6 +53298,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6433281911574091497, guid: 03862f19d17b69e43b6ed80eebc91154,
+        type: 3}
+      propertyPath: pastHealth
+      value: 
+      objectReference: {fileID: 6370966072019762466}
+    - target: {fileID: 6433281911574091497, guid: 03862f19d17b69e43b6ed80eebc91154,
+        type: 3}
+      propertyPath: futureHealth
+      value: 
+      objectReference: {fileID: 5307370915343899274}
     - target: {fileID: 7651188945047984250, guid: 03862f19d17b69e43b6ed80eebc91154,
         type: 3}
       propertyPath: firstBot

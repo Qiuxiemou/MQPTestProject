@@ -623,18 +623,21 @@ namespace Unity.FPS.AI
         {
             if (m_GameFlowManager.GameIsEnding)
                 return false;
-
+    
+            float extendDistance = Vector3.Distance(enemyPosition, enemyFuture);
+            Vector3 dir = (enemyFuture - enemyPosition).normalized;
+            Vector3 extendedEnd = enemyFuture + dir * extendDistance;
             Debug.DrawLine(transform.position, enemyPosition, Color.red, 1f);
-            Debug.DrawLine(transform.position, enemyFuture, Color.blue, 1f);
+            Debug.DrawLine(transform.position, extendedEnd, Color.blue, 1f);
 
             Vector3 aimPos;
             if (UseBlendAim)
             {
-                aimPos = PickAimInRegion(enemyPosition, enemyFuture);
+                aimPos = PickAimInRegion(enemyPosition, extendedEnd);
             }
             else
             {
-                aimPos = Vector3.Lerp(enemyPosition, enemyFuture, BlendToFuture);
+                aimPos = Vector3.Lerp(enemyPosition, extendedEnd, BlendToFuture);
             }
             OrientWeaponsTowards(aimPos);
             if ((m_LastTimeWeaponSwapped + DelayAfterWeaponSwap) >= Time.time)

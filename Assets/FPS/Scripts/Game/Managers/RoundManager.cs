@@ -11,61 +11,132 @@ public class RoundManager : MonoBehaviour
 {
     public static RoundManager Instance { get; private set; }
 
-    // ---------------- ROUND SETTINGS ----------------
-    [Header("Round Settings")]
-    [Tooltip("Length of each round (seconds).")]
-    public float roundLengthSeconds = 60f;
+    //// ---------------- ROUND SETTINGS ----------------
+    //[Header("Round Settings")]
+    //[Tooltip("Length of each round (seconds).")]
+    //public float roundLengthSeconds = 60f;
 
-    [Tooltip("Components to disable while the survey is up (movement, shooting, etc.).")]
+    //[Tooltip("Components to disable while the survey is up (movement, shooting, etc.).")]
+    //public Behaviour[] disableWhilePaused;
+
+    //// --------------- LATENCY ------------------
+    //[Header("Latency Settings")]
+    //public float[] latencyOptionsMs = { 0f, 50f, 100f, 150f, 200f };
+
+    //// Current round latency (read-only for others)
+    //public float CurrentLatencyMs { get; private set; }
+
+
+    //// ---------------- UI ----------------
+    //[Header("UI References")]
+    //public TimerUI timerUI;
+    //public SurveyUI surveyUI;
+
+    //// ---------------- ROLE SWITCHING ----------------
+    ////[Header("Role Switching (Prototype)")]
+    ////[Tooltip("Minimum seconds before a role switch is allowed.")]
+    ////public float minRoleSwitchSeconds = 10f;
+
+    ////[Tooltip("Maximum seconds before a role switch.")]
+    ////public float maxRoleSwitchSeconds = 25f;
+
+    //public event Action<bool> OnPlayerRoleChanged;
+
+
+    //// ---------------- PLAYER ----------------
+    //[Header("Player Spawn")]
+    //public GameObject player;
+    //public Transform playerSpawnPoint;
+
+    //// ---------------- ENEMY PREFABS ----------------
+    //[Header("Enemy Prefabs")]
+    //public GameObject hiderBotPrefab;
+    //public GameObject hiderTrueBotPrefab;
+    //public GameObject hiderPastBotPrefab;
+
+    //GameObject _currentPastBot;
+    //GameObject _currentTrueBot;
+
+    //public GameObject seekerBotPrefab;
+
+    //[Tooltip("Spawn location for the enemy.")]
+    //public Transform enemySpawnPoint;
+
+    //GameObject _currentEnemy;
+
+    //// ---------------- PUBLIC STATE ----------------
+    //public int CurrentRound { get; private set; } = 1;
+    //public bool RoundRunning { get; private set; }
+    //public float TimeRemaining => Mathf.Max(0f, _timeRemaining);
+    //public bool IsSeeker => _isSeeker;
+
+    //public event Action<float> OnTimerTick;
+
+    //// ---------------- INTERNALS ----------------
+    //float _timeRemaining;
+    //bool _isSeeker;
+    //float _roleSwitchTimer;
+
+    //readonly List<SurveyData> _buffer = new();
+    //string _surveyCsvPath;
+    //string _roleLogPath;
+
+    [Header("Round Settings")]
+    public float roundLengthSeconds = 60f;
     public Behaviour[] disableWhilePaused;
 
-    // ---------------- UI ----------------
+    // ================= LATENCY =================
+    [Header("Latency Settings")]
+    public float[] latencyOptionsMs = { 0f, 50f, 100f, 150f, 200f, 500f, 1000f };
+    //public float CurrentLatencyMs { get; private set; }
+    public float CurrentLatencyMs = 0f;
+
+    // ================= TIME WARP =================
+    [Header("Time Warp Settings")]
+    public bool randomizeTimeWarp = false;
+    public bool defaultTimeWarpEnabled = true;
+    public bool IsTimeWarpEnabled { get; private set; }
+    //public event Action<bool> OnTimeWarpChanged;
+
+    // ================= UI =================
     [Header("UI References")]
     public TimerUI timerUI;
     public SurveyUI surveyUI;
 
-    // ---------------- ROLE SWITCHING ----------------
-    //[Header("Role Switching (Prototype)")]
-    //[Tooltip("Minimum seconds before a role switch is allowed.")]
-    //public float minRoleSwitchSeconds = 10f;
-
-    //[Tooltip("Maximum seconds before a role switch.")]
-    //public float maxRoleSwitchSeconds = 25f;
-
-    public event Action<bool> OnPlayerRoleChanged;
-
-
-    // ---------------- PLAYER ----------------
-    [Header("Player Spawn")]
+    // ================= PLAYER =================
+    [Header("Player")]
     public GameObject player;
     public Transform playerSpawnPoint;
 
-    // ---------------- ENEMY PREFABS ----------------
+    // ================= ENEMIES =================
     [Header("Enemy Prefabs")]
-    public GameObject hiderBotPrefab;
     public GameObject seekerBotPrefab;
-
-    [Tooltip("Spawn location for the enemy.")]
+    public GameObject hiderBotPrefab;
+    public GameObject hiderTrueBotPrefab;
+    public GameObject hiderPastBotPrefab;
     public Transform enemySpawnPoint;
 
-    GameObject _currentEnemy;
+    GameObject _futureBot;
+    GameObject _trueBot;
+    GameObject _pastBot;
 
-    // ---------------- PUBLIC STATE ----------------
+    // ================= STATE =================
     public int CurrentRound { get; private set; } = 1;
     public bool RoundRunning { get; private set; }
-    public float TimeRemaining => Mathf.Max(0f, _timeRemaining);
     public bool IsSeeker => _isSeeker;
+    public float TimeRemaining => Mathf.Max(0, _timeRemaining);
 
+    public event Action<bool> OnPlayerRoleChanged;
     public event Action<float> OnTimerTick;
 
-    // ---------------- INTERNALS ----------------
     float _timeRemaining;
     bool _isSeeker;
-    float _roleSwitchTimer;
 
+    // ================= LOGGING =================
     readonly List<SurveyData> _buffer = new();
     string _surveyCsvPath;
     string _roleLogPath;
+
 
     // ---------------- UNITY ----------------
     void Awake()
@@ -128,6 +199,73 @@ public class RoundManager : MonoBehaviour
         }
     }
 
+    void PickLatencyForRound()
+    {
+        int index = UnityEngine.Random.Range(0, latencyOptionsMs.Length);
+        //CurrentLatencyMs = latencyOptionsMs[index];
+
+        Debug.Log($"[RoundManager] Latency this round: {CurrentLatencyMs} ms");
+    }
+
+    void PickTimeWarpForRound()
+    {
+        IsTimeWarpEnabled = defaultTimeWarpEnabled;
+            //randomizeTimeWarp
+            //? UnityEngine.Random.value > 0.5f
+            //: defaultTimeWarpEnabled;
+
+        Debug.Log($"[RoundManager] TimeWarp: {IsTimeWarpEnabled}");
+        
+    }
+
+    void OnTimeWarpChanged(bool enabled)
+    {
+        BotHealthProxy delayedBotHealthProxy = _pastBot.GetComponent<BotHealthProxy>();
+        if (delayedBotHealthProxy)
+        {
+            delayedBotHealthProxy.PropagateBackwards(enabled);
+            delayedBotHealthProxy.SetLatency(CurrentLatencyMs);
+        }
+
+        delayedBotHealthProxy = _futureBot.GetComponent<BotHealthProxy>();
+        if (delayedBotHealthProxy)
+        {
+            //delayedBotHealthProxy.PropagateBackwards(enabled);
+            delayedBotHealthProxy.SetLatency(CurrentLatencyMs);
+        }
+
+        if (enabled)
+        {
+            Transform hitboxTransform = _pastBot.transform.Find("HitBox");
+            Debug.Log(hitboxTransform);
+            if (hitboxTransform != null)
+            {
+                hitboxTransform.gameObject.layer = 0;
+            }
+
+            hitboxTransform = _futureBot.transform.Find("HitBox");
+            if (hitboxTransform != null)
+            {
+                hitboxTransform.gameObject.layer = 3;
+            }
+        }
+        else
+        {
+            Transform hitboxTransform = _pastBot.transform.Find("HitBox");
+            if (hitboxTransform != null)
+            {
+                hitboxTransform.gameObject.layer = 3;
+            }
+
+            hitboxTransform = _futureBot.transform.Find("HitBox");
+            if (hitboxTransform != null)
+            {
+                hitboxTransform.gameObject.layer = 0;
+            }
+        }
+    }
+
+
     // ---------------- ROUND FLOW ----------------
     public void StartRound()
     {
@@ -138,10 +276,14 @@ public class RoundManager : MonoBehaviour
         RoundRunning = true;
         _timeRemaining = roundLengthSeconds;
 
-        _isSeeker = UnityEngine.Random.value > 0.5f;
+        PickLatencyForRound();
+        PickTimeWarpForRound();
+
+        _isSeeker = true;
+            //UnityEngine.Random.value > 0.5f;
         //_roleSwitchTimer = GetNextRoleInterval();
         
-        LogRoleChange();
+        //LogRoleChange();
 
         SpawnEnemyForCurrentRole();
         RespawnPlayer();
@@ -151,6 +293,8 @@ public class RoundManager : MonoBehaviour
         SetGameplayPause(false);
         if (surveyUI) surveyUI.Hide();
         if (timerUI) timerUI.Show();
+
+        OnTimeWarpChanged(defaultTimeWarpEnabled);
 
         StopAllCoroutines();
         StartCoroutine(RoundTick());
@@ -176,10 +320,10 @@ public class RoundManager : MonoBehaviour
 
         SetGameplayPause(true);
 
-        if (_currentEnemy != null)
+        if (_futureBot != null)
         {
-            Destroy(_currentEnemy);
-            _currentEnemy = null;
+            Destroy(_futureBot);
+            _futureBot = null;
         }
 
         if (timerUI) timerUI.Hide();
@@ -193,15 +337,42 @@ public class RoundManager : MonoBehaviour
 
         SetGameplayPause(true);
 
-        if (_currentEnemy != null)
+        if (_futureBot != null)
         {
-            Destroy(_currentEnemy);
-            _currentEnemy = null;
+            Destroy(_futureBot);
+            _futureBot = null;
         }
 
         if (timerUI) timerUI.Hide();
         if (surveyUI) surveyUI.Show(CurrentRound);
     }
+
+    void BindSceneReferences()
+    {
+        // Player
+        if (!player)
+            player = GameObject.FindGameObjectWithTag("Player");
+
+        // Player spawn
+        if (!playerSpawnPoint)
+            playerSpawnPoint = GameObject.FindGameObjectWithTag("PlayerSpawn")?.transform;
+
+        // Enemy spawn
+        if (!enemySpawnPoint)
+            enemySpawnPoint = GameObject.FindGameObjectWithTag("EnemySpawn")?.transform;
+    }
+
+    IEnumerator DelayedBindAndStart()
+    {
+        yield return null; // wait one frame so scene objects exist
+
+        BindUIIfNeeded();
+        BindSceneReferences();
+
+        RoundRunning = false;
+        StartRound();
+    }
+
 
     // ---------------- ROLE SWITCHING ----------------
     //void HandleRoleTimer()
@@ -227,15 +398,100 @@ public class RoundManager : MonoBehaviour
 
     void SpawnEnemyForCurrentRole()
     {
-        if (_currentEnemy != null)
-            Destroy(_currentEnemy);
+        // Cleanup old bots
+        if (_futureBot) Destroy(_futureBot);
+        if (_trueBot) Destroy(_trueBot);
+        if (_pastBot) Destroy(_pastBot);
 
-        GameObject prefab = _isSeeker ? seekerBotPrefab : hiderBotPrefab;
-        _currentEnemy = Instantiate(prefab, enemySpawnPoint.position, enemySpawnPoint.rotation);
+        //GameObject prefab = _isSeeker ? seekerBotPrefab : hiderBotPrefab;
+        //_currentEnemy = Instantiate(prefab, enemySpawnPoint.position, enemySpawnPoint.rotation);
 
-        if (!_isSeeker)
-            AssignPeekNodes(_currentEnemy);
+        if (_isSeeker)
+        {
+            // Player is Hider → Enemy is SEEKER
+            _futureBot = Instantiate(
+                seekerBotPrefab,
+                enemySpawnPoint.position,
+                enemySpawnPoint.rotation
+            );
+        }
+        else
+        {
+
+            // Player is Seeker → Enemy is HIDER
+            _futureBot = Instantiate(
+                hiderBotPrefab,
+                enemySpawnPoint.position,
+                enemySpawnPoint.rotation
+            );
+
+            AssignPeekNodes(_futureBot);
+
+            SpawnHiderTimelineBots(_futureBot);
+        }
+
+        //if (_isSeeker)
+        //    AssignPeekNodes(_currentEnemy);
     }
+
+    void SpawnHiderTimelineBots(GameObject futureHider)
+    {
+        Vector3 pos = futureHider.transform.position;
+        Quaternion rot = futureHider.transform.rotation;
+
+        LM.write("RoundManager: " + CurrentLatencyMs);
+
+        // Spawn TRUE bot (follows Future)
+        _trueBot = Instantiate(hiderTrueBotPrefab, pos, rot);
+        var trueDelayed = _trueBot.GetComponent<BotDelayed>();
+        if (trueDelayed != null)
+        {
+            trueDelayed.firstBot = futureHider.transform;
+            trueDelayed.SetLatency(CurrentLatencyMs);
+        }
+
+        // Spawn PAST bot (follows True)
+        _pastBot = Instantiate(hiderPastBotPrefab, pos, rot);
+        var pastDelayed = _pastBot.GetComponent<BotDelayed>();
+        if (pastDelayed != null)
+        {
+            pastDelayed.firstBot = _trueBot.transform;
+            pastDelayed.SetLatency(CurrentLatencyMs);
+        }
+
+
+        Health futureHealth = futureHider.GetComponent<Health>();
+        Health serverHealth = _trueBot.GetComponent<Health>();
+        Health pastHealth = _pastBot.GetComponent<Health>();
+
+        AssignHealthProxy(futureHider, pastHealth, serverHealth, futureHealth);
+        AssignHealthProxy(_trueBot, pastHealth, serverHealth, futureHealth);
+        AssignHealthProxy(_pastBot, pastHealth, serverHealth, futureHealth);
+
+        Debug.Log("Health wired: "
+        + $"Past={pastHealth.gameObject.name}, "
+        + $"Server={serverHealth.gameObject.name}, "
+        + $"Future={futureHealth.gameObject.name}");
+    }
+
+    void AssignHealthProxy(
+    GameObject bot,
+    Health past,
+    Health server,
+    Health future)
+{
+    var proxy = bot.GetComponent<BotHealthProxy>();
+    if (proxy == null)
+    {
+        Debug.LogWarning($"No BotHealthProxy on {bot.name}");
+        return;
+    }
+
+    proxy.pastHealth   = past;
+    proxy.serverHealth = server;
+    proxy.futureHealth = future;
+}
+
 
     void AssignPeekNodes(GameObject hider)
     {
@@ -289,6 +545,31 @@ public class RoundManager : MonoBehaviour
         if (controller) controller.enabled = true;
 
         ResetPlayerHealth();
+
+        if (IsSeeker) {
+            //var playerLatency = player.GetComponentInChildren<PlayerLatency>();
+            //if (playerLatency != null)
+            //{
+            //    playerLatency.latency = CurrentLatencyMs / 1000f;
+            //    Debug.Log($"[RoundManager] Player latency set to {CurrentLatencyMs} ms");
+            //}
+            //else
+            //{
+            //    Debug.LogWarning("[RoundManager] PlayerLatency component not found");
+            //}
+        } else
+        {
+            var playerLatency = player.GetComponentInChildren<PlayerLatency>();
+            if (playerLatency != null)
+            {
+                playerLatency.latency = 0;
+                Debug.Log($"[RoundManager] Player latency set to {CurrentLatencyMs} ms");
+            }
+            else
+            {
+                Debug.LogWarning("[RoundManager] PlayerLatency component not found");
+            }
+        }
     }
 
     void ResetPlayerHealth()
@@ -315,6 +596,33 @@ public class RoundManager : MonoBehaviour
         );
     }
 
+
+    public void RespawnPlayerAfterDeath()
+    {
+        Debug.Log("[RoundManager] Player died -> respawning");
+
+        RespawnPlayer();
+        SpawnEnemyForCurrentRole();
+
+        // Optional: brief invincibility after respawn
+        //var health = player.GetComponent<Unity.FPS.Game.Health>();
+        //if (health)
+        //    StartCoroutine(TemporaryInvincibility(health, 1.5f));
+    }
+
+    public void RespawnBotAfterDeath()
+    {
+        Debug.Log("[RoundManager] Bot died -> respawning");
+
+        RespawnPlayer();
+        SpawnEnemyForCurrentRole();
+
+        // Optional: brief invincibility after respawn
+        //var health = player.GetComponent<Unity.FPS.Game.Health>();
+        //if (health)
+        //    StartCoroutine(TemporaryInvincibility(health, 1.5f));
+    }
+
     // ---------------- SCENE / UI ----------------
     void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
     {
@@ -322,13 +630,13 @@ public class RoundManager : MonoBehaviour
         StartCoroutine(DelayedBindAndStart());
     }
 
-    IEnumerator DelayedBindAndStart()
-    {
-        yield return null;
-        BindUIIfNeeded();
-        RoundRunning = false;
-        StartRound();
-    }
+    //IEnumerator DelayedBindAndStart()
+    //{
+    //    yield return null;
+    //    BindUIIfNeeded();
+    //    RoundRunning = false;
+    //    StartRound();
+    //}
 
     void BindUIIfNeeded()
     {

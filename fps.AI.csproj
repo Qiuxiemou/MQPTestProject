@@ -65,7 +65,6 @@
     <Compile Include="Assets\FPS\Scripts\AI\EnemyMovement.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\WallGroup.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\Enemy_Controller_Hider.cs" />
-    <Compile Include="Assets\FPS\Scripts\AI\BotDelayed.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\EnemyWayPoint.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\NodeWeitght.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\HiderController.cs" />
@@ -85,7 +84,6 @@
     <Compile Include="Assets\FPS\Scripts\AI\EnemyMobileHider.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\EnemyTurret.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\EnemyLineOfSightCheaker.cs" />
-    <Compile Include="Assets\FPS\Scripts\AI\PlayerLatency.cs" />
     <Compile Include="Assets\FPS\Scripts\AI\BotMovement.cs" />
   </ItemGroup>
   <ItemGroup>

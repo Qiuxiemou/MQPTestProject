@@ -76,6 +76,8 @@ namespace Unity.FPS.Game
             Debug.Log(propagateBackwards);
         }
 
+        public void SetLatency(float latency) { forwardDelayMs = latency; }
+
         public IEnumerator DamageBackwards(float damage, GameObject source)
         {
             Debug.Log("Health Propagating backwards");

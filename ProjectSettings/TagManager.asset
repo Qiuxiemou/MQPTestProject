@@ -8,6 +8,8 @@ TagManager:
   - HiderBot
   - SeekerBot
   - Bot
+  - PlayerSpawn
+  - EnemySpawn
   layers:
   - Default
   - TransparentFX

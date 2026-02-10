@@ -122,34 +122,34 @@ namespace Unity.FPS.UI
             m_MenuAction.Enable();
 
             //  Latency control setup 
-            if (LatencySlider)
-            {
-                // sensible defaults; override in Inspector if you like
-                if (LatencySlider.minValue == 0f) LatencySlider.minValue = 0f;
-                if (LatencySlider.maxValue <= 0f) LatencySlider.maxValue = 2000f; // 0–2000 ms
+            //if (LatencySlider)
+            //{
+            //    // sensible defaults; override in Inspector if you like
+            //    if (LatencySlider.minValue == 0f) LatencySlider.minValue = 0f;
+            //    if (LatencySlider.maxValue <= 0f) LatencySlider.maxValue = 2000f; // 0–2000 ms
 
-                float startMs = DelayedBot ? DelayedBot.GetLatency() : 0f;
-                LatencySlider.value = startMs;
-                UpdateLatencyLabel(startMs);
-                LatencySlider.onValueChanged.AddListener(OnLatencyChanged);
-            }
+            //    float startMs = DelayedBot ? DelayedBot.GetLatency() : 0f;
+            //    LatencySlider.value = startMs;
+            //    UpdateLatencyLabel(startMs);
+            //    LatencySlider.onValueChanged.AddListener(OnLatencyChanged);
+            //}
 
-            // Bot visibility toggle setup (ADD) 
-            if (OrigBotToggle && FutureBotRoot)
-            {
-                OrigBotToggle.isOn = GetVisualsVisible(FutureBotRoot.transform);
-                OrigBotToggle.onValueChanged.AddListener(OnOrigBotToggleChanged);
-            }
+            //// Bot visibility toggle setup (ADD) 
+            //if (OrigBotToggle && FutureBotRoot)
+            //{
+            //    OrigBotToggle.isOn = GetVisualsVisible(FutureBotRoot.transform);
+            //    OrigBotToggle.onValueChanged.AddListener(OnOrigBotToggleChanged);
+            //}
 
-            if (DelayedBotToggle && ServerBotRoot)
-            {
-                DelayedBotToggle.isOn = GetVisualsVisible(ServerBotRoot.transform);
-                DelayedBotToggle.onValueChanged.AddListener(OnDelayedBotToggleChanged);
-            }
+            //if (DelayedBotToggle && ServerBotRoot)
+            //{
+            //    DelayedBotToggle.isOn = GetVisualsVisible(ServerBotRoot.transform);
+            //    DelayedBotToggle.onValueChanged.AddListener(OnDelayedBotToggleChanged);
+            //}
 
-            TimeWarpToggle.onValueChanged.AddListener(OnTimeWarpChanged);
-            TimeWarpToggle.isOn = true;
-            OnTimeWarpChanged(true);
+            //TimeWarpToggle.onValueChanged.AddListener(OnTimeWarpChanged);
+            //TimeWarpToggle.isOn = true;
+            //OnTimeWarpChanged(true);
 
             if (ConditionalTimeWarpToggle)
             {

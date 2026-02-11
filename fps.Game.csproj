@@ -69,10 +69,12 @@
     <Compile Include="Assets\FPS\Scripts\Game\Shared\ProjectileBase.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\LogManager.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\BotHealthProxy.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\PlayerLatency.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\IgnoreHitDetection.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\DebugUtility.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Shared\Health.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\TimedSelfDestruct.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\TimewarpSettings.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\ViewSampler.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\GameStatsLogManager.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\MinMaxParameters.cs" />
@@ -81,6 +83,7 @@
     <Compile Include="Assets\FPS\Scripts\Game\GameConstants.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\EventManager.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\AudioManager.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\BotDelayed.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Shared\Objective.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\RandLatency.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\PrefabReplacerOnInstance.cs" />

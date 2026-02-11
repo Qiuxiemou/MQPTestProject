@@ -165,7 +165,7 @@ namespace Unity.FPS.AI
             m_EnemyManager = FindAnyObjectByType<EnemyManager>();
             m_GameFlowManager = FindAnyObjectByType<GameFlowManager>();
             m_Actor = GetComponent<Actor>();
-            //m_Health = GetComponent<Health>();
+            m_Health = GetComponent<Health>();
             NavMeshAgent = GetComponent<NavMeshAgent>();
 
 
@@ -187,8 +187,8 @@ namespace Unity.FPS.AI
             }
 
             // Subscribe to health events
-            //m_Health.OnDie += OnDie;
-            //m_Health.OnDamaged += OnDamaged;
+            m_Health.OnDie += OnDie;
+            m_Health.OnDamaged += OnDamaged;
             
 
             // Initial state  cover position (start where the bot spawns)
@@ -931,6 +931,12 @@ namespace Unity.FPS.AI
         void OnDie()
         {
             ////Log("OnDie: unregistering and destroying hider");
+            ///
+            if (RoundManager.Instance != null)
+            {
+                RoundManager.Instance.RespawnPlayerAfterDeath();
+                return;
+            }
 
             if (m_EnemyManager != null)
             {

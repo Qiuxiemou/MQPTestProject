@@ -59,9 +59,6 @@ namespace Unity.FPS.UI
         [Tooltip("Toggle to enable/disable timewarp")]
         public Toggle TimeWarpToggle;
 
-        [Tooltip("Toggle to enable/disable conditional timewarp")]
-        public Toggle ConditionalTimeWarpToggle;
-
         [Tooltip("Root object of Future Bot (e.g., Enemy_OrigBot)")]
         public GameObject FutureBotRoot;
 
@@ -80,8 +77,6 @@ namespace Unity.FPS.UI
         private InputAction m_CancelAction;
         private InputAction m_NavigateAction;
         private InputAction m_MenuAction;
-
-        //public static bool ConditionalTimeWarpEnabled { get; private set; }
 
         void Start()
         {
@@ -122,44 +117,34 @@ namespace Unity.FPS.UI
             m_MenuAction.Enable();
 
             //  Latency control setup 
-            //if (LatencySlider)
-            //{
-            //    // sensible defaults; override in Inspector if you like
-            //    if (LatencySlider.minValue == 0f) LatencySlider.minValue = 0f;
-            //    if (LatencySlider.maxValue <= 0f) LatencySlider.maxValue = 2000f; // 0–2000 ms
-
-            //    float startMs = DelayedBot ? DelayedBot.GetLatency() : 0f;
-            //    LatencySlider.value = startMs;
-            //    UpdateLatencyLabel(startMs);
-            //    LatencySlider.onValueChanged.AddListener(OnLatencyChanged);
-            //}
-
-            //// Bot visibility toggle setup (ADD) 
-            //if (OrigBotToggle && FutureBotRoot)
-            //{
-            //    OrigBotToggle.isOn = GetVisualsVisible(FutureBotRoot.transform);
-            //    OrigBotToggle.onValueChanged.AddListener(OnOrigBotToggleChanged);
-            //}
-
-            //if (DelayedBotToggle && ServerBotRoot)
-            //{
-            //    DelayedBotToggle.isOn = GetVisualsVisible(ServerBotRoot.transform);
-            //    DelayedBotToggle.onValueChanged.AddListener(OnDelayedBotToggleChanged);
-            //}
-
-            //TimeWarpToggle.onValueChanged.AddListener(OnTimeWarpChanged);
-            //TimeWarpToggle.isOn = true;
-            //OnTimeWarpChanged(true);
-
-            if (ConditionalTimeWarpToggle)
+            if (LatencySlider)
             {
-                //ConditionalTimeWarpToggle.isOn = true;               
-                ConditionalTimeWarpToggle.onValueChanged.AddListener(OnConditionalTimeWarpChanged);
-                LM.write("Conditional TimeWarp toggle: "+ ConditionalTimeWarpToggle);
-                // initialize state manually
-                OnConditionalTimeWarpChanged(ConditionalTimeWarpToggle.isOn);
+                // sensible defaults; override in Inspector if you like
+                if (LatencySlider.minValue == 0f) LatencySlider.minValue = 0f;
+                if (LatencySlider.maxValue <= 0f) LatencySlider.maxValue = 2000f; // 0–2000 ms
+
+                float startMs = DelayedBot ? DelayedBot.GetLatency() : 0f;
+                LatencySlider.value = startMs;
+                UpdateLatencyLabel(startMs);
+                LatencySlider.onValueChanged.AddListener(OnLatencyChanged);
             }
 
+            // Bot visibility toggle setup (ADD) 
+            if (OrigBotToggle && FutureBotRoot)
+            {
+                OrigBotToggle.isOn = GetVisualsVisible(FutureBotRoot.transform);
+                OrigBotToggle.onValueChanged.AddListener(OnOrigBotToggleChanged);
+            }
+
+            if (DelayedBotToggle && ServerBotRoot)
+            {
+                DelayedBotToggle.isOn = GetVisualsVisible(ServerBotRoot.transform);
+                DelayedBotToggle.onValueChanged.AddListener(OnDelayedBotToggleChanged);
+            }
+
+            TimeWarpToggle.onValueChanged.AddListener(OnTimeWarpChanged);
+            TimeWarpToggle.isOn = true;
+            OnTimeWarpChanged(true);
 
         }
 
@@ -253,14 +238,10 @@ namespace Unity.FPS.UI
             }
                 TimeWarpToggle.isOn = enabled;
         }
-        void OnConditionalTimeWarpChanged(bool enabled)
-        {
-            //ConditionalTimeWarpEnabled = enabled;
-            Unity.FPS.Game.TimewarpSettings.ConditionalTimeWarpEnabled = enabled;
-            LM.write($"Conditional TimeWarp set to: {enabled}");
-        }
 
         ///END Bot visibility toggle setup (ADD) 
+
+
 
         void OnLatencyChanged(float newMs)
         {

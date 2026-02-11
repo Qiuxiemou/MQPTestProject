@@ -78,6 +78,7 @@
     <Compile Include="Assets\FPS\Scripts\UI\PlayerHealthBar.cs" />
     <Compile Include="Assets\FPS\Scripts\UI\Compass.cs" />
     <Compile Include="Assets\FPS\Scripts\UI\ObjectiveHUDManager.cs" />
+    <Compile Include="Assets\FPS\Scripts\UI\WarningMessage.cs" />
     <Compile Include="Assets\FPS\Scripts\UI\TakeScreenshot.cs" />
     <Compile Include="Assets\FPS\Scripts\UI\UITable.cs" />
     <Compile Include="Assets\FPS\Scripts\UI\NotificationHUDManager.cs" />

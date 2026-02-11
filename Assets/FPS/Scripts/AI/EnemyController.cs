@@ -114,6 +114,20 @@ namespace Unity.FPS.AI
         public NodeWeight[] m_PatrolNodes;
         public PatrolPath PatrolPath { get; set; }
         public GameObject KnownDetectedTarget => DetectionModule.KnownDetectedTarget;
+        public Transform KnownPlayerTransform => DetectionModule.KnownDetectedActor ? DetectionModule.KnownDetectedActor.transform : null;
+        [Header("Debug - Read Only")]
+        [SerializeField] Transform debugKnownPlayer;
+        [SerializeField] GameObject debugKnownTarget;
+
+        [Header("Blend / Predict Shooting")]
+        public bool UseBlendAim = true;
+        // 0 => always enemyPosition, 1 => always enemyFuture
+        [Range(0f, 1f)]
+        public float BlendToFuture = 0.3f;
+        // Adds thickness to the region (meters)
+
+
+        public float BlendRadius = 0.15f;
         public bool IsTargetInAttackRange => DetectionModule.IsTargetInAttackRange;
         public bool IsSeeingTarget => DetectionModule.IsSeeingTarget;
         public bool HadKnownTarget => DetectionModule.HadKnownTarget;
@@ -231,6 +245,8 @@ namespace Unity.FPS.AI
 
         void Update()
         {
+             debugKnownPlayer = KnownPlayerTransform;
+            debugKnownTarget = KnownDetectedTarget;
             EnsureIsWithinLevelBounds();
             UpdatePatrolNodeVisits();
             DetectionModule.HandleTargetDetection(m_Actor, m_SelfColliders);
@@ -586,13 +602,44 @@ namespace Unity.FPS.AI
             }
         }
 
+        Vector3 PickAimInRegion(Vector3 a, Vector3 b)
+        {
+            float t = UseBlendAim ? Random.Range(0f, 1f) : BlendToFuture;
+
+            Vector3 p = Vector3.Lerp(a, b, t);
+
+            if (BlendRadius > 0f)
+                p += Random.insideUnitSphere * BlendRadius;
+
+            return p;
+        }
+
         public bool TryAtack(Vector3 enemyPosition)
+        {
+            return TryAtack(enemyPosition, enemyPosition);
+        }
+
+        public bool TryAtack(Vector3 enemyPosition, Vector3 enemyFuture)
         {
             if (m_GameFlowManager.GameIsEnding)
                 return false;
+    
+            float extendDistance = Vector3.Distance(enemyPosition, enemyFuture);
+            Vector3 dir = (enemyFuture - enemyPosition).normalized;
+            Vector3 extendedEnd = enemyFuture + dir * extendDistance;
+            Debug.DrawLine(transform.position, enemyPosition, Color.red, 1f);
+            Debug.DrawLine(transform.position, extendedEnd, Color.blue, 1f);
 
-            OrientWeaponsTowards(enemyPosition);
-
+            Vector3 aimPos;
+            if (UseBlendAim)
+            {
+                aimPos = PickAimInRegion(enemyPosition, extendedEnd);
+            }
+            else
+            {
+                aimPos = Vector3.Lerp(enemyPosition, extendedEnd, BlendToFuture);
+            }
+            OrientWeaponsTowards(aimPos);
             if ((m_LastTimeWeaponSwapped + DelayAfterWeaponSwap) >= Time.time)
                 return false;
 

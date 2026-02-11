@@ -35,6 +35,12 @@ namespace Unity.FPS.AI
         public float WatchTurnSpeed = 720f;    
         float m_WatchTimer = 0f;
         int m_WatchStage = 0;
+
+        [Header("Patrol Look")]
+        public float PatrolHeadYawAmplitude = 10f;   
+        public float PatrolHeadYawSpeed = 1.2f;      
+        public float PatrolBodyTurnSpeed = 8f;       
+        float _patrolHeadT = 0f;
         public AIState AiState { get; private set; }
         EnemyController m_EnemyController;
         AudioSource m_AudioSource;
@@ -114,9 +120,37 @@ namespace Unity.FPS.AI
             switch (AiState)
             {
                 case AIState.Patrol:
+                {
                     Vector3 dest = m_EnemyController.GetBestPatrolDestination();
                     m_EnemyController.SetNavDestination(dest);
+
+                    var agentP = m_EnemyController.NavMeshAgent;
+            
+                    Vector3 navDir = agentP.desiredVelocity;
+                    if (navDir.sqrMagnitude < 0.001f)
+                        navDir = (agentP.steeringTarget - transform.position);
+
+                    navDir.y = 0f;
+                    if (navDir.sqrMagnitude < 0.001f)
+                        break;
+
+                    navDir.Normalize();
+
+                    
+                    float navYaw = Quaternion.LookRotation(navDir, Vector3.up).eulerAngles.y;
+
+                    
+                    _patrolHeadT += Time.deltaTime * PatrolHeadYawSpeed;
+                    float headOffset = Mathf.Sin(_patrolHeadT) * PatrolHeadYawAmplitude;
+
+                   
+                    float targetYaw = navYaw + headOffset;
+
+                    Quaternion targetRot = Quaternion.Euler(0f, targetYaw, 0f);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * PatrolBodyTurnSpeed);
+
                     break;
+                }
                 case AIState.Follow:
                     if (m_EnemyController.KnownDetectedTarget == null)
                     {
@@ -151,7 +185,8 @@ namespace Unity.FPS.AI
                     }
 
                     m_EnemyController.OrientTowards(m_EnemyController.KnownDetectedTarget.transform.position);
-                    m_EnemyController.TryAtack(m_EnemyController.KnownDetectedTarget.transform.position);
+                    m_EnemyController.TryAtack(m_EnemyController.KnownDetectedTarget.transform.position,
+                        m_EnemyController.KnownPlayerTransform ? m_EnemyController.KnownPlayerTransform.position : m_EnemyController.KnownDetectedTarget.transform.position);
                     break;
                 case AIState.Search:
                     if (m_EnemyController.IsSeeingTarget && m_EnemyController.KnownDetectedTarget != null)

@@ -11,85 +11,22 @@ public class RoundManager : MonoBehaviour
 {
     public static RoundManager Instance { get; private set; }
 
-    //// ---------------- ROUND SETTINGS ----------------
-    //[Header("Round Settings")]
-    //[Tooltip("Length of each round (seconds).")]
-    //public float roundLengthSeconds = 60f;
-
-    //[Tooltip("Components to disable while the survey is up (movement, shooting, etc.).")]
-    //public Behaviour[] disableWhilePaused;
-
-    //// --------------- LATENCY ------------------
-    //[Header("Latency Settings")]
-    //public float[] latencyOptionsMs = { 0f, 50f, 100f, 150f, 200f };
-
-    //// Current round latency (read-only for others)
-    //public float CurrentLatencyMs { get; private set; }
-
-
-    //// ---------------- UI ----------------
-    //[Header("UI References")]
-    //public TimerUI timerUI;
-    //public SurveyUI surveyUI;
-
-    //// ---------------- ROLE SWITCHING ----------------
-    ////[Header("Role Switching (Prototype)")]
-    ////[Tooltip("Minimum seconds before a role switch is allowed.")]
-    ////public float minRoleSwitchSeconds = 10f;
-
-    ////[Tooltip("Maximum seconds before a role switch.")]
-    ////public float maxRoleSwitchSeconds = 25f;
-
-    //public event Action<bool> OnPlayerRoleChanged;
-
-
-    //// ---------------- PLAYER ----------------
-    //[Header("Player Spawn")]
-    //public GameObject player;
-    //public Transform playerSpawnPoint;
-
-    //// ---------------- ENEMY PREFABS ----------------
-    //[Header("Enemy Prefabs")]
-    //public GameObject hiderBotPrefab;
-    //public GameObject hiderTrueBotPrefab;
-    //public GameObject hiderPastBotPrefab;
-
-    //GameObject _currentPastBot;
-    //GameObject _currentTrueBot;
-
-    //public GameObject seekerBotPrefab;
-
-    //[Tooltip("Spawn location for the enemy.")]
-    //public Transform enemySpawnPoint;
-
-    //GameObject _currentEnemy;
-
-    //// ---------------- PUBLIC STATE ----------------
-    //public int CurrentRound { get; private set; } = 1;
-    //public bool RoundRunning { get; private set; }
-    //public float TimeRemaining => Mathf.Max(0f, _timeRemaining);
-    //public bool IsSeeker => _isSeeker;
-
-    //public event Action<float> OnTimerTick;
-
-    //// ---------------- INTERNALS ----------------
-    //float _timeRemaining;
-    //bool _isSeeker;
-    //float _roleSwitchTimer;
-
-    //readonly List<SurveyData> _buffer = new();
-    //string _surveyCsvPath;
-    //string _roleLogPath;
-
     [Header("Round Settings")]
     public float roundLengthSeconds = 60f;
     public Behaviour[] disableWhilePaused;
 
     // ================= LATENCY =================
-    [Header("Latency Settings")]
-    public float[] latencyOptionsMs = { 0f, 50f, 100f, 150f, 200f, 500f, 1000f };
-    //public float CurrentLatencyMs { get; private set; }
-    public float CurrentLatencyMs = 0f;
+    //[Header("Latency Settings")]
+    //public float[] latencyOptionsMs = { 0f, 50f, 100f, 150f, 200f, 500f, 1000f };
+    public float CurrentLatencyMs { get; private set; }
+    //public float CurrentLatencyMs = 0f;
+
+    [Header("Study Config")]
+    [SerializeField] private TextAsset roundConditionFile;
+
+    private List<RoundCondition> rounds;
+    public int currentRoundIndex = 3;
+    private RoundCondition currentCondition;
 
     // ================= TIME WARP =================
     [Header("Time Warp Settings")]
@@ -132,6 +69,10 @@ public class RoundManager : MonoBehaviour
     float _timeRemaining;
     bool _isSeeker;
 
+    bool waitingToStartRound = false;
+    int _lastPrintedSecond = -1;
+
+
     // ================= LOGGING =================
     readonly List<SurveyData> _buffer = new();
     string _surveyCsvPath;
@@ -171,8 +112,15 @@ public class RoundManager : MonoBehaviour
 
     void Start()
     {
+        //BindUIIfNeeded();
+        //StartRound();
+
+        rounds = RoundConfigLoader.Load(roundConditionFile);
+
+        LM.write($"[RoundManager] Loaded {rounds.Count} round conditions");
+
         BindUIIfNeeded();
-        StartRound();
+        //StartNextRound();
     }
 
     void OnEnable()
@@ -201,25 +149,26 @@ public class RoundManager : MonoBehaviour
 
     void PickLatencyForRound()
     {
-        int index = UnityEngine.Random.Range(0, latencyOptionsMs.Length);
+        //int index = UnityEngine.Random.Range(0, latencyOptionsMs.Length);
         //CurrentLatencyMs = latencyOptionsMs[index];
 
-        Debug.Log($"[RoundManager] Latency this round: {CurrentLatencyMs} ms");
+        //LM.write($"[RoundManager] Latency this round: {CurrentLatencyMs} ms");
     }
 
     void PickTimeWarpForRound()
     {
-        IsTimeWarpEnabled = defaultTimeWarpEnabled;
+        //IsTimeWarpEnabled = defaultTimeWarpEnabled;
             //randomizeTimeWarp
             //? UnityEngine.Random.value > 0.5f
             //: defaultTimeWarpEnabled;
 
-        Debug.Log($"[RoundManager] TimeWarp: {IsTimeWarpEnabled}");
+        //LM.write($"[RoundManager] TimeWarp: {IsTimeWarpEnabled}");
         
     }
 
     void OnTimeWarpChanged(bool enabled)
     {
+        if (_isSeeker) { return; }
         BotHealthProxy delayedBotHealthProxy = _pastBot.GetComponent<BotHealthProxy>();
         if (delayedBotHealthProxy)
         {
@@ -237,7 +186,7 @@ public class RoundManager : MonoBehaviour
         if (enabled)
         {
             Transform hitboxTransform = _pastBot.transform.Find("HitBox");
-            Debug.Log(hitboxTransform);
+            //LM.write(hitboxTransform);
             if (hitboxTransform != null)
             {
                 hitboxTransform.gameObject.layer = 0;
@@ -265,55 +214,83 @@ public class RoundManager : MonoBehaviour
         }
     }
 
-
-    // ---------------- ROUND FLOW ----------------
-    public void StartRound()
+    // ================= ROUND FLOW =================
+    void StartNextRound()
     {
-        if (RoundRunning) return;
+        if (currentRoundIndex >= rounds.Count)
+        {
+            EndStudy();
+            return;
+        }
+
+        currentCondition = rounds[currentRoundIndex];
+        currentRoundIndex++;
 
         BindUIIfNeeded();
 
+        LM.write($"[RoundManager] Starting round {currentCondition.id}");
+
+        ApplyCondition(currentCondition);
+
         RoundRunning = true;
         _timeRemaining = roundLengthSeconds;
-
-        PickLatencyForRound();
-        PickTimeWarpForRound();
-
-        _isSeeker = true;
-            //UnityEngine.Random.value > 0.5f;
-        //_roleSwitchTimer = GetNextRoleInterval();
-        
-        //LogRoleChange();
 
         SpawnEnemyForCurrentRole();
         RespawnPlayer();
 
         OnPlayerRoleChanged?.Invoke(_isSeeker);
 
+        OnTimeWarpChanged(IsTimeWarpEnabled);
+
         SetGameplayPause(false);
         if (surveyUI) surveyUI.Hide();
         if (timerUI) timerUI.Show();
 
-        OnTimeWarpChanged(defaultTimeWarpEnabled);
-
         StopAllCoroutines();
+
+        LM.write("StartNext Round: before start coroutine");
         StartCoroutine(RoundTick());
+    }
+
+    void ApplyCondition(RoundCondition c)
+    {
+        _isSeeker = (c.player == PlayerRole.Seeker);
+        IsTimeWarpEnabled = c.timewarp != TimewarpMode.None;
+        CurrentLatencyMs = c.latencyMs;
+
+
+        LM.write(
+            $"[RoundManager] Condition → Bot={c.player}, Latency={c.latencyMs}, Timewarp={c.timewarp}"
+        );
     }
 
     IEnumerator RoundTick()
     {
+        LM.write("[RoundTick] Coroutine started");
+
+        _lastPrintedSecond = Mathf.CeilToInt(_timeRemaining);
+
         while (_timeRemaining > 0f)
         {
             _timeRemaining -= Time.deltaTime;
-            //HandleRoleTimer();
             OnTimerTick?.Invoke(TimeRemaining);
+
+            int secondsLeft = Mathf.CeilToInt(_timeRemaining);
+
+            if (secondsLeft != _lastPrintedSecond)
+            {
+                _lastPrintedSecond = secondsLeft;
+                LM.write($"[Timer] {secondsLeft} s remaining");
+            }
+
             yield return null;
         }
 
+        LM.write("[RoundTick] Timer ended");
         EndRound();
     }
 
-    public void EndRound()
+    void EndRound()
     {
         if (!RoundRunning) return;
         RoundRunning = false;
@@ -326,26 +303,109 @@ public class RoundManager : MonoBehaviour
             _futureBot = null;
         }
 
-        if (timerUI) timerUI.Hide();
-        if (surveyUI) surveyUI.Show(CurrentRound);
-    }
-
-    public void EndRoundOnPlayerDeath()
-    {
-        if (!RoundRunning) return;
-        RoundRunning = false;
-
-        SetGameplayPause(true);
-
-        if (_futureBot != null)
+        if (_trueBot != null)
         {
-            Destroy(_futureBot);
-            _futureBot = null;
+            Destroy(_trueBot);
+            _trueBot = null;
+        }
+
+        if (_pastBot != null)
+        {
+            Destroy(_pastBot);
+            _pastBot = null;
         }
 
         if (timerUI) timerUI.Hide();
-        if (surveyUI) surveyUI.Show(CurrentRound);
+        if (surveyUI) surveyUI.Show(currentCondition.id);
     }
+
+    void EndStudy()
+    {
+        LM.write("[RoundManager] Study complete");
+        FlushBuffer();
+    }
+
+
+    //// ---------------- ROUND FLOW ----------------
+    //public void StartRound()
+    //{
+    //    if (RoundRunning) return;
+
+    //    BindUIIfNeeded();
+
+    //    RoundRunning = true;
+    //    _timeRemaining = roundLengthSeconds;
+
+    //    PickLatencyForRound();
+    //    PickTimeWarpForRound();
+
+    //    _isSeeker = true;
+    //        //UnityEngine.Random.value > 0.5f;
+    //    //_roleSwitchTimer = GetNextRoleInterval();
+
+    //    //LogRoleChange();
+
+    //    SpawnEnemyForCurrentRole();
+    //    RespawnPlayer();
+
+    //    OnPlayerRoleChanged?.Invoke(_isSeeker);
+
+    //    SetGameplayPause(false);
+    //    if (surveyUI) surveyUI.Hide();
+    //    if (timerUI) timerUI.Show();
+
+    //    OnTimeWarpChanged(defaultTimeWarpEnabled);
+
+    //    StopAllCoroutines();
+    //    StartCoroutine(RoundTick());
+    //}
+
+    //IEnumerator RoundTick()
+    //{
+    //    while (_timeRemaining > 0f)
+    //    {
+    //        _timeRemaining -= Time.deltaTime;
+    //        //HandleRoleTimer();
+    //        OnTimerTick?.Invoke(TimeRemaining);
+    //        yield return null;
+    //    }
+
+    //    EndRound();
+    //}
+
+    //public void EndRound()
+    //{
+    //    if (!RoundRunning) return;
+    //    RoundRunning = false;
+
+    //    SetGameplayPause(true);
+
+    //    if (_futureBot != null)
+    //    {
+    //        Destroy(_futureBot);
+    //        _futureBot = null;
+    //    }
+
+    //    if (timerUI) timerUI.Hide();
+    //    if (surveyUI) surveyUI.Show(CurrentRound);
+    //}
+
+    //public void EndRoundOnPlayerDeath()
+    //{
+    //    if (!RoundRunning) return;
+    //    RoundRunning = false;
+
+    //    SetGameplayPause(true);
+
+    //    if (_futureBot != null)
+    //    {
+    //        Destroy(_futureBot);
+    //        _futureBot = null;
+    //    }
+
+    //    if (timerUI) timerUI.Hide();
+    //    if (surveyUI) surveyUI.Show(CurrentRound);
+    //}
 
     void BindSceneReferences()
     {
@@ -370,7 +430,7 @@ public class RoundManager : MonoBehaviour
         BindSceneReferences();
 
         RoundRunning = false;
-        StartRound();
+        StartNextRound();
     }
 
 
@@ -468,7 +528,7 @@ public class RoundManager : MonoBehaviour
         AssignHealthProxy(_trueBot, pastHealth, serverHealth, futureHealth);
         AssignHealthProxy(_pastBot, pastHealth, serverHealth, futureHealth);
 
-        Debug.Log("Health wired: "
+        LM.write("Health wired: "
         + $"Past={pastHealth.gameObject.name}, "
         + $"Server={serverHealth.gameObject.name}, "
         + $"Future={futureHealth.gameObject.name}");
@@ -483,7 +543,7 @@ public class RoundManager : MonoBehaviour
     var proxy = bot.GetComponent<BotHealthProxy>();
     if (proxy == null)
     {
-        Debug.LogWarning($"No BotHealthProxy on {bot.name}");
+        LM.write($"No BotHealthProxy on {bot.name}");
         return;
     }
 
@@ -520,12 +580,12 @@ public class RoundManager : MonoBehaviour
                 // Wake up the AI (optional but recommended)
                 b.SendMessage("SetPeekNodes", transforms, SendMessageOptions.DontRequireReceiver);
 
-                Debug.Log("[RoundManager] Peek nodes injected into hider.");
+                LM.write("[RoundManager] Peek nodes injected into hider.");
                 return;
             }
         }
 
-        Debug.LogWarning("[RoundManager] No peekNodes field found on hider.");
+        LM.write("[RoundManager] No peekNodes field found on hider.");
     }
 
     public void RespawnPlayer()
@@ -547,27 +607,28 @@ public class RoundManager : MonoBehaviour
         ResetPlayerHealth();
 
         if (IsSeeker) {
-            //var playerLatency = player.GetComponentInChildren<PlayerLatency>();
-            //if (playerLatency != null)
-            //{
-            //    playerLatency.latency = CurrentLatencyMs / 1000f;
-            //    Debug.Log($"[RoundManager] Player latency set to {CurrentLatencyMs} ms");
-            //}
-            //else
-            //{
-            //    Debug.LogWarning("[RoundManager] PlayerLatency component not found");
-            //}
-        } else
+            var playerLatency = player.GetComponentInChildren<PlayerLatency>();
+            if (playerLatency != null)
+            {
+                playerLatency.latency = CurrentLatencyMs / 1000f;
+                LM.write($"[RoundManager] Player latency set to {CurrentLatencyMs} ms");
+            }
+            else
+            {
+                LM.write("[RoundManager] PlayerLatency component not found");
+            }
+        } 
+        else
         {
             var playerLatency = player.GetComponentInChildren<PlayerLatency>();
             if (playerLatency != null)
             {
                 playerLatency.latency = 0;
-                Debug.Log($"[RoundManager] Player latency set to {CurrentLatencyMs} ms");
+                LM.write($"[RoundManager] Player latency set to {CurrentLatencyMs} ms");
             }
             else
             {
-                Debug.LogWarning("[RoundManager] PlayerLatency component not found");
+                LM.write("[RoundManager] PlayerLatency component not found");
             }
         }
     }
@@ -577,7 +638,7 @@ public class RoundManager : MonoBehaviour
         var health = player.GetComponent<Unity.FPS.Game.Health>();
         if (!health)
         {
-            Debug.LogWarning("[RoundManager] Player has no Health component.");
+            LM.write("[RoundManager] Player has no Health component.");
             return;
         }
 
@@ -599,44 +660,30 @@ public class RoundManager : MonoBehaviour
 
     public void RespawnPlayerAfterDeath()
     {
-        Debug.Log("[RoundManager] Player died -> respawning");
+        LM.write("[RoundManager] Player died -> respawning");
 
         RespawnPlayer();
         SpawnEnemyForCurrentRole();
-
-        // Optional: brief invincibility after respawn
-        //var health = player.GetComponent<Unity.FPS.Game.Health>();
-        //if (health)
-        //    StartCoroutine(TemporaryInvincibility(health, 1.5f));
     }
 
     public void RespawnBotAfterDeath()
     {
-        Debug.Log("[RoundManager] Bot died -> respawning");
+        LM.write("[RoundManager] Bot died -> respawning");
 
         RespawnPlayer();
         SpawnEnemyForCurrentRole();
 
-        // Optional: brief invincibility after respawn
-        //var health = player.GetComponent<Unity.FPS.Game.Health>();
-        //if (health)
-        //    StartCoroutine(TemporaryInvincibility(health, 1.5f));
     }
 
     // ---------------- SCENE / UI ----------------
     void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (scene.name != "MainScene") return;
+        if (waitingToStartRound) return;
+
+        waitingToStartRound = true;
         StartCoroutine(DelayedBindAndStart());
     }
-
-    //IEnumerator DelayedBindAndStart()
-    //{
-    //    yield return null;
-    //    BindUIIfNeeded();
-    //    RoundRunning = false;
-    //    StartRound();
-    //}
 
     void BindUIIfNeeded()
     {

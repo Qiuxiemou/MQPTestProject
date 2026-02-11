@@ -44998,22 +44998,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c7747893f578244ebf571f0db1588b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: fps.Game::RoundManager
-  roundLengthSeconds: 45
+  roundLengthSeconds: 5
   disableWhilePaused:
   - {fileID: 2729281214152228945}
   - {fileID: 2729281214152228942}
   - {fileID: 2729281214152228944}
-  latencyOptionsMs:
-  - 0
-  - 50
-  - 100
-  - 150
-  - 200
-  - 500
-  - 1000
-  CurrentLatencyMs: 1000
+  roundConditionFile: {fileID: 4900000, guid: d789d650bb8f0c44ba59b81dc90cb988, type: 3}
+  currentRoundIndex: 3
   randomizeTimeWarp: 0
-  defaultTimeWarpEnabled: 1
+  defaultTimeWarpEnabled: 0
   timerUI: {fileID: 925943784}
   surveyUI: {fileID: 1298435347}
   player: {fileID: 2729281214152228921}

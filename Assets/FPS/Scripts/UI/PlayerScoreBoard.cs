@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using Unity.FPS.Game;
+using Unity.FPS.AI;
 using System.Collections.Generic;
 
 namespace Unity.FPS.UI
@@ -23,18 +24,33 @@ namespace Unity.FPS.UI
 
         public Health m_PlayerHealth;
 
+        public EnemyController enemyController;
+
+        int score = 0;
+
         void Start()
         {
             foreach (HealthEntry health in m_healthbars)
             {
                 health.m_health.OnDamaged += OnDamaged;
             }
+            if (IsSeeker)
+                score = 4000;
+            else
+                score = 1000;
         }
 
         void FixedUpdate()
         {
-            m_SecondsPassed = Time.time;
-            ScoreText.text = $"Score: {CalculateScore()}";
+            if (IsSeeker && enemyController.IsSeeingTarget == false)
+            {
+                score -= 1;
+            }
+            else if (!IsSeeker && enemyController.IsSeeingTarget == false)
+            {
+                score += 1;
+            }
+            ScoreText.text = $"Score: {score}";
         }
 
         void OnDestroy()
@@ -50,18 +66,15 @@ namespace Unity.FPS.UI
         {
             if (damageSource != null)
             {
-                m_ShotsHit++;
+                if (IsSeeker)
+                {
+                    score += 50;
+                }
+                else
+                {
+                    score -= 50;
+                }
             }
-        }
-
-        int CalculateScore()
-        {
-            int seconds = Mathf.FloorToInt(m_SecondsPassed);
-
-            if (IsSeeker)
-                return 4000 - 50 * seconds + 50 * m_ShotsHit;
-            else
-                return 1000 + 50 * seconds - 50 * m_ShotsHit;
         }
     }
 }

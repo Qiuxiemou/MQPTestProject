@@ -46,7 +46,6 @@ namespace Unity.FPS.AI
         public UnityAction onDetectedTarget;
         public UnityAction onLostTarget;
         public GameObject KnownDetectedTarget;
-        public Actor KnownDetectedActor;
         public bool IsSeeingTarget { get; private set; }
         public bool IsTargetInAttackRange { get; private set; }
         public bool HadKnownTarget { get; private set; }
@@ -138,7 +137,6 @@ namespace Unity.FPS.AI
             if (_isReacting && Time.time >= _reactionEndTime)
             {
                 KnownDetectedTarget = _pendingTarget.AimPoint.gameObject;
-                KnownDetectedActor = _pendingTarget;
                 onDetectedTarget?.Invoke();
 
                 _isReacting = false;
@@ -149,7 +147,6 @@ namespace Unity.FPS.AI
             if (!IsSeeingTarget && Time.time - TimeLastSeenTarget > KnownTargetTimeout)
             {
                 KnownDetectedTarget = null;
-                KnownDetectedActor = null;
 
                  onLostTarget?.Invoke();
                  
@@ -174,9 +171,6 @@ namespace Unity.FPS.AI
         {
             TimeLastSeenTarget = Time.time;
             KnownDetectedTarget = attacker;
-            KnownDetectedActor = attacker.GetComponentInParent<Actor>();
-
-             onDetectedTarget?.Invoke();
 
             if (Animator)
                 Animator.SetTrigger(k_AnimOnDamagedParameter);

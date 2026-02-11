@@ -12,7 +12,7 @@ namespace Unity.FPS.Game
         [Header("References")]
         [Tooltip("First Bot")]
         public Transform firstBot;          
-        public static float latencyMs = 500f;      // Delay in milliseconds
+        public static float latencyMs = 200f;      // Delay in milliseconds
         public float modifier = 1;
 
         private Queue<(Vector3 pos, Quaternion rot, float applyTime)> stateBuffer = new Queue<(Vector3, Quaternion, float)>();
@@ -46,22 +46,19 @@ namespace Unity.FPS.Game
                 targetRot = state.rot;
             }
 
-            // Move toward target instead of snapping
-            //float distance = Vector3.Distance(transform.position, targetPos);
+            // Step 3: Move toward target instead of snapping
+            float distance = Vector3.Distance(transform.position, targetPos);
 
-            //// Increase speed if we’re far behind
-            //float moveSpeed = baseMoveSpeed;
-            //if (distance > 0.1f)
-            //{
-            //    // scale speed based on how far we are behind
-            //    moveSpeed += distance * catchupMultiplier;
-            //}
+            // Increase speed if we’re far behind
+            float moveSpeed = baseMoveSpeed;
+            if (distance > 0.1f)
+            {
+                // scale speed based on how far we are behind
+                moveSpeed += distance * catchupMultiplier;
+            }
 
-            //transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
-            //transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 10f);
-
-            transform.position = targetPos;
-            transform.rotation = targetRot;
+            transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 10f);
         }
 
         public void SetLatency(float ms)
@@ -70,7 +67,6 @@ namespace Unity.FPS.Game
             // Clearing gives an immediate, predictable change.
             if (ms < latencyMs) stateBuffer.Clear();
             latencyMs = Mathf.Max(0f, ms * modifier);
-                LM.write("BotDelay: " + latencyMs);
         }
 
         public float GetLatency()

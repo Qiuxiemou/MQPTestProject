@@ -21,7 +21,7 @@ namespace Unity.FPS.Game
 
         [Header("Delays")]
         [Tooltip("Delay (ms) before forwarding damage to the server bot")]
-        public static float forwardDelayMs = 200f;
+        public static float forwardDelayMs = 500f;
 
         [Tooltip("Extra buffer (ms) after client death before destroying this proxy, to ensure all delayed hits are forwarded")]
         public float destroyBufferAfterClientDeathMs = 100f;
@@ -118,17 +118,20 @@ namespace Unity.FPS.Game
             //if (clientHealth != null && !clientDying)
             //    clientHealth.TakeDamage(damage, source);
 
-
             //if (serverHealth != null)
             //    StartCoroutine(ForwardToServerAfterDelay(damage, source));
 
-            LM.write($"{transform.root.name} takeDamege");
-
-            Debug.Log(propagateBackwards);
+            LM.write($"{transform.root.name} takeDamage");
             if (propagateBackwards && futureHealth != null)
+            {
                 StartCoroutine(DamageBackwards(damage, source));
+                LM.write("NO TimeWarp: DamageBackwards");
+            }
             else if (!propagateBackwards && pastHealth != null)
+            {               
                 StartCoroutine(DamageForwards(damage, source));
+                LM.write("YES TimeWarp: DamageForwards");
+            }
         }
 
         IEnumerator ForwardToServerAfterDelay(float damage, GameObject source)
@@ -187,5 +190,10 @@ namespace Unity.FPS.Game
         }
 
         // void OnServerDie() { if (this) Destroy(gameObject); }
+
+        // HasLineOfSightFromFutureToPlayer
+        // Returns true if future bot has line of sight to player
+        // Return false otherwise
+ 
     }
 }

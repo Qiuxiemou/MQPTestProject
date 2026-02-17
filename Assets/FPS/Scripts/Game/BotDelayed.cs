@@ -12,7 +12,7 @@ namespace Unity.FPS.Game
         [Header("References")]
         [Tooltip("First Bot")]
         public Transform firstBot;          
-        public static float latencyMs = 200f;      // Delay in milliseconds
+        public static float latencyMs = 500f;      // Delay in milliseconds
         public float modifier = 1;
 
         private Queue<(Vector3 pos, Quaternion rot, float applyTime)> stateBuffer = new Queue<(Vector3, Quaternion, float)>();

@@ -15670,7 +15670,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: fps.AI::PlayerLatency
   player: {fileID: 2729281214152228946}
   latency: 5
-  offset: {x: 0, y: 1.6, z: 0}
 --- !u!135 &840133045
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -26983,6 +26982,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_TagString
       value: Bot
+      objectReference: {fileID: 0}
+    - target: {fileID: 6219073082427525763, guid: 504df3be75ea8ed449e61ed2e5877d1b,
+        type: 3}
+      propertyPath: fieldOfView
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 6219073082427525763, guid: 504df3be75ea8ed449e61ed2e5877d1b,
+        type: 3}
+      propertyPath: verboseDebug
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6927159929266097258, guid: 504df3be75ea8ed449e61ed2e5877d1b,
         type: 3}
@@ -45039,14 +45048,27 @@ MonoBehaviour:
   - {fileID: 2729281214152228945}
   - {fileID: 2729281214152228942}
   - {fileID: 2729281214152228944}
+  latencyOptionsMs:
+  - 0
+  - 50
+  - 100
+  - 150
+  - 200
+  - 500
+  - 1000
+  CurrentLatencyMs: 0
+  randomizeTimeWarp: 0
+  defaultTimeWarpEnabled: 1
   timerUI: {fileID: 925943784}
   surveyUI: {fileID: 1298435347}
   player: {fileID: 2729281214152228921}
   playerSpawnPoint: {fileID: 1880157105}
-  hiderBotPrefab: {fileID: 5469839216697517205, guid: b121d0988953b2a42b10879cd510a295,
-    type: 3}
   seekerBotPrefab: {fileID: 6163822215945196408, guid: 504df3be75ea8ed449e61ed2e5877d1b,
     type: 3}
+  hiderBotPrefab: {fileID: 5469839216697517205, guid: b121d0988953b2a42b10879cd510a295,
+    type: 3}
+  hiderTrueBotPrefab: {fileID: 0}
+  hiderPastBotPrefab: {fileID: 0}
   enemySpawnPoint: {fileID: 1036273494}
 --- !u!4 &2021164507
 Transform:
@@ -50763,7 +50785,7 @@ PrefabInstance:
     - target: {fileID: 8746678193447392789, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 47.83
+      value: 34.48
       objectReference: {fileID: 0}
     - target: {fileID: 8746678193447392789, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}
@@ -50773,7 +50795,7 @@ PrefabInstance:
     - target: {fileID: 8746678193447392789, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 16.86
+      value: 17.77
       objectReference: {fileID: 0}
     - target: {fileID: 8746678193447392789, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}

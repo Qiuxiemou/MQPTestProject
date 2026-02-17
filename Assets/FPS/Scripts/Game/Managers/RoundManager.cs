@@ -25,8 +25,14 @@ public class RoundManager : MonoBehaviour
     [SerializeField] private TextAsset roundConditionFile;
 
     private List<RoundCondition> rounds;
-    public int currentRoundIndex = 3;
+    public int currentRoundIndex = 0;
     private RoundCondition currentCondition;
+
+    [SerializeField] private TextAsset latinSquareFile;
+
+    private string _participantCounterPath;
+
+
 
     // ================= TIME WARP =================
     [Header("Time Warp Settings")]
@@ -63,7 +69,7 @@ public class RoundManager : MonoBehaviour
     public bool IsSeeker => _isSeeker;
     public float TimeRemaining => Mathf.Max(0, _timeRemaining);
 
-    public event Action<bool> OnPlayerRoleChanged;
+    public event Action<bool> OnBotRoleChanged;
     public event Action<float> OnTimerTick;
 
     Coroutine _roundCoroutine;
@@ -72,6 +78,28 @@ public class RoundManager : MonoBehaviour
 
     bool waitingToStartRound = false;
     int _lastPrintedSecond = -1;
+
+    // ================ SCORE ====================
+    IScoreDisplay scoreDisplay;
+    public GameObject CurrentEnemy => _futureBot;
+
+
+    public interface IScoreDisplay
+    {
+        void SetEnemy(GameObject enemy);
+    }
+
+    public void RegisterScoreDisplay(IScoreDisplay display)
+    {
+        scoreDisplay = display;
+
+        // If enemy already exists, assign immediately
+        if (_futureBot != null)
+        {
+            LM.write("Enemy already exists, assigning now");
+            scoreDisplay.SetEnemy(_futureBot);
+        }
+    }
 
 
     // ================= LOGGING =================
@@ -104,6 +132,11 @@ public class RoundManager : MonoBehaviour
             $"role_log_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.csv"
         );
 
+        _participantCounterPath = Path.Combine(
+            GetProjectLogsPath(),
+            "participant_counter.txt"
+        );
+
         File.WriteAllText(_surveyCsvPath,
             "timestamp,round,smoothness,responsiveness,fairness,qoe,fun,notes\n");
 
@@ -116,13 +149,111 @@ public class RoundManager : MonoBehaviour
         //BindUIIfNeeded();
         //StartRound();
 
-        rounds = RoundConfigLoader.Load(roundConditionFile);
+        // Load all possible conditions
+        var allConditions = RoundConfigLoader.Load(roundConditionFile);
+
+        // Load Latin square order
+        var latinOrders = LoadLatinSquare(latinSquareFile);
+
+        // Pick row for this participant
+        int participantIndex = GetAndIncrementParticipantIndex(latinOrders.Count);
+
+        List<int> orderRow = latinOrders[participantIndex];
+
+        // Rebuild rounds list based on ID order
+        rounds = new List<RoundCondition>();
+
+        foreach (int id in orderRow)
+        {
+            RoundCondition match = allConditions.Find(c => c.id == id);
+            if (match.id == 0)
+            {
+                LM.write($"Condition ID {id} not found!");
+                continue;
+            }
+            rounds.Add(match);
+        }
 
         LM.write($"[RoundManager] Loaded {rounds.Count} round conditions");
+
+        // Log ID order for this participant
+        StringBuilder orderLog = new StringBuilder();
+        orderLog.Append($"[RoundManager] Participant {participantIndex} order: ");
+
+        for (int i = 0; i < rounds.Count; i++)
+        {
+            orderLog.Append(rounds[i].id);
+
+            if (i < rounds.Count - 1)
+                orderLog.Append(", ");
+        }
+
+        LM.write(orderLog.ToString());
+
 
         BindUIIfNeeded();
         //StartNextRound();
     }
+
+    private int GetAndIncrementParticipantIndex(int totalSequences)
+    {
+        int index = 0;
+
+        if (File.Exists(_participantCounterPath))
+        {
+            string content = File.ReadAllText(_participantCounterPath);
+            int.TryParse(content, out index);
+        }
+
+        // Save incremented value
+        index = index % totalSequences;
+
+        int nextIndex = (index + 1) % totalSequences;
+
+        File.WriteAllText(_participantCounterPath, nextIndex.ToString());
+
+        return index;
+    }
+
+    private List<List<int>> LoadLatinSquare(TextAsset csvFile)
+    {
+        var result = new List<List<int>>();
+
+        if (csvFile == null)
+        {
+            LM.write("Latin square file missing!");
+            return result;
+        }
+
+        string[] lines = csvFile.text.Split('\n');
+
+        foreach (string line in lines)
+        {
+            if (string.IsNullOrWhiteSpace(line))
+                continue;
+
+            string cleaned = line.Trim();
+
+            string[] tokens = cleaned.Split(
+                new char[] { ',', '\t', ' ' },
+                System.StringSplitOptions.RemoveEmptyEntries
+            );
+
+            List<int> row = new List<int>();
+
+            foreach (string token in tokens)
+            {
+                if (int.TryParse(token, out int value))
+                    row.Add(value);
+            }
+
+            if (row.Count > 0)
+                result.Add(row);
+        }
+
+        return result;
+    }
+
 
     void OnEnable()
     {
@@ -147,6 +278,7 @@ public class RoundManager : MonoBehaviour
             Cursor.visible = true;
         }
     }
+
 
     void PickLatencyForRound()
     {
@@ -237,9 +369,11 @@ public class RoundManager : MonoBehaviour
         _timeRemaining = roundLengthSeconds;
 
         SpawnEnemyForCurrentRole();
+        StartCoroutine(BindScoreDisplayNextFrame());
+
         RespawnPlayer();
 
-        OnPlayerRoleChanged?.Invoke(_isSeeker);
+        OnBotRoleChanged?.Invoke(_isSeeker);
 
         OnTimeWarpChanged(IsTimeWarpEnabled);
 
@@ -252,8 +386,6 @@ public class RoundManager : MonoBehaviour
 
         _roundCoroutine = StartCoroutine(RoundTick());
 
-        LM.write("StartNext Round: before start coroutine");
-        StartCoroutine(RoundTick());
     }
 
     void ApplyCondition(RoundCondition c)
@@ -352,7 +484,7 @@ public class RoundManager : MonoBehaviour
     //    SpawnEnemyForCurrentRole();
     //    RespawnPlayer();
 
-    //    OnPlayerRoleChanged?.Invoke(_isSeeker);
+    //    OnBotRoleChanged?.Invoke(_isSeeker);
 
     //    SetGameplayPause(false);
     //    if (surveyUI) surveyUI.Hide();
@@ -425,7 +557,7 @@ public class RoundManager : MonoBehaviour
 
     IEnumerator DelayedBindAndStart()
     {
-        yield return null; // wait one frame so scene objects exist
+        yield return null; 
 
         BindUIIfNeeded();
         BindSceneReferences();
@@ -446,7 +578,7 @@ public class RoundManager : MonoBehaviour
     //        LogRoleChange();
     //        SpawnEnemyForCurrentRole();
     //        RespawnPlayer();
-    //        OnPlayerRoleChanged?.Invoke(_isSeeker);
+    //        OnBotRoleChanged?.Invoke(_isSeeker);
     //        _roleSwitchTimer = GetNextRoleInterval();
     //    }
     //}
@@ -470,7 +602,7 @@ public class RoundManager : MonoBehaviour
 
         if (_isSeeker)
         {
-            // Player is Hider → Enemy is SEEKER
+            // Enemy is Seeker, Player is Hider
             _futureBot = Instantiate(
                 seekerBotPrefab,
                 enemySpawnPoint.position,
@@ -480,7 +612,7 @@ public class RoundManager : MonoBehaviour
         else
         {
 
-            // Player is Seeker → Enemy is HIDER
+            // Enemy is Hider, Player is Seeker
             _futureBot = Instantiate(
                 hiderBotPrefab,
                 enemySpawnPoint.position,
@@ -490,11 +622,26 @@ public class RoundManager : MonoBehaviour
             AssignPeekNodes(_futureBot);
 
             SpawnHiderTimelineBots(_futureBot);
+            
         }
-
         //if (_isSeeker)
         //    AssignPeekNodes(_currentEnemy);
     }
+    IEnumerator BindScoreDisplayNextFrame()
+    {
+        yield return null;
+
+        if (scoreDisplay != null)
+        {
+            LM.write("Binding score display to enemy");
+            scoreDisplay.SetEnemy(_futureBot);
+        }
+        else
+        {
+            LM.write("ScoreDisplay still null after 1 frame");
+        }
+    }
+
 
     void SpawnHiderTimelineBots(GameObject futureHider)
     {

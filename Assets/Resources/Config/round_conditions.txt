@@ -1,36 +1,33 @@
 # id | bot | latency(ms) | timewarp
-1 | Seeker | 0 | None
-2 | Seeker | 50 | None
-3 | Seeker | 100 | None
-4 | Seeker | 150 | None
-5 | Seeker | 200 | None
 
-6 | Hider | 0 | None
-7 | Hider | 50 | None
-8 | Hider | 100 | None
-9 | Hider | 150 | None
-10 | Hider | 200 | None
+1  | Seeker | 0   | None
+2  | Seeker | 50  | None
+3  | Seeker | 100 | None
+4  | Seeker | 150 | None
+5  | Seeker | 200 | None
 
-11 | Seeker | 0 | Normal
-12 | Seeker | 50 | Normal
-13 | Seeker | 100 | Normal
-14 | Seeker | 150 | Normal
-15 | Seeker | 200 | Normal
+6  | Hider  | 0   | None
+7  | Hider  | 50  | None
+8  | Hider  | 100 | None
+9  | Hider  | 150 | None
+10 | Hider  | 200 | None
 
-16 | Hider | 0 | Normal
-17 | Hider | 50 | Normal
-18 | Hider | 100 | Normal
-19 | Hider | 150 | Normal
-20 | Hider | 200 | Normal
+11 | Seeker | 50  | Normal
+12 | Seeker | 100 | Normal
+13 | Seeker | 150 | Normal
+14 | Seeker | 200 | Normal
 
-21 | Seeker | 0 | Conditional
-22 | Seeker | 50 | Conditional
-23 | Seeker | 100 | Conditional
-24 | Seeker | 150 | Conditional
-25 | Seeker | 200 | Conditional
+15 | Hider  | 50  | Normal
+16 | Hider  | 100 | Normal
+17 | Hider  | 150 | Normal
+18 | Hider  | 200 | Normal
 
-26 | Hider | 0 | Conditional
-27 | Hider | 50 | Conditional
-28 | Hider | 100 | Conditional
-29 | Hider | 150 | Conditional
-30 | Hider | 200 | Conditional
+19 | Seeker | 50  | Conditional
+20 | Seeker | 100 | Conditional
+21 | Seeker | 150 | Conditional
+22 | Seeker | 200 | Conditional
+
+23 | Hider  | 50  | Conditional
+24 | Hider  | 100 | Conditional
+25 | Hider  | 150 | Conditional
+26 | Hider  | 200 | Conditional

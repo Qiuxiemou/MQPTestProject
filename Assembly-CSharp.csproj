@@ -110,6 +110,7 @@
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />
     <None Include="Assets\TextMesh Pro\Examples &amp; Extras\Fonts\Oswald-Bold - OFL.txt" />
     <None Include="Assets\TextMesh Pro\Examples &amp; Extras\Fonts\Roboto-Bold - AFL.txt" />
+    <None Include="Assets\Resources\Config\participant_counter.txt" />
     <None Include="Assets\TextMesh Pro\Examples &amp; Extras\Fonts\Anton OFL.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Mobile.cginc" />
     <None Include="Assets\Logs\EventLogs\EventLog_20250916_113039.txt" />
@@ -121,6 +122,7 @@
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface-Mobile.shader" />
     <None Include="Assets\FPS\Art\Shaders\ProjectorMultiply.shader" />
     <None Include="Assets\FPS\Prefabs\RootObjects\_ReadMe_RootObjects.txt" />
+    <None Include="Assets\Resources\Config\game_config.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\SDFFunctions.hlsl" />
     <None Include="Assets\Logs\EventLogs\EventLog_20250916_125713.txt" />
     <None Include="Assets\FPS\Prefabs\Level\BaseObjects\_ReadMe_BaseObjects.txt" />

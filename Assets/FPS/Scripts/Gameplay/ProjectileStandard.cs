@@ -6,6 +6,16 @@ namespace Unity.FPS.Gameplay
 {
     public class ProjectileStandard : ProjectileBase
     {
+        [Header("Conditional Timewarp Reject")]
+        [Tooltip("When hitting delayed AimPoint hitbox, validate line of sight to the REAL player's CURRENT capsule. If fully behind cover -> reject.")]
+        public bool UseRealPositionReject = true;
+
+        [Tooltip("World geometry layers used for cover checks (walls/level). EXCLUDE player layers.")]
+        public LayerMask WorldObstructionLayers = -1;
+
+        [Tooltip("Tag on the delayed hitbox collider (child under AimPoint).")]
+        public string AimPointHitboxTag = "AimPointHitbox";
+
         [Header("General")] [Tooltip("Radius of this projectile's collision detection")]
         public float Radius = 0.01f;
 
@@ -220,6 +230,39 @@ namespace Unity.FPS.Gameplay
             return true;
         }
 
+        bool RealPlayerFullyBehindCover(CharacterController cc, Vector3 shooterOrigin)
+        {
+            if (cc == null) return true;
+
+            Vector3 center = cc.transform.TransformPoint(cc.center);
+            Vector3 up = cc.transform.up;
+            Vector3 right = cc.transform.right;
+
+            float radius = cc.radius;
+            float height = Mathf.Max(cc.height, radius * 2f);
+            float half = (height * 0.5f) - radius;
+
+            // Sample a few points on the real capsule
+            Vector3[] samples =
+            {
+        center,
+        center + up * half,
+        center - up * half,
+        center + right * radius,
+        center - right * radius
+    };
+
+            // If ANY point is visible (not blocked by world), then player is NOT fully behind cover.
+            for (int i = 0; i < samples.Length; i++)
+            {
+                if (!Physics.Linecast(shooterOrigin, samples[i], WorldObstructionLayers, QueryTriggerInteraction.Ignore))
+                    return false;
+            }
+
+            // All points blocked => fully behind cover
+            return true;
+        }
+
         void OnHit(Vector3 point, Vector3 normal, Collider collider)
         {
             //LM.write($"[ProjectileStandard] OnHit Triggered");
@@ -233,19 +276,47 @@ namespace Unity.FPS.Gameplay
                     m_ProjectileBase.Owner);
             }
             else
-            { 
-                var proxy = collider.GetComponentInParent<BotHealthProxy>();
-                if (proxy != null)
+            {
+                if (UseRealPositionReject && collider.CompareTag(AimPointHitboxTag))
                 {
-                    //LM.write($"[ProjectileStandard] OnHit proxy != null");
-                    proxy.TakeDamage(Damage, m_ProjectileBase.Owner);
+                    Debug.Log("[Projectile] Hit delayed AimPoint hitbox");
+                    CharacterController realCC = collider.GetComponentInParent<CharacterController>();
+                    Health realHealth = collider.GetComponentInParent<Health>();
+
+             
+                    Vector3 shooterOrigin = m_ProjectileBase != null ? m_ProjectileBase.InitialPosition : Root.position;
+
+       
+                    if (RealPlayerFullyBehindCover(realCC, shooterOrigin))
+                    {
+                        Debug.Log("[Projectile] REJECTED: Real player fully behind cover");
+                        Destroy(gameObject);
+                        return;
+                    }
+                    else
+                    {
+                        Debug.Log("[Projectile] ACCEPTED: Real player exposed");
+                    }
+
+                    if (realHealth != null)
+                    {
+                        realHealth.TakeDamage(Damage, m_ProjectileBase.Owner);
+                    }
                 }
                 else
                 {
-                    //LM.write($"[ProjectileStandard] OnHit else");
-                    Damageable damageable = collider.GetComponent<Damageable>();
-                    if (damageable)
-                        damageable.InflictDamage(Damage, false, m_ProjectileBase.Owner);
+                    // Existing behavior for bots/proxies/world
+                    var proxy = collider.GetComponentInParent<BotHealthProxy>();
+                    if (proxy != null)
+                    {
+                        proxy.TakeDamage(Damage, m_ProjectileBase.Owner);
+                    }
+                    else
+                    {
+                        Damageable damageable = collider.GetComponent<Damageable>();
+                        if (damageable)
+                            damageable.InflictDamage(Damage, false, m_ProjectileBase.Owner);
+                    }
                 }
             }
 
@@ -292,45 +363,45 @@ namespace Unity.FPS.Gameplay
             }
 
 
-            if (AreaOfDamage)
-            {
-                // area damage
-                AreaOfDamage.InflictDamageInArea(Damage, point, HittableLayers, k_TriggerInteraction,
-                    m_ProjectileBase.Owner);
-            }
-            else
-            {
-                var proxy = collider.GetComponentInParent<BotHealthProxy>();
-                if (proxy != null)
-                {
-                    //LM.write($"[ProjectileStandard] OnHit proxy != null");
-                    proxy.TakeDamage(Damage, m_ProjectileBase.Owner);
-                }
-                else
-                {
-                    //LM.write($"[ProjectileStandard] OnHit else");
-                    Damageable damageable = collider.GetComponent<Damageable>();
-                    if (damageable)
-                        damageable.InflictDamage(Damage, false, m_ProjectileBase.Owner);
-                }
-            }
+            //if (AreaOfDamage)
+            //{
+            //    // area damage
+            //    AreaOfDamage.InflictDamageInArea(Damage, point, HittableLayers, k_TriggerInteraction,
+            //        m_ProjectileBase.Owner);
+            //}
+            //else
+            //{
+            //    var proxy = collider.GetComponentInParent<BotHealthProxy>();
+            //    if (proxy != null)
+            //    {
+            //        //LM.write($"[ProjectileStandard] OnHit proxy != null");
+            //        proxy.TakeDamage(Damage, m_ProjectileBase.Owner);
+            //    }
+            //    else
+            //    {
+            //        //LM.write($"[ProjectileStandard] OnHit else");
+            //        Damageable damageable = collider.GetComponent<Damageable>();
+            //        if (damageable)
+            //            damageable.InflictDamage(Damage, false, m_ProjectileBase.Owner);
+            //    }
+            //}
 
-            // impact vfx
-            if (ImpactVfx)
-            {
-                GameObject impactVfxInstance = Instantiate(ImpactVfx, point + (normal * ImpactVfxSpawnOffset),
-                    Quaternion.LookRotation(normal));
-                if (ImpactVfxLifetime > 0)
-                {
-                    Destroy(impactVfxInstance.gameObject, ImpactVfxLifetime);
-                }
-            }
+            //// impact vfx
+            //if (ImpactVfx)
+            //{
+            //    GameObject impactVfxInstance = Instantiate(ImpactVfx, point + (normal * ImpactVfxSpawnOffset),
+            //        Quaternion.LookRotation(normal));
+            //    if (ImpactVfxLifetime > 0)
+            //    {
+            //        Destroy(impactVfxInstance.gameObject, ImpactVfxLifetime);
+            //    }
+            //}
 
-            // impact sfx
-            if (ImpactSfxClip)
-            {
-                AudioUtility.CreateSFX(ImpactSfxClip, point, AudioUtility.AudioGroups.Impact, 1f, 3f);
-            }
+            //// impact sfx
+            //if (ImpactSfxClip)
+            //{
+            //    AudioUtility.CreateSFX(ImpactSfxClip, point, AudioUtility.AudioGroups.Impact, 1f, 3f);
+            //}
 
             // Self Destruct
             Destroy(this.gameObject);

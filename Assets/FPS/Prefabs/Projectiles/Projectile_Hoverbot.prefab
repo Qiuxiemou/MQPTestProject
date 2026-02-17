@@ -45,6 +45,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de99b30e1e73fd14e98cc5371da25d12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  UseRealPositionReject: 1
+  WorldObstructionLayers:
+    serializedVersion: 2
+    m_Bits: 8320
+  AimPointHitboxTag: AimPointHitbox
   Radius: 0.1
   Root: {fileID: 3659995153115176982}
   Tip: {fileID: 1135791333161367127}

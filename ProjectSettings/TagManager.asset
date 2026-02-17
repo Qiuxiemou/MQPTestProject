@@ -10,6 +10,7 @@ TagManager:
   - Bot
   - PlayerSpawn
   - EnemySpawn
+  - AimPointHitbox
   layers:
   - Default
   - TransparentFX

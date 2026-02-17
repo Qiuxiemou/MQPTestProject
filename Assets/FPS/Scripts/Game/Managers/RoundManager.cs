@@ -16,8 +16,6 @@ public class RoundManager : MonoBehaviour
     public Behaviour[] disableWhilePaused;
 
     // ================= LATENCY =================
-    //[Header("Latency Settings")]
-    //public float[] latencyOptionsMs = { 0f, 50f, 100f, 150f, 200f, 500f, 1000f };
     public float CurrentLatencyMs { get; private set; }
     //public float CurrentLatencyMs = 0f;
 
@@ -32,14 +30,9 @@ public class RoundManager : MonoBehaviour
 
     private string _participantCounterPath;
 
-
-
     // ================= TIME WARP =================
     [Header("Time Warp Settings")]
-    public bool randomizeTimeWarp = false;
-    public bool defaultTimeWarpEnabled = true;
-    public bool IsTimeWarpEnabled { get; private set; }
-    //public event Action<bool> OnTimeWarpChanged;
+    public TimewarpMode CurrentTimewarpMode { get; private set; }
 
     // ================= UI =================
     [Header("UI References")]
@@ -146,9 +139,6 @@ public class RoundManager : MonoBehaviour
 
     void Start()
     {
-        //BindUIIfNeeded();
-        //StartRound();
-
         // Load all possible conditions
         var allConditions = RoundConfigLoader.Load(roundConditionFile);
 
@@ -279,73 +269,52 @@ public class RoundManager : MonoBehaviour
         }
     }
 
-
-    void PickLatencyForRound()
+    void ApplyTimewarpMode()
     {
-        //int index = UnityEngine.Random.Range(0, latencyOptionsMs.Length);
-        //CurrentLatencyMs = latencyOptionsMs[index];
+        if (_isSeeker) return; // only applies to hider timeline
 
-        //LM.write($"[RoundManager] Latency this round: {CurrentLatencyMs} ms");
-    }
+        if (_futureBot == null) return;
 
-    void PickTimeWarpForRound()
-    {
-        //IsTimeWarpEnabled = defaultTimeWarpEnabled;
-            //randomizeTimeWarp
-            //? UnityEngine.Random.value > 0.5f
-            //: defaultTimeWarpEnabled;
+        var futureProxy = _futureBot.GetComponent<BotHealthProxy>();
+        var pastProxy = _pastBot?.GetComponent<BotHealthProxy>();
 
-        //LM.write($"[RoundManager] TimeWarp: {IsTimeWarpEnabled}");
-        
-    }
-
-    void OnTimeWarpChanged(bool enabled)
-    {
-        if (_isSeeker) { return; }
-        BotHealthProxy delayedBotHealthProxy = _pastBot.GetComponent<BotHealthProxy>();
-        if (delayedBotHealthProxy)
+        if (futureProxy != null)
         {
-            delayedBotHealthProxy.PropagateBackwards(enabled);
-            delayedBotHealthProxy.SetLatency(CurrentLatencyMs);
+            futureProxy.SetLatency(CurrentLatencyMs);
+            futureProxy.SetTimewarpMode(CurrentTimewarpMode);
         }
 
-        delayedBotHealthProxy = _futureBot.GetComponent<BotHealthProxy>();
-        if (delayedBotHealthProxy)
+        if (pastProxy != null)
         {
-            //delayedBotHealthProxy.PropagateBackwards(enabled);
-            delayedBotHealthProxy.SetLatency(CurrentLatencyMs);
+            pastProxy.SetLatency(CurrentLatencyMs);
+            pastProxy.SetTimewarpMode(CurrentTimewarpMode);
         }
 
-        if (enabled)
-        {
-            Transform hitboxTransform = _pastBot.transform.Find("HitBox");
-            //LM.write(hitboxTransform);
-            if (hitboxTransform != null)
-            {
-                hitboxTransform.gameObject.layer = 0;
-            }
+        LM.write($"[RoundManager] Applied Timewarp Mode: {CurrentTimewarpMode}");
 
-            hitboxTransform = _futureBot.transform.Find("HitBox");
-            if (hitboxTransform != null)
-            {
-                hitboxTransform.gameObject.layer = 3;
-            }
+        Transform futureHitbox = _futureBot.transform.Find("HitBox");
+        Transform pastHitbox = _pastBot?.transform.Find("HitBox");
+
+        if (CurrentTimewarpMode == TimewarpMode.None)
+        {
+            // Future is hittable
+            if (futureHitbox != null)
+                futureHitbox.gameObject.layer = 0;
+
+            if (pastHitbox != null)
+                pastHitbox.gameObject.layer = 3;
         }
         else
         {
-            Transform hitboxTransform = _pastBot.transform.Find("HitBox");
-            if (hitboxTransform != null)
-            {
-                hitboxTransform.gameObject.layer = 3;
-            }
+            // Past is hittable
+            if (futureHitbox != null)
+                futureHitbox.gameObject.layer = 3;
 
-            hitboxTransform = _futureBot.transform.Find("HitBox");
-            if (hitboxTransform != null)
-            {
-                hitboxTransform.gameObject.layer = 0;
-            }
+            if (pastHitbox != null)
+                pastHitbox.gameObject.layer = 0;
         }
     }
+
 
     // ================= ROUND FLOW =================
     void StartNextRound()
@@ -369,13 +338,14 @@ public class RoundManager : MonoBehaviour
         _timeRemaining = roundLengthSeconds;
 
         SpawnEnemyForCurrentRole();
+        ApplyTimewarpMode();
+
         StartCoroutine(BindScoreDisplayNextFrame());
 
         RespawnPlayer();
 
-        OnBotRoleChanged?.Invoke(_isSeeker);
-
-        OnTimeWarpChanged(IsTimeWarpEnabled);
+        OnBotRoleChanged?.Invoke(_isSeeker);    
+        //OnTimeWarpChanged(IsTimeWarpEnabled);
 
         SetGameplayPause(false);
         if (surveyUI) surveyUI.Hide();
@@ -391,7 +361,7 @@ public class RoundManager : MonoBehaviour
     void ApplyCondition(RoundCondition c)
     {
         _isSeeker = (c.player == PlayerRole.Seeker);
-        IsTimeWarpEnabled = c.timewarp != TimewarpMode.None;
+        CurrentTimewarpMode = c.timewarp;
         CurrentLatencyMs = c.latencyMs;
 
 
@@ -416,7 +386,6 @@ public class RoundManager : MonoBehaviour
             if (secondsLeft != _lastPrintedSecond)
             {
                 _lastPrintedSecond = secondsLeft;
-                LM.write($"[Timer] {secondsLeft} s remaining");
             }
 
             yield return null;
@@ -461,88 +430,6 @@ public class RoundManager : MonoBehaviour
         FlushBuffer();
     }
 
-
-    //// ---------------- ROUND FLOW ----------------
-    //public void StartRound()
-    //{
-    //    if (RoundRunning) return;
-
-    //    BindUIIfNeeded();
-
-    //    RoundRunning = true;
-    //    _timeRemaining = roundLengthSeconds;
-
-    //    PickLatencyForRound();
-    //    PickTimeWarpForRound();
-
-    //    _isSeeker = true;
-    //        //UnityEngine.Random.value > 0.5f;
-    //    //_roleSwitchTimer = GetNextRoleInterval();
-
-    //    //LogRoleChange();
-
-    //    SpawnEnemyForCurrentRole();
-    //    RespawnPlayer();
-
-    //    OnBotRoleChanged?.Invoke(_isSeeker);
-
-    //    SetGameplayPause(false);
-    //    if (surveyUI) surveyUI.Hide();
-    //    if (timerUI) timerUI.Show();
-
-    //    OnTimeWarpChanged(defaultTimeWarpEnabled);
-
-    //    StopAllCoroutines();
-    //    StartCoroutine(RoundTick());
-    //}
-
-    //IEnumerator RoundTick()
-    //{
-    //    while (_timeRemaining > 0f)
-    //    {
-    //        _timeRemaining -= Time.deltaTime;
-    //        //HandleRoleTimer();
-    //        OnTimerTick?.Invoke(TimeRemaining);
-    //        yield return null;
-    //    }
-
-    //    EndRound();
-    //}
-
-    //public void EndRound()
-    //{
-    //    if (!RoundRunning) return;
-    //    RoundRunning = false;
-
-    //    SetGameplayPause(true);
-
-    //    if (_futureBot != null)
-    //    {
-    //        Destroy(_futureBot);
-    //        _futureBot = null;
-    //    }
-
-    //    if (timerUI) timerUI.Hide();
-    //    if (surveyUI) surveyUI.Show(CurrentRound);
-    //}
-
-    //public void EndRoundOnPlayerDeath()
-    //{
-    //    if (!RoundRunning) return;
-    //    RoundRunning = false;
-
-    //    SetGameplayPause(true);
-
-    //    if (_futureBot != null)
-    //    {
-    //        Destroy(_futureBot);
-    //        _futureBot = null;
-    //    }
-
-    //    if (timerUI) timerUI.Hide();
-    //    if (surveyUI) surveyUI.Show(CurrentRound);
-    //}
-
     void BindSceneReferences()
     {
         player = GameObject.FindGameObjectWithTag("Player");
@@ -568,37 +455,12 @@ public class RoundManager : MonoBehaviour
     }
 
 
-    // ---------------- ROLE SWITCHING ----------------
-    //void HandleRoleTimer()
-    //{
-    //    _roleSwitchTimer -= Time.deltaTime;
-    //    if (_roleSwitchTimer <= 0f)
-    //    {
-    //        _isSeeker = !_isSeeker;
-    //        LogRoleChange();
-    //        SpawnEnemyForCurrentRole();
-    //        RespawnPlayer();
-    //        OnBotRoleChanged?.Invoke(_isSeeker);
-    //        _roleSwitchTimer = GetNextRoleInterval();
-    //    }
-    //}
-
-    //float GetNextRoleInterval()
-    //{
-    //    float min = Mathf.Max(10f, minRoleSwitchSeconds);
-    //    float max = Mathf.Max(min + 0.01f, maxRoleSwitchSeconds);
-    //    return UnityEngine.Random.Range(min, max);
-    //}
-
     void SpawnEnemyForCurrentRole()
     {
         // Cleanup old bots
         if (_futureBot) Destroy(_futureBot);
         if (_trueBot) Destroy(_trueBot);
         if (_pastBot) Destroy(_pastBot);
-
-        //GameObject prefab = _isSeeker ? seekerBotPrefab : hiderBotPrefab;
-        //_currentEnemy = Instantiate(prefab, enemySpawnPoint.position, enemySpawnPoint.rotation);
 
         if (_isSeeker)
         {
@@ -633,12 +495,12 @@ public class RoundManager : MonoBehaviour
 
         if (scoreDisplay != null)
         {
-            LM.write("Binding score display to enemy");
+            //LM.write("Binding score display to enemy");
             scoreDisplay.SetEnemy(_futureBot);
         }
         else
         {
-            LM.write("ScoreDisplay still null after 1 frame");
+            //LM.write("ScoreDisplay still null after 1 frame");
         }
     }
 
@@ -648,7 +510,7 @@ public class RoundManager : MonoBehaviour
         Vector3 pos = futureHider.transform.position;
         Quaternion rot = futureHider.transform.rotation;
 
-        LM.write("RoundManager: " + CurrentLatencyMs);
+        //LM.write("RoundManager: " + CurrentLatencyMs);
 
         // Spawn TRUE bot (follows Future)
         _trueBot = Instantiate(hiderTrueBotPrefab, pos, rot);
@@ -674,7 +536,7 @@ public class RoundManager : MonoBehaviour
         Health pastHealth = _pastBot.GetComponent<Health>();
 
         AssignHealthProxy(futureHider, pastHealth, serverHealth, futureHealth);
-        AssignHealthProxy(_trueBot, pastHealth, serverHealth, futureHealth);
+        //AssignHealthProxy(_trueBot, pastHealth, serverHealth, futureHealth);
         AssignHealthProxy(_pastBot, pastHealth, serverHealth, futureHealth);
 
         LM.write("Health wired: "

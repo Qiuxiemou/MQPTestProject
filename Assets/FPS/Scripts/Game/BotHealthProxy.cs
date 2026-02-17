@@ -28,7 +28,9 @@ namespace Unity.FPS.Game
 
         private Health clientHealth;
         //private bool clientDying;
-        private static bool propagateBackwards = false;
+        //private static bool propagateBackwards = false;
+
+        private TimewarpMode currentMode = TimewarpMode.None;
 
         void Awake()
         {
@@ -69,12 +71,19 @@ namespace Unity.FPS.Game
             return forwardDelayMs;
         }
 
-        public void PropagateBackwards(bool propBack)
+        public void SetTimewarpMode(TimewarpMode mode)
         {
-            Debug.Log(propBack);
-            propagateBackwards = !propBack;
-            Debug.Log(propagateBackwards);
+            currentMode = mode;
+            LM.write($"[{gameObject.name}] Timewarp mode set to {mode}");
         }
+
+
+        //public void PropagateBackwards(bool propBack)
+        //{
+        //    Debug.Log(propBack);
+        //    propagateBackwards = !propBack;
+        //    Debug.Log(propagateBackwards);
+        //}
 
         public void SetLatency(float latency) { forwardDelayMs = latency; }
 
@@ -83,7 +92,7 @@ namespace Unity.FPS.Game
             Debug.Log("Health Propagating backwards");
             LM.write("Health pass backwards");
 
-            //futureHealth.TakeDamage(damage, source);
+            futureHealth.TakeDamage(damage, source);
 
             if (forwardDelayMs > 0f)
                 yield return new WaitForSeconds(forwardDelayMs / 1000f);
@@ -103,7 +112,7 @@ namespace Unity.FPS.Game
             Debug.Log("Health Propagating forwards");
             LM.write("Health pass forward");
 
-            //pastHealth.TakeDamage(damage, source);
+            pastHealth.TakeDamage(damage, source);
 
             if (futureHealth != null) futureHealth.TakeDamage(damage, source);
 
@@ -113,25 +122,88 @@ namespace Unity.FPS.Game
             if (serverHealth != null) serverHealth.TakeDamage(damage, source);
         }
 
+        
         public void TakeDamage(float damage, GameObject source)
         {
-            //if (clientHealth != null && !clientDying)
-            //    clientHealth.TakeDamage(damage, source);
+            LM.write($"{transform.root.name} takeDamage | Mode={currentMode}");
 
-            //if (serverHealth != null)
-            //    StartCoroutine(ForwardToServerAfterDelay(damage, source));
-
-            LM.write($"{transform.root.name} takeDamage");
-            if (propagateBackwards && futureHealth != null)
+            switch (currentMode)
             {
-                StartCoroutine(DamageBackwards(damage, source));
-                LM.write("NO TimeWarp: DamageBackwards");
+                case TimewarpMode.None:
+                    // No timewarp -> backwards propagation
+                    if (futureHealth != null)
+                    {
+
+                        StartCoroutine(DamageBackwards(damage, source));
+                    }
+                    break;
+
+                case TimewarpMode.Normal:
+                    // Always forward (classic timewarp)
+                    if (pastHealth != null)
+                        StartCoroutine(DamageForwards(damage, source));
+                    break;
+
+                case TimewarpMode.Conditional:
+                    // Only forward if LOS from future bot
+                    if (HasLineOfSightFromFutureToPlayer())
+                    {
+                        LM.write("CTW: LOS valid -> forward");
+                        StartCoroutine(DamageForwards(damage, source));
+                    }
+                    else
+                    {
+                        LM.write("CTW: LOS failed -> cancel damage");
+                    }
+                    break;
             }
-            else if (!propagateBackwards && pastHealth != null)
-            {               
-                StartCoroutine(DamageForwards(damage, source));
-                LM.write("YES TimeWarp: DamageForwards");
+        }
+
+        bool HasLineOfSightFromFutureToPlayer()
+        {
+            // Check to see if future bot still has health to pass damage to
+            if (!futureHealth) return false;
+
+            // Check if player still exists to have LOS to
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (!player) return false;
+
+            // Raycast from future bot's top to player's top to check LOS
+            Vector3 origin = futureHealth.transform.position + Vector3.up * 1.5f;
+            Vector3 target = player.transform.position + Vector3.up * 1.5f;
+
+            Vector3 dir = target - origin;
+            float dist = dir.magnitude;
+
+            // Only consider walls and unhitable player layers' colliders as LOS blockers
+            int mask = LayerMask.GetMask("Wall", "PlayerUnhitable");
+            int playerLayer = LayerMask.NameToLayer("PlayerUnhitable");
+
+            // yellow = attempted
+            Debug.DrawRay(origin, dir, Color.yellow, 0.1f);
+
+            // If we hit something and it's not the player, LOS is blocked
+            if (Physics.Raycast(origin, dir.normalized, out RaycastHit hit, dist, mask))
+            {
+                LM.write($"LOS hit: {hit.collider.name} | layer {LayerMask.LayerToName(hit.collider.gameObject.layer)}");
+                //if (hit.collider.CompareTag("Player"))
+                if (hit.collider.gameObject.layer == playerLayer)
+                {
+                    // green = clear LOS
+                    Debug.DrawRay(origin, dir, Color.green, 0.1f);
+                    return true;
+                }
+                else
+                {
+                    // red = blocked
+                    LM.write("RED: LOS is Blocked");
+                    Debug.DrawRay(origin, dir, Color.red, 0.1f);
+                    return false;
+                }
             }
+
+
+            return false;
         }
 
         IEnumerator ForwardToServerAfterDelay(float damage, GameObject source)

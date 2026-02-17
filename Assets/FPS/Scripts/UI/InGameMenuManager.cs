@@ -215,44 +215,44 @@ namespace Unity.FPS.UI
             //SetAllBotVisualsVisible(visible);
         }
 
-        void OnTimeWarpChanged(bool enabled)
-        {
-            if (DelayedBotHealthProxy) DelayedBotHealthProxy.PropagateBackwards(enabled);
+        //void OnTimeWarpChanged(bool enabled)
+        //{
+        //    if (DelayedBotHealthProxy) DelayedBotHealthProxy.PropagateBackwards(enabled);
 
-            int hittableLayer = LayerMask.NameToLayer("Enemy");
-            int ignoreLayer = LayerMask.NameToLayer("Default");
+        //    int hittableLayer = LayerMask.NameToLayer("Enemy");
+        //    int ignoreLayer = LayerMask.NameToLayer("Default");
 
-            if (enabled)
-            {
-                Transform hitboxTransform = PastBotRoot.transform.Find("HitBox");
-                Debug.Log(hitboxTransform);
-                if (hitboxTransform != null)
-                {
-                    hitboxTransform.gameObject.layer = 0;
-                }
+        //    if (enabled)
+        //    {
+        //        Transform hitboxTransform = PastBotRoot.transform.Find("HitBox");
+        //        Debug.Log(hitboxTransform);
+        //        if (hitboxTransform != null)
+        //        {
+        //            hitboxTransform.gameObject.layer = 0;
+        //        }
 
-                hitboxTransform = FutureBotRoot.transform.Find("HitBox");
-                if (hitboxTransform != null)
-                {
-                    hitboxTransform.gameObject.layer = 3;
-                }
-            }
-            else
-            {
-                Transform hitboxTransform = PastBotRoot.transform.Find("HitBox");
-                if (hitboxTransform != null)
-                {
-                    hitboxTransform.gameObject.layer = 3;
-                }
+        //        hitboxTransform = FutureBotRoot.transform.Find("HitBox");
+        //        if (hitboxTransform != null)
+        //        {
+        //            hitboxTransform.gameObject.layer = 3;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Transform hitboxTransform = PastBotRoot.transform.Find("HitBox");
+        //        if (hitboxTransform != null)
+        //        {
+        //            hitboxTransform.gameObject.layer = 3;
+        //        }
 
-                hitboxTransform = FutureBotRoot.transform.Find("HitBox");
-                if (hitboxTransform != null)
-                {
-                    hitboxTransform.gameObject.layer = 0;
-                }
-            }
-                TimeWarpToggle.isOn = enabled;
-        }
+        //        hitboxTransform = FutureBotRoot.transform.Find("HitBox");
+        //        if (hitboxTransform != null)
+        //        {
+        //            hitboxTransform.gameObject.layer = 0;
+        //        }
+        //    }
+        //        TimeWarpToggle.isOn = enabled;
+        //}
         void OnConditionalTimeWarpChanged(bool enabled)
         {
             //ConditionalTimeWarpEnabled = enabled;

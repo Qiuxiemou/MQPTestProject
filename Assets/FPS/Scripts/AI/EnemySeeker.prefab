@@ -841,6 +841,14 @@ MonoBehaviour:
   AttackRangeColor: {r: 1, g: 0, b: 0, a: 1}
   DetectionRangeColor: {r: 0, g: 0, b: 1, a: 1}
   m_PatrolNodes: []
+  debugKnownPlayer: {fileID: 0}
+  debugKnownTarget: {fileID: 0}
+  UseBlendAim: 1
+  BlendToFuture: 0.3
+  BlendRadius: 0.15
+  LastSeenPlayerPosition: {x: 0, y: 0, z: 0}
+  HasLastSeenPlayer: 0
+  TimeSinceLastSeenPlayer: 0
 --- !u!114 &6069944285856237986
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -858,11 +866,15 @@ MonoBehaviour:
   RandomHitSparks: []
   OnDetectVfx: []
   OnDetectSfx: {fileID: 8300000, guid: 25722734eeccba042a18e26e376ca542, type: 3}
+  m_HasDetected: 0
   MovementSound: {fileID: 8300000, guid: 44c5f76f80602024e82d3e5f3af4ee97, type: 3}
   PitchDistortionMovementSpeed:
     Min: 0
     Max: 0
   WatchTurnSpeed: 720
+  PatrolHeadYawAmplitude: 10
+  PatrolHeadYawSpeed: 1.2
+  PatrolBodyTurnSpeed: 8
 --- !u!114 &2739245804788288154
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -877,6 +889,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxHealth: 100
   CriticalHealthRatio: 0.3
+  pastHealth: {fileID: 0}
+  futureHealth: {fileID: 0}
 --- !u!114 &7520169648142615619
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -904,7 +918,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 15
+  m_Speed: 5
   m_Acceleration: 50
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -1181,6 +1195,7 @@ MonoBehaviour:
   missMaxRange: 30
   Animator: {fileID: 0}
   KnownDetectedTarget: {fileID: 0}
+  KnownDetectedActor: {fileID: 0}
 --- !u!135 &3310386304147622860
 SphereCollider:
   m_ObjectHideFlags: 0

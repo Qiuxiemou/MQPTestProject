@@ -117,8 +117,6 @@ namespace Unity.FPS.UI
 
         public void SetEnemy(GameObject enemy)
         {
-            LM.write("This is called");
-
             enemyController = null;
             hiderController = null;
 

@@ -70,7 +70,7 @@ namespace Unity.FPS.Game
             // Clearing gives an immediate, predictable change.
             if (ms < latencyMs) stateBuffer.Clear();
             latencyMs = Mathf.Max(0f, ms * modifier);
-                LM.write("BotDelay: " + latencyMs);
+                //LM.write("BotDelay: " + latencyMs);
         }
 
         public float GetLatency()

@@ -49,20 +49,6 @@ namespace Unity.FPS.Game
 
         public void TakeDamage(float damage, GameObject damageSource)
         {
-            // Conditional Time Warp
-            LM.write($"CTW Status: {TimewarpSettings.ConditionalTimeWarpEnabled}");
-
-            if (TimewarpSettings.ConditionalTimeWarpEnabled)
-            {
-                LM.write("CTW: ACTIVE LOS");
-                bool hasLOS = HasLineOfSightFromFutureToPlayer();
-                if (!hasLOS)
-                {
-                    LM.write("CTW: HIT DENIED");
-                    return;
-                }
-                LM.write("CTW: HIT ALLOWED");
-            }
 
             if (Invincible)
                 return;
@@ -114,53 +100,6 @@ namespace Unity.FPS.Game
 
                 OnDie?.Invoke();
             }
-        }
-
-        bool HasLineOfSightFromFutureToPlayer()
-        {
-            // Check to see if future bot still has health to pass damage to
-            if (!futureHealth) return false;
-
-            // Check if player still exists to have LOS to
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-            if (!player) return false;
-
-            // Raycast from future bot's top to player's top to check LOS
-            Vector3 origin = futureHealth.transform.position + Vector3.up * 1.5f;
-            Vector3 target = player.transform.position + Vector3.up * 1.5f;
-
-            Vector3 dir = target - origin;
-            float dist = dir.magnitude;
-
-            // Only consider walls and unhitable player layers' colliders as LOS blockers
-            int mask = LayerMask.GetMask("Wall", "PlayerUnhitable");
-            int playerLayer = LayerMask.NameToLayer("PlayerUnhitable");
-
-            // yellow = attempted
-            Debug.DrawRay(origin, dir, Color.yellow, 0.1f);
-
-            // If we hit something and it's not the player, LOS is blocked
-            if (Physics.Raycast(origin, dir.normalized, out RaycastHit hit, dist, mask))
-            {
-                LM.write($"LOS hit: {hit.collider.name} | layer {LayerMask.LayerToName(hit.collider.gameObject.layer)}");
-                //if (hit.collider.CompareTag("Player"))
-                if (hit.collider.gameObject.layer == playerLayer)
-                {
-                    // green = clear LOS
-                    Debug.DrawRay(origin, dir, Color.green, 0.1f);
-                    return true;
-                }
-                else
-                {
-                    // red = blocked
-                    LM.write("RED: LOS is Blocked");
-                    Debug.DrawRay(origin, dir, Color.red, 0.1f);
-                    return false;
-                }
-            }
-
-
-            return false;
         }
     }
 }

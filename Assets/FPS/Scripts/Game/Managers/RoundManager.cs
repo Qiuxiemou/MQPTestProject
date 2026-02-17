@@ -66,6 +66,7 @@ public class RoundManager : MonoBehaviour
     public event Action<bool> OnPlayerRoleChanged;
     public event Action<float> OnTimerTick;
 
+    Coroutine _roundCoroutine;
     float _timeRemaining;
     bool _isSeeker;
 
@@ -246,7 +247,10 @@ public class RoundManager : MonoBehaviour
         if (surveyUI) surveyUI.Hide();
         if (timerUI) timerUI.Show();
 
-        StopAllCoroutines();
+        if (_roundCoroutine != null)
+            StopCoroutine(_roundCoroutine);
+
+        _roundCoroutine = StartCoroutine(RoundTick());
 
         LM.write("StartNext Round: before start coroutine");
         StartCoroutine(RoundTick());
@@ -409,17 +413,14 @@ public class RoundManager : MonoBehaviour
 
     void BindSceneReferences()
     {
-        // Player
-        if (!player)
-            player = GameObject.FindGameObjectWithTag("Player");
+        player = GameObject.FindGameObjectWithTag("Player");
 
-        // Player spawn
-        if (!playerSpawnPoint)
-            playerSpawnPoint = GameObject.FindGameObjectWithTag("PlayerSpawn")?.transform;
+        playerSpawnPoint = GameObject.FindGameObjectWithTag("PlayerSpawn")?.transform;
 
-        // Enemy spawn
-        if (!enemySpawnPoint)
-            enemySpawnPoint = GameObject.FindGameObjectWithTag("EnemySpawn")?.transform;
+        enemySpawnPoint = GameObject.FindGameObjectWithTag("EnemySpawn")?.transform;
+
+        timerUI = FindFirstObjectByType<TimerUI>(FindObjectsInactive.Include);
+        surveyUI = FindFirstObjectByType<SurveyUI>(FindObjectsInactive.Include);
     }
 
     IEnumerator DelayedBindAndStart()
@@ -430,6 +431,7 @@ public class RoundManager : MonoBehaviour
         BindSceneReferences();
 
         RoundRunning = false;
+        waitingToStartRound = false;
         StartNextRound();
     }
 

@@ -39,6 +39,11 @@ public class RoundManager : MonoBehaviour
     public TimerUI timerUI;
     public SurveyUI surveyUI;
 
+    [Header("Round Start UI")]
+    public RoundStartUI roundStartUI;
+
+    bool waitingForPlayerInput = false;
+
     // ================= PLAYER =================
     [Header("Player")]
     public GameObject player;
@@ -243,7 +248,13 @@ public class RoundManager : MonoBehaviour
 
         return result;
     }
-
+    void Update()
+    {
+        if (waitingForPlayerInput && Input.GetKeyDown(KeyCode.Tab))
+        {
+            StartRoundGameplay();
+        }
+    }
 
     void OnEnable()
     {
@@ -317,6 +328,24 @@ public class RoundManager : MonoBehaviour
 
 
     // ================= ROUND FLOW =================
+    void StartRoundGameplay()
+    {
+        waitingForPlayerInput = false;
+
+        roundStartUI.Hide();
+
+        RoundRunning = true;
+
+        SetGameplayPause(false);
+
+        if (timerUI) timerUI.Show();
+
+        if (_roundCoroutine != null)
+            StopCoroutine(_roundCoroutine);
+
+        _roundCoroutine = StartCoroutine(RoundTick());
+    }
+
     void StartNextRound()
     {
         if (currentRoundIndex >= rounds.Count)
@@ -334,7 +363,7 @@ public class RoundManager : MonoBehaviour
 
         ApplyCondition(currentCondition);
 
-        RoundRunning = true;
+        //RoundRunning = true;
         _timeRemaining = roundLengthSeconds;
 
         SpawnEnemyForCurrentRole();
@@ -344,17 +373,27 @@ public class RoundManager : MonoBehaviour
 
         RespawnPlayer();
 
-        OnBotRoleChanged?.Invoke(_isSeeker);    
+        OnBotRoleChanged?.Invoke(_isSeeker);
         //OnTimeWarpChanged(IsTimeWarpEnabled);
 
-        SetGameplayPause(false);
+
+        //SetGameplayPause(false);
+        //if (surveyUI) surveyUI.Hide();
+        //if (timerUI) timerUI.Show();
+
+        //if (_roundCoroutine != null)
+        //    StopCoroutine(_roundCoroutine);
+
+        //_roundCoroutine = StartCoroutine(RoundTick());
+
+        // Freeze gameplay
+        SetGameplayPause(true);
+
+        if (timerUI) timerUI.Hide();
         if (surveyUI) surveyUI.Hide();
-        if (timerUI) timerUI.Show();
 
-        if (_roundCoroutine != null)
-            StopCoroutine(_roundCoroutine);
-
-        _roundCoroutine = StartCoroutine(RoundTick());
+        roundStartUI.Show(_isSeeker);
+        waitingForPlayerInput = true;
 
     }
 
@@ -703,6 +742,9 @@ public class RoundManager : MonoBehaviour
 
         if (!surveyUI)
             surveyUI = FindFirstObjectByType<SurveyUI>(FindObjectsInactive.Include);
+
+        if (!roundStartUI)
+            roundStartUI = FindFirstObjectByType<RoundStartUI>(FindObjectsInactive.Include);
     }
 
     // ---------------- PAUSE / LOGGING ----------------

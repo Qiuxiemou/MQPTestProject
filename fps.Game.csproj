@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="Assets\FPS\Scripts\Game\Shared\Damageable.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\RoundConfigLoader.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\RoundStartUI.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\RoundCondition.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\MeshCombiner.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\MeshCombineUtility.cs" />

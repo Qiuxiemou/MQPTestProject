@@ -151,6 +151,8 @@ namespace Unity.FPS.AI
         public Vector3 LastSeenPlayerPosition;
         public bool HasLastSeenPlayer = false;
         public float TimeSinceLastSeenPlayer = 0f;
+        [SerializeField] private float fieldOfView = 90f;
+        public bool verboseDebug = true;
 
 
         // -------- Look Around internal state --------
@@ -385,7 +387,13 @@ namespace Unity.FPS.AI
                 if (CanSeeNode(node))
                 {
                     node.MarkVisited();
+                }
+                if (DetectionModule.KnownDetectedTarget != null)
+                {
+                    HasLastSeenPlayer = true;
                     TimeSinceLastSeenPlayer = Time.time;
+                    LastSeenPlayerPosition = DetectionModule.LastSeenPosition;
+                    node.MarkVisited();
                 }
             }
         }
@@ -394,22 +402,74 @@ namespace Unity.FPS.AI
         {
             if (!node) return false;
 
-            Vector3 dir = node.transform.position - DetectionModule.DetectionSourcePoint.position;
-            float distance = dir.magnitude;
+            Vector3 origin = DetectionModule.DetectionSourcePoint.position;
+            Vector3 toNode = node.transform.position - origin;
+            float distance = toNode.magnitude;
 
-            // Raycast to node
-            if (Physics.Raycast(DetectionModule.DetectionSourcePoint.position, dir.normalized, out RaycastHit hit, distance, ~0))
+            // --- FIELD OF VIEW CHECK ---
+            Vector3 forward = -1 * DetectionModule.DetectionSourcePoint.forward;
+            Vector3 dirNormalized = toNode.normalized;
+            float dot = Vector3.Dot(forward, dirNormalized);
+            // Convert FOV to dot threshold
+            float fovThreshold = Mathf.Cos(fieldOfView * 0.5f * Mathf.Deg2Rad);
+
+
+            Vector3 leftBoundary = Quaternion.AngleAxis(-(fieldOfView * 0.5f), Vector3.up) * forward;
+            Vector3 rightBoundary = Quaternion.AngleAxis(fieldOfView * 0.5f, Vector3.up) * forward;
+
+            // Draw center forward ray
+            Debug.DrawRay(origin, forward * 20f, Color.green);
+
+            // Draw FOV boundary rays
+            Debug.DrawRay(origin, leftBoundary * 20f, Color.green);
+            Debug.DrawRay(origin, rightBoundary * 20f, Color.green);
+
+            // Draw FOV arc
+            float radius = 20f;
+            int segments = 24;
+            Vector3 prevPoint = Vector3.zero;
+            for (int i = 0; i <= segments; i++)
+            {
+                float t = i / (float)segments;
+                float angle = Mathf.Lerp(-(fieldOfView * 0.5f), fieldOfView * 0.5f, t);
+
+                Vector3 dir = Quaternion.AngleAxis(angle, Vector3.up) * forward;
+                Vector3 point = origin + dir * radius;
+
+                if (i > 0)
+                    Debug.DrawLine(prevPoint, point, Color.green);
+
+                prevPoint = point;
+            }
+
+
+
+            if (dot < fovThreshold && distance > 3)
+            {
+                if (verboseDebug)
+                    Debug.Log($"Node {node.name} outside FOV (dot={dot:F2}, threshold={fovThreshold:F2})");
+                return false; // Outside vision cone
+            }
+               
+
+            // --- LINE OF SIGHT CHECK ---
+            if (Physics.Raycast(origin, dirNormalized, out RaycastHit hit, 20, ~0))
             {
                 if ((hit.point - node.transform.position).sqrMagnitude < 0.1f)
+                {
+                    Debug.DrawRay(origin, toNode, Color.blue);
                     return true;
+                }
 
+                if (distance <= 20)
+                    Debug.DrawRay(origin, toNode, Color.red);
+                if (verboseDebug)
+                    Debug.Log($"Node {node.name} blocked by {hit.collider.name}");
                 return false; // blocked
             }
 
-            return true; // no hit, node is visible
+            return false; // no hit
         }
-
-
 
         public void ResetPathDestination()
         {

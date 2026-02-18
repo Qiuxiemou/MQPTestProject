@@ -408,7 +408,6 @@ namespace Unity.FPS.AI
 
             // --- FIELD OF VIEW CHECK ---
             Vector3 forward = -1 * DetectionModule.DetectionSourcePoint.forward;
-            Debug.DrawRay(transform.position, forward * 2, Color.red);
             Vector3 dirNormalized = toNode.normalized;
             float dot = Vector3.Dot(forward, dirNormalized);
             // Convert FOV to dot threshold

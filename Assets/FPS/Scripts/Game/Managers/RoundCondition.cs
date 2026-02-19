@@ -1,6 +1,6 @@
 using System;
 
-public enum PlayerRole
+public enum BotRole
 {
     Hider,
     Seeker
@@ -17,7 +17,7 @@ public enum TimewarpMode
 public class RoundCondition
 {
     public int id;
-    public PlayerRole player;
+    public BotRole bot;
     public int latencyMs;
     public TimewarpMode timewarp;
 }

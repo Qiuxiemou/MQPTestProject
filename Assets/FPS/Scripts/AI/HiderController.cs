@@ -74,7 +74,7 @@ namespace Unity.FPS.AI
         public float coverSearchRadius = 20f;
 
         [Tooltip("Offset from wall center along direction away from player")]
-        public float coverOffset = 3f;
+        public float coverOffset = 5f;
 
         [Tooltip("Draw debug lines for chosen cover positions")]
         public bool showDebugCover = true;
@@ -147,8 +147,6 @@ namespace Unity.FPS.AI
         bool _lostRecentEntered = false;
         Coroutine _lostWaitCoroutine;
 
-        Coroutine _peekCoroutine;
-
         
 
 
@@ -211,18 +209,6 @@ namespace Unity.FPS.AI
                 DetectionModule.HandleTargetDetection(m_Actor, m_SelfColliders);
             }
 
-
-            // Always run detection every frame
-
-            // Lock to last see player position
-            //Vector3 toLastSeen = _lastKnownPlayerPos - transform.position;
-
-            //Vector3 lookDir = toLastSeen.normalized;
-            //Quaternion targetRot = Quaternion.LookRotation(lookDir);
-            //transform.rotation = Quaternion.Slerp(
-            //    transform.rotation,
-            //    targetRot,
-            //    Time.deltaTime * OrientationSpeed);
             // Only face last known player position when it makes sense
             if (_state == HiderState.SeePlayer || _state == HiderState.LostPlayerRecent)
             {
@@ -236,7 +222,7 @@ namespace Unity.FPS.AI
                         targetRot,
                         Time.deltaTime * OrientationSpeed);
                 }
-            }
+            } 
 
 
             // Handle arrival at chosen cover (for SeePlayer state)
@@ -318,7 +304,7 @@ namespace Unity.FPS.AI
                 {
                     case HiderState.UnknownPlayer:
                         {
-                            //Debug.//Log("State UnknownPlayer2");
+                            LM.write("State UnknownPlayer");
                             if (!_isPeeking)
                             {
                                 //Debug.//Log("State UnknownPlayer: starting UnknownPlayerRoutine");
@@ -336,13 +322,14 @@ namespace Unity.FPS.AI
                     case HiderState.SeePlayer:
                         {
                             // Find cover based on lastKnownPlayerPos and move there
+                            
+
                             if (!_isChoosingCover)
                             {
-                                //Debug.//Log($"State SeePlayer: choosing cover vs player at {_lastKnownPlayerPos}");
+                                LM.write($"State SeePlayer: choosing cover vs player at {_lastKnownPlayerPos}");
                                 if (ReachedDestination())
                                 {
                                     ChooseCoverAndMove(_lastKnownPlayerPos);
-
                                 }
 
                             }
@@ -354,7 +341,7 @@ namespace Unity.FPS.AI
                             if (!_lostRecentEntered && !_isChoosingCover)
                             {
                                 _lostRecentEntered = true;
-                                //Debug.//Log($"State LostPlayerRecent: relocate using lastKnown={_lastKnownPlayerPos}");
+                                LM.write($"State LostPlayerRecent: relocate using lastKnown={_lastKnownPlayerPos}");
 
                                 if (ReachedDestination())
                                     ChooseCoverAndMove(_lastKnownPlayerPos);
@@ -440,12 +427,12 @@ namespace Unity.FPS.AI
 
 
             // 3. Go to exact cover position first (tuck in behind the wall)
-            NavMeshAgent.SetDestination(_coverPos);
+            SetDestinationWithDebug(_coverPos);
             while (NavMeshAgent.remainingDistance > reachThreshold && !NavMeshAgent.pathPending)
                 yield return null;
 
             // 4. Move from cover to the chosen corner (still mostly safe)
-            NavMeshAgent.SetDestination(basePeek);
+            SetDestinationWithDebug(basePeek);
             while (NavMeshAgent.remainingDistance > reachThreshold && !NavMeshAgent.pathPending)
                 yield return null;
 
@@ -472,7 +459,7 @@ namespace Unity.FPS.AI
 
                 // ---- STEP OUT (expose) ----
                 //Log($"PeekRoutine: Jiggle #{i + 1}/{peekJiggleCount} -> STEP OUT to {peekOut}");
-                NavMeshAgent.SetDestination(peekOut);
+                SetDestinationWithDebug(peekOut);
                 while (NavMeshAgent.remainingDistance > reachThreshold && !NavMeshAgent.pathPending)
                     yield return null;
 
@@ -493,7 +480,7 @@ namespace Unity.FPS.AI
 
                 // ---- STEP BACK (safe again) ----
                 //Log($"PeekRoutine: Jiggle #{i + 1} -> STEP BACK to basePeek {basePeek}");
-                NavMeshAgent.SetDestination(basePeek);
+                SetDestinationWithDebug(basePeek);
                 while (NavMeshAgent.remainingDistance > reachThreshold && !NavMeshAgent.pathPending)
                     yield return null;
 
@@ -504,7 +491,7 @@ namespace Unity.FPS.AI
 
             // 7. After all jiggling, go fully back to the main cover position
             //Log("PeekRoutine: finished all jiggle peeks, returning to _coverPos");
-            NavMeshAgent.SetDestination(_coverPos);
+            SetDestinationWithDebug(_coverPos);
             while (NavMeshAgent.remainingDistance > reachThreshold && !NavMeshAgent.pathPending)
                 yield return null;
 
@@ -602,22 +589,69 @@ namespace Unity.FPS.AI
 
         bool ReachedDestination()
         {
+            if (NavMeshAgent == null) return false;
+            if (!NavMeshAgent.isActiveAndEnabled) return false;
+            if (!NavMeshAgent.isOnNavMesh) return false;
+
             if (NavMeshAgent.pathPending) return false;
             if (NavMeshAgent.remainingDistance > NavMeshAgent.stoppingDistance) return false;
-            if (NavMeshAgent.hasPath && NavMeshAgent.velocity.sqrMagnitude > 0.001f) return false;
+            if (NavMeshAgent.hasPath) return false;
+
             return true;
         }
 
+
+        //IEnumerator LookAlongWallRoutine()
+        //{
+        //    _isUnknownRoutineRunning = true;
+
+        //    //Debug.//Log("LookAlongWallRoutine started");
+
+        //    // Directions toward left & right wall edges
+        //    Vector3 leftDir = (_peekLeftPos - transform.position).normalized;
+        //    Vector3 rightDir = (_peekRightPos - transform.position).normalized;
+
+        //    float timer = 0f;
+
+        //    while (_state == HiderState.UnknownPlayer)
+        //    {
+        //        timer += Time.deltaTime;
+
+        //        // Ping-pong between left and right
+        //        float t = Mathf.PingPong(timer, IdleScanDuration) / IdleScanDuration;
+        //        Vector3 lookDir = Vector3.Slerp(leftDir, rightDir, t);
+
+        //        Quaternion targetRot = Quaternion.LookRotation(lookDir);
+        //        transform.rotation = Quaternion.Slerp(
+        //            transform.rotation,
+        //            targetRot,
+        //            Time.deltaTime * OrientationSpeed);
+
+        //        Debug.DrawRay(transform.position + Vector3.up, lookDir * 2f, Color.yellow);
+        //        Debug.DrawRay(transform.position + Vector3.up, leftDir * 2f, Color.green);
+        //        Debug.DrawRay(transform.position + Vector3.up, rightDir * 2f, Color.blue);
+
+
+        //        // Immediately stop scanning if player is seen
+        //        if (DetectionModule != null && DetectionModule.IsSeeingTarget)
+        //        {
+        //            _lastKnownPlayerPos = DetectionModule.LastSeenPosition;
+        //            _state = HiderState.SeePlayer;
+        //            break;
+        //        }
+
+        //        yield return null;
+        //    }
+
+
+        //    _isUnknownRoutineRunning = false;
+        //}
 
         IEnumerator LookAlongWallRoutine()
         {
             _isUnknownRoutineRunning = true;
 
-            //Debug.//Log("LookAlongWallRoutine started");
-
-            // Directions toward left & right wall edges
-            Vector3 leftDir = (_peekLeftPos - transform.position).normalized;
-            Vector3 rightDir = (_peekRightPos - transform.position).normalized;
+            Vector3 mapCenter = new Vector3(55f, 3f, 15f);
 
             float timer = 0f;
 
@@ -625,22 +659,38 @@ namespace Unity.FPS.AI
             {
                 timer += Time.deltaTime;
 
-                // Ping-pong between left and right
-                float t = Mathf.PingPong(timer, IdleScanDuration) / IdleScanDuration;
-                Vector3 lookDir = Vector3.Slerp(leftDir, rightDir, t);
+                // Direction toward map center (flatten Y so we don't tilt)
+                Vector3 toCenter = mapCenter - transform.position;
+                toCenter.y = 0f;
 
-                Quaternion targetRot = Quaternion.LookRotation(lookDir);
+                if (toCenter.sqrMagnitude < 0.001f)
+                    yield break;
+
+                Quaternion baseRotation = Quaternion.LookRotation(toCenter.normalized);
+
+                // PingPong angle between -90 and +90
+                float angle = Mathf.Lerp(
+                    -50f,
+                    50f,
+                    Mathf.PingPong(timer, IdleScanDuration) / IdleScanDuration
+                );
+
+                Quaternion offsetRotation = Quaternion.Euler(0f, angle, 0f);
+
+                Quaternion targetRot = baseRotation * offsetRotation;
+
                 transform.rotation = Quaternion.Slerp(
                     transform.rotation,
                     targetRot,
-                    Time.deltaTime * OrientationSpeed);
+                    Time.deltaTime * OrientationSpeed
+                );
 
-                Debug.DrawRay(transform.position + Vector3.up, lookDir * 2f, Color.yellow);
-                Debug.DrawRay(transform.position + Vector3.up, leftDir * 2f, Color.green);
-                Debug.DrawRay(transform.position + Vector3.up, rightDir * 2f, Color.blue);
+                // Debug rays
+                Debug.DrawRay(transform.position + Vector3.up,
+                    targetRot * Vector3.forward * 2f,
+                    Color.yellow);
 
-
-                // Immediately stop scanning if player is seen
+                // Stop immediately if player seen
                 if (DetectionModule != null && DetectionModule.IsSeeingTarget)
                 {
                     _lastKnownPlayerPos = DetectionModule.LastSeenPosition;
@@ -651,9 +701,9 @@ namespace Unity.FPS.AI
                 yield return null;
             }
 
-
             _isUnknownRoutineRunning = false;
         }
+
 
         #region Cover Selection 
 
@@ -678,7 +728,7 @@ namespace Unity.FPS.AI
                 if (upDot > 0.8f)
                     continue;
 
-                Vector3 wallPos = wall.transform.position;
+                Vector3 wallPos = wall.bounds.center;
                 float dist = Vector3.Distance(botPos, wallPos);
 
                 // coverPos is a bit in front of the wall from the bot's viewpoint
@@ -704,7 +754,7 @@ namespace Unity.FPS.AI
             {
                 _currentCoverTarget = navHit.position;
                 _isChoosingCover = true;        // reuse arrival logic in Update()
-                NavMeshAgent.SetDestination(_currentCoverTarget);
+                SetDestinationWithDebug(_currentCoverTarget);
 
                 ////Log($"MoveToRandomNearbyCover: moving to idle cover index={idx} at {_currentCoverTarget}");
                 if (showDebugCover)
@@ -717,6 +767,24 @@ namespace Unity.FPS.AI
                 ////Log($"MoveToRandomNearbyCover: NavMesh.SamplePosition failed near {chosenPos}");
             }
         }
+
+        float GetNavMeshPathLength(Vector3 target)
+        {
+            NavMeshPath path = new NavMeshPath();
+
+            if (!NavMeshAgent.CalculatePath(target, path))
+                return Mathf.Infinity;
+
+            float length = 0f;
+
+            for (int i = 1; i < path.corners.Length; i++)
+            {
+                length += Vector3.Distance(path.corners[i - 1], path.corners[i]);
+            }
+
+            return length;
+        }
+
 
         void ChooseCoverAndMove(Vector3 playerPos)
         {
@@ -749,7 +817,7 @@ namespace Unity.FPS.AI
                 if (!blocked)
                     continue;
 
-                float distBot = Vector3.Distance(botPos, coverPos);
+                float distBot = GetNavMeshPathLength(coverPos);
                 float distPlayer = Vector3.Distance(playerPos, coverPos);
 
                 // ---------- Calculate combined score ----------
@@ -834,7 +902,7 @@ namespace Unity.FPS.AI
 
                 if (NavMesh.SamplePosition(randomChoice.pos, out NavMeshHit navHit, 2f, NavMesh.AllAreas))
                 {
-                    NavMeshAgent.SetDestination(navHit.position);
+                    SetDestinationWithDebug(navHit.position);
                     Debug.DrawLine(transform.position + Vector3.up, navHit.position + Vector3.up, Color.magenta, 1f);
                     //LM.write($"[HIDER] Random chosen cover = {navHit.position}");
                 }
@@ -867,29 +935,49 @@ namespace Unity.FPS.AI
             {
                 float probability = (scores[i] / totalScore) * 100f;
                 string marker = (i == chosenIndex) ? " <- CHOSEN" : "";
-                //LM.write($"  Candidate {i}: Score={scores[i]:F2}, Probability={probability:F1}%{marker}");
+                LM.write($"  Candidate {i}: Score={scores[i]:F2}, Probability={probability:F1}%{marker}");
 
                 // Draw debug lines - chosen one is bright blue, others are dim
-                Color debugColor = (i == chosenIndex) ? Color.blue : new Color(0.5f, 0.5f, 0.5f, 0.3f);
-                Debug.DrawLine(playerPos + Vector3.up, candidates[i].pos + Vector3.up, debugColor, 0.5f);
+                Color debugColor = (i == chosenIndex) ? Color.blue : Color.grey;
+                Debug.DrawLine(playerPos + Vector3.up, candidates[i].pos, debugColor, 0.5f);
             }
 
             // ---------- Move to chosen cover ----------
             Vector3 chosenPos = chosenCandidate.pos;
 
-            if (NavMesh.SamplePosition(chosenPos, out NavMeshHit finalHit, 2f, NavMesh.AllAreas))
+            if (NavMesh.SamplePosition(chosenPos, out NavMeshHit finalHit, 5f, NavMesh.AllAreas))
             {
-                NavMeshAgent.SetDestination(finalHit.position);
-                Debug.DrawLine(transform.position + Vector3.up, finalHit.position + Vector3.up, Color.cyan, 1f);
-                //LM.write($"[HIDER] Weighted random chosen cover = {finalHit.position}");
+                SetDestinationWithDebug(finalHit.position);
+                //Debug.DrawLine(transform.position + Vector3.up, finalHit.position, Color.cyan, 1f);
+                LM.write($"[HIDER] Weighted random chosen cover = {finalHit.position}");
             }
             else
             {
-                //LM.write($"[HIDER] ChooseCoverAndMove: no NavMesh near chosen cover {chosenPos}");
+                LM.write($"[HIDER] ChooseCoverAndMove: no NavMesh near chosen cover {chosenPos}");
             }            
         }
 
         #endregion
+
+        void SetDestinationWithDebug(Vector3 destination, Color color = default)
+        {
+            if (NavMeshAgent == null || !NavMeshAgent.isActiveAndEnabled)
+                return;
+
+            NavMeshAgent.SetDestination(destination);
+            if (color == default)
+                color = Color.red;
+
+            // Draw line from current position to target
+            Debug.DrawLine(
+                transform.position + Vector3.up,
+                destination + Vector3.up,
+                color,
+                1.5f
+            );
+
+            Debug.Log($"[HIDER] Moving to {destination}");
+        }
 
 
         Transform[] FindPeekNodesInScene()
@@ -920,7 +1008,10 @@ namespace Unity.FPS.AI
 
             if (damageSource && !damageSource.GetComponent<HiderController>())
             {
-                // pursue the player
+                _lastKnownPlayerPos = damageSource.transform.position;
+
+                _lastTimeSawPlayer = Time.time;
+
                 DetectionModule.OnDamaged(damageSource);
 
                 //onDamaged?.Invoke();

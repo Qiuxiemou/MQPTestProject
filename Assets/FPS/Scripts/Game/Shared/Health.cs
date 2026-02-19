@@ -14,11 +14,6 @@ namespace Unity.FPS.Game
         public UnityAction<float> OnHealed;
         public UnityAction OnDie;
 
-        [Tooltip("Health on the past bot")]
-        public Health pastHealth;
-
-        [Tooltip("Health on the future bot")]
-        public Health futureHealth;
         public float CurrentHealth { get; set; }
         public bool Invincible { get; set; }
         public bool CanPickup() => CurrentHealth < MaxHealth;

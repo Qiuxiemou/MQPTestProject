@@ -399,13 +399,13 @@ public class RoundManager : MonoBehaviour
 
     void ApplyCondition(RoundCondition c)
     {
-        _isSeeker = (c.player == PlayerRole.Seeker);
-        CurrentTimewarpMode = c.timewarp;
-        CurrentLatencyMs = c.latencyMs;
+        _isSeeker = false;// (c.bot == BotRole.Seeker);
+        CurrentTimewarpMode = TimewarpMode.None;//c.timewarp;
+        CurrentLatencyMs = 0;//c.latencyMs;
 
 
         LM.write(
-            $"[RoundManager] Condition → Bot={c.player}, Latency={c.latencyMs}, Timewarp={c.timewarp}"
+            $"[RoundManager] Condition → Bot={c.bot}, Latency={c.latencyMs}, Timewarp={c.timewarp}"
         );
     }
 

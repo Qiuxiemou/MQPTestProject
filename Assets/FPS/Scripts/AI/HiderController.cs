@@ -304,7 +304,7 @@ namespace Unity.FPS.AI
                 {
                     case HiderState.UnknownPlayer:
                         {
-                            LM.write("State UnknownPlayer");
+                            //LM.write("State UnknownPlayer");
                             if (!_isPeeking)
                             {
                                 //Debug.//Log("State UnknownPlayer: starting UnknownPlayerRoutine");
@@ -326,7 +326,7 @@ namespace Unity.FPS.AI
 
                             if (!_isChoosingCover)
                             {
-                                LM.write($"State SeePlayer: choosing cover vs player at {_lastKnownPlayerPos}");
+                                //LM.write($"State SeePlayer: choosing cover vs player at {_lastKnownPlayerPos}");
                                 if (ReachedDestination())
                                 {
                                     ChooseCoverAndMove(_lastKnownPlayerPos);
@@ -935,7 +935,7 @@ namespace Unity.FPS.AI
             {
                 float probability = (scores[i] / totalScore) * 100f;
                 string marker = (i == chosenIndex) ? " <- CHOSEN" : "";
-                LM.write($"  Candidate {i}: Score={scores[i]:F2}, Probability={probability:F1}%{marker}");
+                //LM.write($"  Candidate {i}: Score={scores[i]:F2}, Probability={probability:F1}%{marker}");
 
                 // Draw debug lines - chosen one is bright blue, others are dim
                 Color debugColor = (i == chosenIndex) ? Color.blue : Color.grey;

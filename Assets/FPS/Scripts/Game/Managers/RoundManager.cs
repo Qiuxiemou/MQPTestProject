@@ -400,8 +400,8 @@ public class RoundManager : MonoBehaviour
     void ApplyCondition(RoundCondition c)
     {
         _isSeeker = false;// (c.bot == BotRole.Seeker);
-        CurrentTimewarpMode = TimewarpMode.None;//c.timewarp;
-        CurrentLatencyMs = 0;//c.latencyMs;
+        CurrentTimewarpMode = TimewarpMode.Conditional;//c.timewarp;
+        CurrentLatencyMs = 1000;//c.latencyMs;
 
 
         LM.write(

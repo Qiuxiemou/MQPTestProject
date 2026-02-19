@@ -112,6 +112,11 @@ namespace Unity.FPS.Game
             Debug.Log("Health Propagating forwards");
             LM.write("Health pass forward");
 
+            if (pastHealth.CurrentHealth == 1)
+            {
+                pastHealth.CurrentHealth = futureHealth.CurrentHealth;
+            }
+
             pastHealth.TakeDamage(damage, source);
 
             if (futureHealth != null) futureHealth.TakeDamage(damage, source);
@@ -133,7 +138,6 @@ namespace Unity.FPS.Game
                     // No timewarp -> backwards propagation
                     if (futureHealth != null)
                     {
-
                         StartCoroutine(DamageBackwards(damage, source));
                     }
                     break;
@@ -153,12 +157,36 @@ namespace Unity.FPS.Game
                     }
                     else
                     {
-                        LM.write("CTW: LOS failed -> cancel damage");
+                        LM.write("CTW: LOS blocked -> cancel damage");
+                        StartCoroutine(SimulateServerDecision(damage, source));
                     }
                     break;
             }
         }
 
+        IEnumerator SimulateServerDecision(float damage, GameObject source)
+        {
+            if (pastHealth == null)
+                yield break;
+
+            if (damage >= pastHealth.CurrentHealth)
+            {
+                pastHealth.CurrentHealth = 1f;
+                LM.write("CTW: Predicted kill -> clamped to 1 HP");
+            }
+            else
+            {
+                pastHealth.TakeDamage(damage, source);
+            }
+
+            // Simulate server delay
+            yield return new WaitForSeconds(forwardDelayMs*2 / 1000f);
+
+            // Restore health (server correction)
+            pastHealth.CurrentHealth = futureHealth.CurrentHealth;
+
+            LM.write("CTW: Server rejected hit -> restoring past health");
+        }
         bool HasLineOfSightFromFutureToPlayer()
         {
             // Check to see if future bot still has health to pass damage to

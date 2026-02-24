@@ -4,14 +4,11 @@ using UnityEngine.UI;
 public class SurveyUI : MonoBehaviour
 {
     [Header("Sliders (1–5)")]
-    public Slider smoothnessSlider;
-    public Slider responsivenessSlider;
-    public Slider fairnessSlider;
-    public Slider qoeSlider;
-    public Slider funSlider;
+    public Slider lagSlider;
+    public Slider hiderSlider;
+    public Slider seekerSlider;
 
-    [Header("Optional")]
-    public InputField notesInput;     // can be null
+    [Header("Title")]
     public Text titleText;            // "Round X Survey"
 
     [Header("Buttons")]
@@ -21,13 +18,43 @@ public class SurveyUI : MonoBehaviour
 
     int _roundShown = 0;
 
+    [SerializeField] private GameObject seekerQuestions;
+    [SerializeField] private GameObject hiderQuestions;
+
+    [SerializeField] private Text roleQuestionText;
+
+    private bool lagTouched = false;
+    private bool hiderTouched = false;
+    private bool seekerTouched = false;
+
     void Awake()
     {
-        Setup(smoothnessSlider);
-        Setup(responsivenessSlider);
-        Setup(fairnessSlider);
-        Setup(qoeSlider);
-        Setup(funSlider);
+        if (submitButton)
+            submitButton.interactable = false;
+
+        Setup(lagSlider);
+        Setup(hiderSlider);
+        Setup(seekerSlider);
+        if (lagSlider)
+            lagSlider.onValueChanged.AddListener((v) =>
+            {
+                lagTouched = true;
+                CheckAllAnswered();
+            });
+
+        if (hiderSlider)
+            hiderSlider.onValueChanged.AddListener((v) =>
+            {
+                hiderTouched = true;
+                CheckAllAnswered();
+            });
+
+        if (seekerSlider)
+            seekerSlider.onValueChanged.AddListener((v) =>
+            {
+                seekerTouched = true;
+                CheckAllAnswered();
+            });
 
         Hide();
 
@@ -51,6 +78,13 @@ public class SurveyUI : MonoBehaviour
         _roundShown = roundNumber;
         if (titleText) titleText.text = $"Round {roundNumber} Survey";
         gameObject.SetActive(true);
+
+        lagTouched = false;
+        hiderTouched = false;
+        seekerTouched = false;
+
+        if (submitButton)
+            submitButton.interactable = false;
     }
 
     public void Hide() => gameObject.SetActive(false);
@@ -58,23 +92,73 @@ public class SurveyUI : MonoBehaviour
     void OnSubmit()
     {
         var data = new SurveyData
+        /*
+        public struct SurveyData{
+        public int round;
+        public float smoothness;
+        public float responsiveness;
+        public float fairness;
+        public float qoe;
+        public float fun;
+        public string notes;}
+        */
         {
             round = _roundShown,
-            smoothness = smoothnessSlider ? smoothnessSlider.value : 3f,
-            responsiveness = responsivenessSlider ? responsivenessSlider.value : 3f,
-            fairness = fairnessSlider ? fairnessSlider.value : 3f,
-            qoe = qoeSlider ? qoeSlider.value : 3f,
-            fun = funSlider ? funSlider.value : 3f,
-            notes = notesInput ? notesInput.text : ""
+            smoothness = lagSlider ? lagSlider.value : 3f,
+            responsiveness = hiderSlider ? hiderSlider.value : 3f,
+            fairness = seekerSlider ? seekerSlider.value : 3f
         };
 
         Hide();
         RoundManager.Instance.SubmitSurvey(data);
     }
-
     void OnExit()
     {
         Hide();
         RoundManager.Instance.ExitGame();
+    }
+    void OnEnable()
+    {
+        if (RoundManager.Instance != null)
+        {
+            RoundManager.Instance.OnBotRoleChanged += UpdateRoleUI;
+            UpdateRoleUI(RoundManager.Instance.IsSeeker);
+        }
+    }
+    void OnDisable()
+    {
+        if (RoundManager.Instance != null)
+        {
+            RoundManager.Instance.OnBotRoleChanged -= UpdateRoleUI;
+        }
+    }
+    private void UpdateRoleUI(bool isSeeker)
+    {
+        seekerQuestions.SetActive(!isSeeker); // bot is not seeker, player is seeker
+        hiderQuestions.SetActive(isSeeker); // bot is seeker, player is hider
+        if (!isSeeker)
+        {
+            roleQuestionText.text =
+                "Q2. How difficult was it to hit the hider?";
+        }
+        else
+        {
+            roleQuestionText.text =
+                "Q2. How often were you shot around the corner?";
+        }
+    }
+    void CheckAllAnswered()
+    {
+        bool roleSpecificAnswered;
+
+        if (RoundManager.Instance != null && RoundManager.Instance.IsSeeker)
+            roleSpecificAnswered = hiderTouched;   // player is hider
+        else
+            roleSpecificAnswered = seekerTouched;    // player is seeker
+
+        if (lagTouched && roleSpecificAnswered)
+            submitButton.interactable = true;
+        else
+            submitButton.interactable = false;
     }
 }

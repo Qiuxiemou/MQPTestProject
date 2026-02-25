@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 using Unity.FPS.Game;
-
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 public class RoundManager : MonoBehaviour
 {
     public static RoundManager Instance { get; private set; }
@@ -439,7 +439,9 @@ public class RoundManager : MonoBehaviour
         if (!RoundRunning) return;
         RoundRunning = false;
 
-        SetGameplayPause(true);
+        //SetGameplayPause(true);
+        SetGameplayPause(false);  // <-- change this
+        Time.timeScale = 1f;      // <-- add this
 
         if (_futureBot != null)
         {
@@ -728,6 +730,20 @@ public class RoundManager : MonoBehaviour
     // ---------------- SCENE / UI ----------------
     void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        Time.timeScale = 1f;
+
+        var systems = FindObjectsByType<EventSystem>(FindObjectsSortMode.None);
+        Debug.Log($"[DEBUG] EventSystem count = {systems.Length}");
+
+        foreach (var es in systems)
+            Debug.Log($"[DEBUG] EventSystem: {es.gameObject.name}, active={es.gameObject.activeInHierarchy}");
+
+
+        if (systems.Length > 1)
+        {
+            for (int i = 1; i < systems.Length; i++)
+                Destroy(systems[i].gameObject);
+        }
         if (scene.name != "MainScene") return;
         if (waitingToStartRound) return;
 
@@ -766,7 +782,11 @@ public class RoundManager : MonoBehaviour
     {
         _buffer.Add(data);
         CurrentRound += 1;
-        SceneManager.LoadScene("MainScene");
+
+       // Time.timeScale = 1f;
+
+        //SceneManager.LoadScene("MainScene");
+        StartNextRound();
     }
 
     public void ExitGame()

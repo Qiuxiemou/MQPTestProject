@@ -61,7 +61,8 @@ public class SurveyUI : MonoBehaviour
         if (submitButton) submitButton.onClick.AddListener(OnSubmit);
         if (exitButton) exitButton.onClick.AddListener(OnExit);
 
-        //DontDestroyOnLoad(gameObject);           
+        //DontDestroyOnLoad(gameObject);
+        Debug.Log("[DEBUG] SurveyUI Awake");
     }
 
     static void Setup(Slider s)
@@ -85,6 +86,9 @@ public class SurveyUI : MonoBehaviour
 
         if (submitButton)
             submitButton.interactable = false;
+
+        Debug.Log("[DEBUG] SurveyUI shown");
+        Debug.Log($"[DEBUG] Time.timeScale = {Time.timeScale}");
     }
 
     public void Hide() => gameObject.SetActive(false);
@@ -136,6 +140,8 @@ public class SurveyUI : MonoBehaviour
     {
         seekerQuestions.SetActive(!isSeeker); // bot is not seeker, player is seeker
         hiderQuestions.SetActive(isSeeker); // bot is seeker, player is hider
+        //if (seekerQuestions) seekerQuestions.SetActive(!isSeeker);
+        //if (hiderQuestions) hiderQuestions.SetActive(isSeeker);
         if (!isSeeker)
         {
             roleQuestionText.text =

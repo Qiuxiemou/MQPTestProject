@@ -348,6 +348,9 @@ public class RoundManager : MonoBehaviour
 
     void StartNextRound()
     {
+
+        LM.write($"Start Next Round Index: {currentRoundIndex}");
+
         if (currentRoundIndex >= rounds.Count)
         {
             EndStudy();
@@ -462,7 +465,7 @@ public class RoundManager : MonoBehaviour
         }
 
         if (timerUI) timerUI.Hide();
-        if (surveyUI) surveyUI.Show(currentCondition.id);
+        if (surveyUI) surveyUI.Show(currentRoundIndex);
     }
 
     void EndStudy()
@@ -783,10 +786,10 @@ public class RoundManager : MonoBehaviour
         _buffer.Add(data);
         CurrentRound += 1;
 
-       // Time.timeScale = 1f;
+        //Time.timeScale = 1f;
 
         //SceneManager.LoadScene("MainScene");
-        StartNextRound();
+        //StartNextRound();
     }
 
     public void ExitGame()

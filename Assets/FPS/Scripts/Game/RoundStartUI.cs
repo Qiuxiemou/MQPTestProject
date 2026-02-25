@@ -9,7 +9,6 @@ public class RoundStartUI : MonoBehaviour
 
     public void Show(bool isSeeker)
     {
-        LM.write("this is called");
         panel.SetActive(true);
         panel.transform.SetAsLastSibling();
 

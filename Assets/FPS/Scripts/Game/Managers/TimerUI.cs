@@ -63,8 +63,6 @@ public class TimerUI : MonoBehaviour
     public void ForceRefresh()
     {
         if (RoundManager.Instance == null) return;
-
-        LM.write("this is called");
         latencyText.text = $"Latency: {RoundManager.Instance.CurrentLatencyMs} ms";
         timewarpText.text = $"Timewarp: {RoundManager.Instance.CurrentTimewarpMode}";
     }

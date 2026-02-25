@@ -30,7 +30,7 @@ namespace Unity.FPS.UI
 
         void Update()
         {
-            UpdateCrosshairPointingAtEnemy(false);
+            //UpdateCrosshairPointingAtEnemy(false);
             m_WasPointingAtEnemy = m_WeaponsManager.IsPointingAtEnemy;
         }
 

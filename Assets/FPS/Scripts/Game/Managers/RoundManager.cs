@@ -7,6 +7,7 @@ using Unity.FPS.Game;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+
 public class RoundManager : MonoBehaviour
 {
     public static RoundManager Instance { get; private set; }
@@ -402,13 +403,13 @@ public class RoundManager : MonoBehaviour
 
     void ApplyCondition(RoundCondition c)
     {
-        _isSeeker = (c.player == PlayerRole.Seeker);
-        CurrentTimewarpMode = c.timewarp;
-        CurrentLatencyMs = c.latencyMs;
+        _isSeeker = false; //c.bot == BotRole.Seeker);
+        CurrentTimewarpMode = TimewarpMode.Normal; //c.timewarp;
+        CurrentLatencyMs = 1000f;
 
 
         LM.write(
-            $"[RoundManager] Condition → Bot={c.player}, Latency={c.latencyMs}, Timewarp={c.timewarp}"
+            $"[RoundManager] Condition → Bot={c.bot}, Latency={c.latencyMs}, Timewarp={c.timewarp}"
         );
     }
 
@@ -472,6 +473,12 @@ public class RoundManager : MonoBehaviour
     {
         LM.write("[RoundManager] Study complete");
         FlushBuffer();
+
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+    Application.Quit();
+#endif
     }
 
     void BindSceneReferences()
@@ -548,16 +555,44 @@ public class RoundManager : MonoBehaviour
         }
     }
 
+    void SetVisualsVisible(Transform root, bool visible)
+    {
+        if (!root) return;
+
+        // Disable ALL renderers (Mesh, Skinned, Particle, etc.)
+        foreach (var r in root.GetComponentsInChildren<Renderer>(true))
+            r.enabled = visible;
+
+        // Disable legacy projectors (if any)
+        foreach (var p in root.GetComponentsInChildren<Projector>(true))
+            p.enabled = visible;
+
+        // Disable health bar component (if exists)
+        //var healthBar = root.GetComponentInChildren<WorldspaceHealthBar>(true);
+        //if (healthBar != null)
+        //    healthBar.setHealthVisibility(visible);
+
+        foreach (var canvas in root.GetComponentsInChildren<Canvas>(true))
+            canvas.enabled = visible;
+
+
+        // Disable any world-space canvases
+        foreach (var c in root.GetComponentsInChildren<Canvas>(true))
+            c.enabled = visible;
+    }
+
 
     void SpawnHiderTimelineBots(GameObject futureHider)
     {
         Vector3 pos = futureHider.transform.position;
         Quaternion rot = futureHider.transform.rotation;
 
-        //LM.write("RoundManager: " + CurrentLatencyMs);
+        // HIDE FUTURE BOT (not true bot)
+        SetVisualsVisible(futureHider.transform, false);
 
         // Spawn TRUE bot (follows Future)
         _trueBot = Instantiate(hiderTrueBotPrefab, pos, rot);
+
         var trueDelayed = _trueBot.GetComponent<BotDelayed>();
         if (trueDelayed != null)
         {
@@ -567,6 +602,7 @@ public class RoundManager : MonoBehaviour
 
         // Spawn PAST bot (follows True)
         _pastBot = Instantiate(hiderPastBotPrefab, pos, rot);
+
         var pastDelayed = _pastBot.GetComponent<BotDelayed>();
         if (pastDelayed != null)
         {
@@ -574,19 +610,17 @@ public class RoundManager : MonoBehaviour
             pastDelayed.SetLatency(CurrentLatencyMs);
         }
 
-
         Health futureHealth = futureHider.GetComponent<Health>();
         Health serverHealth = _trueBot.GetComponent<Health>();
         Health pastHealth = _pastBot.GetComponent<Health>();
 
         AssignHealthProxy(futureHider, pastHealth, serverHealth, futureHealth);
-        //AssignHealthProxy(_trueBot, pastHealth, serverHealth, futureHealth);
         AssignHealthProxy(_pastBot, pastHealth, serverHealth, futureHealth);
 
         LM.write("Health wired: "
-        + $"Past={pastHealth.gameObject.name}, "
-        + $"Server={serverHealth.gameObject.name}, "
-        + $"Future={futureHealth.gameObject.name}");
+            + $"Past={pastHealth.gameObject.name}, "
+            + $"Server={serverHealth.gameObject.name}, "
+            + $"Future={futureHealth.gameObject.name}");
     }
 
     void AssignHealthProxy(
@@ -687,6 +721,8 @@ public class RoundManager : MonoBehaviour
             }
         }
     }
+
+
 
     void ResetPlayerHealth()
     {

@@ -27819,11 +27819,6 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6163822215945196408, guid: 504df3be75ea8ed449e61ed2e5877d1b,
-        type: 3}
-      propertyPath: m_TagString
-      value: Bot
-      objectReference: {fileID: 0}
     - target: {fileID: 6927159929266097258, guid: 504df3be75ea8ed449e61ed2e5877d1b,
         type: 3}
       propertyPath: m_Layer
@@ -27938,21 +27933,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 7313527957261094369, guid: 504df3be75ea8ed449e61ed2e5877d1b,
-        type: 3}
-      propertyPath: AttackRange
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 7313527957261094369, guid: 504df3be75ea8ed449e61ed2e5877d1b,
-        type: 3}
-      propertyPath: MaxReactionTime
-      value: 0.75
-      objectReference: {fileID: 0}
-    - target: {fileID: 7313527957261094369, guid: 504df3be75ea8ed449e61ed2e5877d1b,
-        type: 3}
-      propertyPath: MinReactionTime
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7313527957261094369, guid: 504df3be75ea8ed449e61ed2e5877d1b,
         type: 3}
@@ -46082,7 +46062,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c7747893f578244ebf571f0db1588b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: fps.Game::RoundManager
-  roundLengthSeconds: 5
+  roundLengthSeconds: 1000
   disableWhilePaused:
   - {fileID: 2729281214152228945}
   - {fileID: 2729281214152228942}

@@ -38,7 +38,7 @@ public static class RoundConfigLoader
                 var condition = new RoundCondition
                 {
                     id = int.Parse(tokens[0].Trim()),
-                    player = Enum.Parse<PlayerRole>(tokens[1].Trim(), true),
+                    bot = Enum.Parse<BotRole>(tokens[1].Trim(), true),
                     latencyMs = int.Parse(tokens[2].Trim()),
                     timewarp = Enum.Parse<TimewarpMode>(tokens[3].Trim(), true)
                 };

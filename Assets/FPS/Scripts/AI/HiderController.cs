@@ -602,6 +602,12 @@ namespace Unity.FPS.AI
 
         bool ReachedDestination()
         {
+            if (NavMeshAgent == null) return false;
+
+            if (!NavMeshAgent.isActiveAndEnabled) return false;
+
+            if (!NavMeshAgent.isOnNavMesh) return false;
+
             if (NavMeshAgent.pathPending) return false;
             if (NavMeshAgent.remainingDistance > NavMeshAgent.stoppingDistance) return false;
             if (NavMeshAgent.hasPath && NavMeshAgent.velocity.sqrMagnitude > 0.001f) return false;

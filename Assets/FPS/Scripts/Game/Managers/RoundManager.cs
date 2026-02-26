@@ -403,8 +403,8 @@ public class RoundManager : MonoBehaviour
 
     void ApplyCondition(RoundCondition c)
     {
-        _isSeeker = false; //c.bot == BotRole.Seeker);
-        CurrentTimewarpMode = TimewarpMode.Normal; //c.timewarp;
+        _isSeeker = (c.bot == BotRole.Seeker);
+        CurrentTimewarpMode =c.timewarp;
         CurrentLatencyMs = 1000f;
 
 
@@ -444,8 +444,8 @@ public class RoundManager : MonoBehaviour
         RoundRunning = false;
 
         //SetGameplayPause(true);
-        SetGameplayPause(false);  // <-- change this
-        Time.timeScale = 1f;      // <-- add this
+        SetGameplayPause(false); 
+        Time.timeScale = 1f; 
 
         if (_futureBot != null)
         {
@@ -521,6 +521,9 @@ public class RoundManager : MonoBehaviour
                 enemySpawnPoint.position,
                 enemySpawnPoint.rotation
             );
+
+            SetVisualsVisible(_futureBot.transform, true);
+
         }
         else
         {
@@ -535,7 +538,9 @@ public class RoundManager : MonoBehaviour
             AssignPeekNodes(_futureBot);
 
             SpawnHiderTimelineBots(_futureBot);
-            
+
+            SetVisualsVisible(_futureBot.transform, false);
+
         }
         //if (_isSeeker)
         //    AssignPeekNodes(_currentEnemy);
@@ -559,11 +564,12 @@ public class RoundManager : MonoBehaviour
     {
         if (!root) return;
 
-        // Disable ALL renderers (Mesh, Skinned, Particle, etc.)
         foreach (var r in root.GetComponentsInChildren<Renderer>(true))
+        {
             r.enabled = visible;
-
-        // Disable legacy projectors (if any)
+            LM.write($"Renderer {r.name} enabled = {r.enabled}");
+        }
+        
         foreach (var p in root.GetComponentsInChildren<Projector>(true))
             p.enabled = visible;
 
@@ -572,8 +578,8 @@ public class RoundManager : MonoBehaviour
         //if (healthBar != null)
         //    healthBar.setHealthVisibility(visible);
 
-        foreach (var canvas in root.GetComponentsInChildren<Canvas>(true))
-            canvas.enabled = visible;
+        //foreach (var c in root.GetComponentsInChildren<Canvas>(true))
+        //    c.enabled = visible;
 
 
         // Disable any world-space canvases
@@ -586,9 +592,6 @@ public class RoundManager : MonoBehaviour
     {
         Vector3 pos = futureHider.transform.position;
         Quaternion rot = futureHider.transform.rotation;
-
-        // HIDE FUTURE BOT (not true bot)
-        SetVisualsVisible(futureHider.transform, false);
 
         // Spawn TRUE bot (follows Future)
         _trueBot = Instantiate(hiderTrueBotPrefab, pos, rot);

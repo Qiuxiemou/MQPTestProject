@@ -83,13 +83,13 @@ namespace Unity.FPS.Game
 
         void HandleDeath()
         {
-            if (m_IsDead)
-                return;
+            //if (m_IsDead)
+            //    return;
 
             // call OnDie action
             if (CurrentHealth <= 0f)
             {
-                m_IsDead = true;
+                //m_IsDead = true;
 
                 // Log Event Death
                 EventManager.Broadcast(new DeathEvent

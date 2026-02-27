@@ -253,10 +253,10 @@ namespace Unity.FPS.Game
         IEnumerator DelayedDestroy()
         {
             // 2 delays max in backward case → forwardDelayMs * 2
-            Debug.Log("Delaying death by" + forwardDelayMs * 2f);
+            //Debug.Log("Delaying death by" + forwardDelayMs * 2f);
             float maxChainTime = (forwardDelayMs * 2f + destroyBufferAfterClientDeathMs) / 1000f;
             yield return new WaitForSeconds(maxChainTime);
-            Debug.Log("Waited for " + forwardDelayMs);
+            //Debug.Log("Waited for " + forwardDelayMs);
 
             Destroy(gameObject);
         }

@@ -20,6 +20,9 @@ public class RoundManager : MonoBehaviour
     public float CurrentLatencyMs { get; private set; }
     //public float CurrentLatencyMs = 0f;
 
+    public bool LatencyTest = false;
+    public float SimulatedLatencyMs = 200f;
+
     [Header("Study Config")]
     [SerializeField] private TextAsset roundConditionFile;
 
@@ -405,7 +408,7 @@ public class RoundManager : MonoBehaviour
     {
         _isSeeker = (c.bot == BotRole.Seeker);
         CurrentTimewarpMode =c.timewarp;
-        CurrentLatencyMs = 1000f;
+        CurrentLatencyMs = LatencyTest ? SimulatedLatencyMs : c.latencyMs;
 
 
         LM.write(

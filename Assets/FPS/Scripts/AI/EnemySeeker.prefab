@@ -567,9 +567,9 @@ MonoBehaviour:
   WeaponRoot: {fileID: 2750649481841936366}
   WeaponMuzzle: {fileID: 7381232120336673319}
   ShootType: 1
-  ProjectilePrefab: {fileID: 5542020336735652036, guid: 3ed737fd5a7886246af08b048c48769d,
+  ProjectilePrefab: {fileID: 8924682559891268397, guid: dd654cb84cc16c343aeefb86ae4f93d1,
     type: 3}
-  DelayBetweenShots: 0.2
+  DelayBetweenShots: 1
   BulletSpreadAngle: 1
   BulletsPerShot: 1
   RecoilForce: 1
@@ -582,9 +582,9 @@ MonoBehaviour:
   EjectionPort: {fileID: 0}
   ShellCasingEjectionForce: 2
   ShellPoolSize: 1
-  AmmoReloadRate: 0.5
-  AmmoReloadDelay: 0.5
-  MaxAmmo: 100
+  AmmoReloadRate: 2
+  AmmoReloadDelay: 1
+  MaxAmmo: 4
   AutomaticReleaseOnCharged: 0
   MaxChargeDuration: 2
   AmmoUsedOnStartCharge: 1

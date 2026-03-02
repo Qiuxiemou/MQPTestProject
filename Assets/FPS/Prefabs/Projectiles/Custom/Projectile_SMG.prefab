@@ -106,6 +106,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de99b30e1e73fd14e98cc5371da25d12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  UseRealPositionReject: 1
+  WorldObstructionLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  AimPointHitboxTag: AimPointHitbox
   Radius: 0.05
   Root: {fileID: 106790115311484948}
   Tip: {fileID: 106790115311484948}
@@ -122,7 +127,7 @@ MonoBehaviour:
   GravityDownAcceleration: 0
   TrajectoryCorrectionDistance: -1
   InheritWeaponVelocity: 0
-  Damage: 6
+  Damage: 4
   AreaOfDamage: {fileID: 0}
   RadiusColor: {r: 0, g: 1, b: 1, a: 0.49803922}
 --- !u!114 &1203337828444365110

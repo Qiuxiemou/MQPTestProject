@@ -27804,6 +27804,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2718159811854142281, guid: 504df3be75ea8ed449e61ed2e5877d1b,
+        type: 3}
+      propertyPath: DelayBetweenShots
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2882444874386798999, guid: 504df3be75ea8ed449e61ed2e5877d1b,
+        type: 3}
+      propertyPath: m_Speed
+      value: 150
+      objectReference: {fileID: 0}
     - target: {fileID: 6163822215945196408, guid: 504df3be75ea8ed449e61ed2e5877d1b,
         type: 3}
       propertyPath: m_Name
@@ -27817,6 +27827,11 @@ PrefabInstance:
     - target: {fileID: 6163822215945196408, guid: 504df3be75ea8ed449e61ed2e5877d1b,
         type: 3}
       propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6219073082427525763, guid: 504df3be75ea8ed449e61ed2e5877d1b,
+        type: 3}
+      propertyPath: SwapToNextWeapon
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6927159929266097258, guid: 504df3be75ea8ed449e61ed2e5877d1b,
@@ -46062,7 +46077,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c7747893f578244ebf571f0db1588b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: fps.Game::RoundManager
-  roundLengthSeconds: 5
+  roundLengthSeconds: 45
   disableWhilePaused:
   - {fileID: 2729281214152228945}
   - {fileID: 2729281214152228942}
@@ -52294,6 +52309,12 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 298744117520805562, guid: 761cdc9e4e883334cbdcea062d0befa7,
+        type: 3}
+      propertyPath: 'StartingWeapons.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8323776800172828795, guid: f6dc0ec279fa40041a785e6ded2ca62e,
+        type: 3}
     - target: {fileID: 814417836257332542, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}
       propertyPath: MaxSpeedOnGround

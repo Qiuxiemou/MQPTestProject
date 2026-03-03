@@ -9326,7 +9326,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 542ee955c189f1048b6241a1262755b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: fps.AI::HeatmapManager
-  HeatmapSource: {fileID: 11400000, guid: 1265f096b7fda1b46ada17e8f05bed88, type: 2}
+  HeatmapSource: {fileID: 11400000, guid: 7fd85df2f4ebd4e4cb3cdef0d0cb057f, type: 2}
   AllNodes:
   - {fileID: 2024585959}
   - {fileID: 630902664}
@@ -46067,8 +46067,8 @@ MonoBehaviour:
   - {fileID: 2729281214152228945}
   - {fileID: 2729281214152228942}
   - {fileID: 2729281214152228944}
-  LatencyTest: 0
-  SimulatedLatencyMs: 500
+  LatencyTest: 1
+  SimulatedLatencyMs: 0
   roundConditionFile: {fileID: 4900000, guid: d789d650bb8f0c44ba59b81dc90cb988, type: 3}
   currentRoundIndex: 0
   latinSquareFile: {fileID: 4900000, guid: a12398fb7b8b55843a8d5476ab954b25, type: 3}
@@ -52296,6 +52296,12 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 298744117520805562, guid: 761cdc9e4e883334cbdcea062d0befa7,
+        type: 3}
+      propertyPath: 'StartingWeapons.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8323776800172828795, guid: f6dc0ec279fa40041a785e6ded2ca62e,
+        type: 3}
     - target: {fileID: 814417836257332542, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}
       propertyPath: MaxSpeedOnGround

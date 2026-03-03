@@ -48,7 +48,7 @@ MonoBehaviour:
   UseRealPositionReject: 1
   WorldObstructionLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 8320
   AimPointHitboxTag: AimPointHitbox
   Radius: 0.01
   Root: {fileID: 3659995153115176982}
@@ -61,7 +61,7 @@ MonoBehaviour:
   ImpactSfxClip: {fileID: 0}
   HittableLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 12279
   Speed: 500
   GravityDownAcceleration: 20
   TrajectoryCorrectionDistance: -1

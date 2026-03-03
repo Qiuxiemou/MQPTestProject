@@ -60,6 +60,7 @@ public class RoundManager : MonoBehaviour
     public GameObject hiderTrueBotPrefab;
     public GameObject hiderPastBotPrefab;
     public GameObject SeekerProjectilePrefab;
+    
     public Transform enemySpawnPoint;
 
     GameObject _futureBot;
@@ -370,24 +371,40 @@ public class RoundManager : MonoBehaviour
         }
         if (SeekerProjectilePrefab != null)
         {
-            var projectileStandard = SeekerProjectilePrefab.GetComponent<ProjectileStandard>();
+            var comps = SeekerProjectilePrefab.GetComponents<Component>();
+            Component ps = null;
 
-            if (projectileStandard != null)
+            foreach (var c in comps)
             {
-                // Only enable reject in Conditional mode
-                bool enableReject = (CurrentTimewarpMode == TimewarpMode.Conditional);
-                projectileStandard.UseRealPositionReject = enableReject;
+                if (c != null && c.GetType().Name == "ProjectileStandard")
+                {
+                    ps = c;
+                    break;
+                }
+            }
 
-                Debug.Log($"[RoundManager] SeekerProjectile UseRealPositionReject = {enableReject} (Mode: {CurrentTimewarpMode})");
+            if (ps != null)
+            {
+                bool enableReject = (CurrentTimewarpMode == TimewarpMode.Conditional);
+                var field = ps.GetType().GetField("UseRealPositionReject");
+                if (field != null)
+                {
+                    field.SetValue(ps, enableReject);
+                    Debug.Log($"[RoundManager] Set ProjectileStandard.UseRealPositionReject = {enableReject}");
+                }
+                else
+                {
+                    Debug.LogWarning("[RoundManager] Field UseRealPositionReject not found on ProjectileStandard");
+                }
             }
             else
             {
-                Debug.Log("[RoundManager] ProjectileStandard component not found on SeekerProjectilePrefab");
+                Debug.LogWarning("[RoundManager] ProjectileStandard component not found on SeekerProjectilePrefab");
             }
         }
         else
         {
-            Debug.Log("[RoundManager] SeekerProjectilePrefab is null");
+            Debug.LogWarning("[RoundManager] SeekerProjectilePrefab is null");
         }
 
 

@@ -59,6 +59,7 @@ public class RoundManager : MonoBehaviour
     public GameObject hiderBotPrefab;
     public GameObject hiderTrueBotPrefab;
     public GameObject hiderPastBotPrefab;
+    public GameObject SeekerProjectilePrefab;
     public Transform enemySpawnPoint;
 
     GameObject _futureBot;
@@ -330,6 +331,67 @@ public class RoundManager : MonoBehaviour
         }
     }
 
+    void ApplyTimewarpModeForPlayer()
+    {
+        if (!player) return;
+
+        
+        Transform aimPoint = player.transform.Find("AimPoint");
+
+        if (!aimPoint)
+        {
+            // Try alternative names
+            aimPoint = player.transform.Find("AimTarget")
+                    ?? player.transform.Find("Aim");
+        }
+
+        if (!aimPoint)
+        {
+        
+            return;
+        }
+
+        const int playerLayer = 6;           // Player layer
+        const int playerUnhitableLayer = 14; // PlayerUnhitable layer
+
+        if (CurrentTimewarpMode == TimewarpMode.None)
+        {
+            // No timewarp: hit real player position
+            player.layer = playerLayer;
+            aimPoint.gameObject.layer = playerUnhitableLayer;
+
+        }
+        else
+        {
+            // Timewarp enabled: hit rewound position (aimpoint)
+            player.layer = playerUnhitableLayer;
+            aimPoint.gameObject.layer = playerLayer;
+
+        }
+        if (SeekerProjectilePrefab != null)
+        {
+            var projectileStandard = SeekerProjectilePrefab.GetComponent<ProjectileStandard>();
+
+            if (projectileStandard != null)
+            {
+                // Only enable reject in Conditional mode
+                bool enableReject = (CurrentTimewarpMode == TimewarpMode.Conditional);
+                projectileStandard.UseRealPositionReject = enableReject;
+
+                Debug.Log($"[RoundManager] SeekerProjectile UseRealPositionReject = {enableReject} (Mode: {CurrentTimewarpMode})");
+            }
+            else
+            {
+                Debug.Log("[RoundManager] ProjectileStandard component not found on SeekerProjectilePrefab");
+            }
+        }
+        else
+        {
+            Debug.Log("[RoundManager] SeekerProjectilePrefab is null");
+        }
+
+
+    }
 
     // ================= ROUND FLOW =================
     void StartRoundGameplay()
@@ -379,6 +441,7 @@ public class RoundManager : MonoBehaviour
         StartCoroutine(BindScoreDisplayNextFrame());
 
         RespawnPlayer();
+        ApplyTimewarpModeForPlayer();
 
         OnBotRoleChanged?.Invoke(_isSeeker);
         //OnTimeWarpChanged(IsTimeWarpEnabled);

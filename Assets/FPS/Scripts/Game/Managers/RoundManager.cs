@@ -22,6 +22,8 @@ public class RoundManager : MonoBehaviour
 
     public bool LatencyTest = false;
     public float SimulatedLatencyMs = 200f;
+    public TimewarpMode TimeWarpmode = TimewarpMode.None;
+    public bool BotIsSeeker = true;
 
     [Header("Study Config")]
     [SerializeField] private TextAsset roundConditionFile;
@@ -406,8 +408,8 @@ public class RoundManager : MonoBehaviour
 
     void ApplyCondition(RoundCondition c)
     {
-        _isSeeker = (c.bot == BotRole.Seeker);
-        CurrentTimewarpMode =c.timewarp;
+        _isSeeker = LatencyTest ? BotIsSeeker : (c.bot == BotRole.Seeker);
+        CurrentTimewarpMode = LatencyTest ? TimeWarpmode : c.timewarp;
         CurrentLatencyMs = LatencyTest ? SimulatedLatencyMs : c.latencyMs;
 
 

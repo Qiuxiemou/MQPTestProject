@@ -106,8 +106,8 @@ public class RoundManager : MonoBehaviour
 
     // ================= LOGGING =================
     readonly List<SurveyData> _buffer = new();
-    string _surveyCsvPath;
-    string _roleLogPath;
+    //string _surveyCsvPath;
+    //string _roleLogPath;
 
 
     // ---------------- UNITY ----------------
@@ -122,28 +122,34 @@ public class RoundManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        string logsDir = GetProjectLogsPath();
+        //string logsDir = GetProjectLogsPath();
 
-        _surveyCsvPath = Path.Combine(
-            logsDir,
-            $"survey_log_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.csv"
-        );
+        //_surveyCsvPath = Path.Combine(
+        //    logsDir,
+        //    $"survey_log_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.csv"
+        //);
 
-        _roleLogPath = Path.Combine(
-            logsDir,
-            $"role_log_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.csv"
-        );
+        //_roleLogPath = Path.Combine(
+        //    logsDir,
+        //    $"role_log_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.csv"
+        //);
 
-        _participantCounterPath = Path.Combine(
-            GetProjectLogsPath(),
-            "participant_counter.txt"
-        );
+        //_participantCounterPath = Path.Combine(
+        //    GetProjectLogsPath(),
+        //    "participant_counter.txt"
+        //);
 
-        File.WriteAllText(_surveyCsvPath,
-            "timestamp,round,smoothness,responsiveness,fairness,qoe,fun,notes\n");
+        //File.WriteAllText(_surveyCsvPath,
+        //    "timestamp,round,smoothness,responsiveness,fairness,qoe,fun,notes\n");
 
-        File.WriteAllText(_roleLogPath,
-            "timestamp,round,timeRemaining,role\n");
+        //File.WriteAllText(_roleLogPath,
+        //    "timestamp,round,timeRemaining,role\n");
+
+        string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+        string logsDir = Path.Combine(root, "Logs");
+        Directory.CreateDirectory(logsDir);
+
+        _participantCounterPath = Path.Combine(logsDir, "participant_counter.txt");
     }
 
     void Start()
@@ -156,6 +162,9 @@ public class RoundManager : MonoBehaviour
 
         // Pick row for this participant
         int participantIndex = GetAndIncrementParticipantIndex(latinOrders.Count);
+
+        // Initialize participant in log manager
+        ParticipantLogManager.Instance.InitializeParticipant(participantIndex);
 
         List<int> orderRow = latinOrders[participantIndex];
 
@@ -364,11 +373,25 @@ public class RoundManager : MonoBehaviour
         currentCondition = rounds[currentRoundIndex];
         currentRoundIndex++;
 
+        ParticipantLogManager.Instance.StartNewRound(currentCondition.id);
+
+        EventLogManager.Instance.StartNewRound(
+            ParticipantLogManager.Instance.CurrentRoundFolder
+        );
+
         BindUIIfNeeded();
 
         LM.write($"[RoundManager] Starting round {currentCondition.id}");
 
         ApplyCondition(currentCondition);
+
+        ParticipantLogManager.Instance.SaveRoundCondition(
+            currentCondition.id,
+            _isSeeker ? "Seeker" : "Hider",
+            CurrentLatencyMs,
+            CurrentTimewarpMode.ToString(),
+            roundLengthSeconds
+        );
 
         //RoundRunning = true;
         _timeRemaining = roundLengthSeconds;
@@ -467,6 +490,8 @@ public class RoundManager : MonoBehaviour
             Destroy(_pastBot);
             _pastBot = null;
         }
+
+        GameStatsLogManager.Instance?.EndRoundLogStats();
 
         if (timerUI) timerUI.Hide();
         if (surveyUI) surveyUI.Show(currentRoundIndex);
@@ -743,17 +768,14 @@ public class RoundManager : MonoBehaviour
         health.Heal(health.MaxHealth);
     }
 
-
-
-    void LogRoleChange()
-    {
-        string role = _isSeeker ? "Seeker" : "Hider";
-        File.AppendAllText(
-            _roleLogPath,
-            $"{DateTime.Now:o},{CurrentRound},{TimeRemaining:F2},{role}\n"
-        );
-    }
-
+    //void LogRoleChange()
+    //{
+    //    string role = _isSeeker ? "Seeker" : "Hider";
+    //    File.AppendAllText(
+    //        _roleLogPath,
+    //        $"{DateTime.Now:o},{CurrentRound},{TimeRemaining:F2},{role}\n"
+    //    );
+    //}
 
     public void RespawnPlayerAfterDeath()
     {
@@ -823,15 +845,40 @@ public class RoundManager : MonoBehaviour
         Cursor.visible = paused;
     }
 
+    //public void SubmitSurvey(SurveyData data)
+    //{
+    //    _buffer.Add(data);
+    //    CurrentRound += 1;
+
+    //    //Time.timeScale = 1f;
+
+    //    //SceneManager.LoadScene("MainScene");
+    //    //StartNextRound();
+    //}
     public void SubmitSurvey(SurveyData data)
     {
-        _buffer.Add(data);
+        string surveyFolder = Path.Combine(
+            ParticipantLogManager.Instance.CurrentRoundFolder,
+            "survey"
+        );
+
+        string surveyPath = Path.Combine(surveyFolder, "survey.csv");
+
+        StringBuilder sb = new StringBuilder();
+
+        sb.AppendLine("timestamp,round,smoothness,responsiveness,fairness,qoe,fun,notes");
+
+        string notes = (data.notes ?? "").Replace(",", ";");
+
+        sb.AppendLine(
+            $"{DateTime.Now:o},{data.round},{data.smoothness}," +
+            $"{data.responsiveness},{data.fairness}," +
+            $"{data.qoe},{data.fun},{notes}"
+        );
+
+        File.WriteAllText(surveyPath, sb.ToString(), Encoding.UTF8);
+
         CurrentRound += 1;
-
-        //Time.timeScale = 1f;
-
-        //SceneManager.LoadScene("MainScene");
-        //StartNextRound();
     }
 
     public void ExitGame()
@@ -859,7 +906,7 @@ public class RoundManager : MonoBehaviour
                 $"{d.fairness},{d.qoe},{d.fun},{notes}");
         }
 
-        File.WriteAllText(_surveyCsvPath, sb.ToString(), Encoding.UTF8);
+        //File.WriteAllText(_surveyCsvPath, sb.ToString(), Encoding.UTF8);
         _buffer.Clear();
     }
 

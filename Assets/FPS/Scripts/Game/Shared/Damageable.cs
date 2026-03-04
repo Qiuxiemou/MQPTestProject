@@ -17,12 +17,12 @@ namespace Unity.FPS.Game
             // find the health component either at the same level, or higher in the hierarchy
             Health = GetComponent<Health>();
             if (Health)
-                Debug.Log("Damageable component on " + name + " found Health component" + Health.name);
+                //Debug.Log("Damageable component on " + name + " found Health component" + Health.name);
             if (!Health)
             {
                 Health = GetComponentInParent<Health>();
-                if (Health)
-                    Debug.Log("Damageable component on " + name + " found Health component in parent " + Health.name);
+                //if (Health)
+                //    Debug.Log("Damageable component on " + name + " found Health component in parent " + Health.name);
             }
         }
 

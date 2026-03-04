@@ -74,6 +74,7 @@
     <Compile Include="Assets\FPS\Scripts\Game\ConstantRotation.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Actor.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\GameFlowManager.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\Managers\ParticipantLogManager.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Shared\WeaponController.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\KeyInputBroadcaster.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\RoundManager.cs" />

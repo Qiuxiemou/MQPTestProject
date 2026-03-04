@@ -32,7 +32,7 @@ namespace Unity.FPS.Game
             DontDestroyOnLoad(gameObject);
 
             _sessionId = System.DateTime.Now.ToString("yyyyMMdd_HHmmss");
-            InitCsvWriters();
+            //InitCsvWriters();
             Subscribe();
         }
 
@@ -225,9 +225,13 @@ namespace Unity.FPS.Game
             BumpFlushCounter();
         }
 
+        //public void LogStats(string sessionId, double wallTsMs,
+        //                     int totalShots, int totalHits, float accPct,
+        //                     int delayedHits, float delayedAccPct)
         public void LogStats(string sessionId, double wallTsMs,
-                             int totalShots, int totalHits, float accPct,
-                             int delayedHits, float delayedAccPct)
+                     int totalShots, int totalHits, float accPct,
+                     int delayedHits, float delayedAccPct,
+                     int damageDealt, int damageReceived)
         {
             if (_statsWriter == null) return;
 
@@ -238,8 +242,43 @@ namespace Unity.FPS.Game
             _statsWriter.WriteLine(
                 $"{San(sessionId)},{wall}," +
                 $"{totalShots},{totalHits},{accPct:F2}," +
-                $"{delayedHits},{delayedAccPct:F2}");
+                //$"{delayedHits},{delayedAccPct:F2}"
+                $"{delayedHits},{delayedAccPct:F2}," +
+                $"{damageDealt},{damageReceived}"
+                );
             BumpFlushCounter();
         }
+
+        public void StartNewRound(string roundFolder)
+        {
+            CloseWriters();
+
+            string eventsFolder = Path.Combine(roundFolder, "events");
+            string worldFolder = Path.Combine(roundFolder, "world");
+            string statsFolder = Path.Combine(roundFolder, "stats");
+
+            _eventsCsvPath = Path.Combine(eventsFolder, "events.csv");
+            _viewCsvPath = Path.Combine(eventsFolder, "view.csv");
+            _worldCsvPath = Path.Combine(worldFolder, "world.csv");
+            _statsCsvPath = Path.Combine(statsFolder, "stats.csv");
+
+            _eventsWriter = NewWriterWithHeader(_eventsCsvPath,
+                "timestamp,event,shooter,target,damage,forward_delay_ms," +
+                "hit_x,hit_y,hit_z,hitbox," +
+                "client_x,client_y,client_z,client_hp,client_ratio," +
+                "server_x,server_y,server_z,server_hp,server_ratio");
+
+            _viewWriter = NewWriterWithHeader(_viewCsvPath,
+                "timestamp,player,px,py,pz,yaw,pitch,roll,fx,fy,fz");
+
+            _worldWriter = NewWriterWithHeader(_worldCsvPath,
+                "session_id,wall_ts,game_t,entity_id,entity_type,pos_x,pos_y,pos_z,yaw,pitch,roll,hp");
+
+            _statsWriter = NewWriterWithHeader(_statsCsvPath,
+                "session_id,wall_ts,total_shots,total_hits,accuracy_pct, delayed_hits,delayed_accuracy_pct,damage_dealt,damage_received"
+            );
+        }
     }
+
+
 }

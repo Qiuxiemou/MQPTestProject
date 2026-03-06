@@ -515,12 +515,12 @@ public class RoundManager : MonoBehaviour
 
         SpawnEnemyForCurrentRole();
         ApplyTimewarpMode();
-
+        ConfigureEnemyShootingBehavior();
         StartCoroutine(BindScoreDisplayNextFrame());
 
         RespawnPlayer();
         ApplyTimewarpModeForPlayer();
-        ConfigureEnemyShootingBehavior();
+
         OnBotRoleChanged?.Invoke(_isSeeker);
         //OnTimeWarpChanged(IsTimeWarpEnabled);
 

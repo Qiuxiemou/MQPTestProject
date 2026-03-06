@@ -22,6 +22,8 @@ public class RoundManager : MonoBehaviour
 
     public bool LatencyTest = false;
     public float SimulatedLatencyMs = 200f;
+    public TimewarpMode TimeWarpmode = TimewarpMode.None;
+    public bool BotIsSeeker = true;
 
     [Header("Study Config")]
     [SerializeField] private TextAsset roundConditionFile;
@@ -59,6 +61,8 @@ public class RoundManager : MonoBehaviour
     public GameObject hiderBotPrefab;
     public GameObject hiderTrueBotPrefab;
     public GameObject hiderPastBotPrefab;
+    public GameObject SeekerProjectilePrefab;
+    
     public Transform enemySpawnPoint;
 
     GameObject _futureBot;
@@ -154,11 +158,53 @@ public class RoundManager : MonoBehaviour
 
     void Start()
     {
+        //string debugFolder = Path.Combine(
+        //    Application.persistentDataPath,
+        //    "DebugConfig"
+        //);
+        //string debugModePath = Path.Combine(debugFolder, "debug_mode.txt");
+        //bool useDebugConfig = File.Exists(debugModePath);
+
+        //// ROUND CONDITIONS 
+        //TextAsset roundAsset = roundConditionFile;
+        //if (useDebugConfig)
+        //{
+        //    LM.write("[RoundManager] DEBUG CONFIG OVERRIDE ENABLED");
+        //    string debugRoundPath = Path.Combine(debugFolder, "debug_round_conditions.txt");
+
+        //    if (File.Exists(debugRoundPath))
+        //    {
+        //        string text = File.ReadAllText(debugRoundPath);
+        //        roundAsset = new TextAsset(text);
+
+        //        LM.write("[RoundManager] Using DEBUG round conditions");
+        //    }
+        //}
         // Load all possible conditions
         var allConditions = RoundConfigLoader.Load(roundConditionFile);
+        //var allConditions = RoundConfigLoader.Load(roundAsset);
+
+        // LATIN SQUARE
+        //TextAsset latinAsset = latinSquareFile;
+
+        //if (useDebugConfig)
+        //{
+        //    string debugLatinPath = Path.Combine(debugFolder, "debug_latin_square.txt");
+
+        //    if (File.Exists(debugLatinPath))
+        //    {
+        //        string text = File.ReadAllText(debugLatinPath);
+        //        latinAsset = new TextAsset(text);
+
+        //        LM.write("[RoundManager] Using DEBUG latin square");
+        //    }
+        //}
 
         // Load Latin square order
         var latinOrders = LoadLatinSquare(latinSquareFile);
+        //var latinOrders = LoadLatinSquare(latinAsset);
+
+        // NEXT
 
         // Pick row for this participant
         int participantIndex = GetAndIncrementParticipantIndex(latinOrders.Count);
@@ -339,6 +385,83 @@ public class RoundManager : MonoBehaviour
         }
     }
 
+    void ApplyTimewarpModeForPlayer()
+    {
+        if (!player) return;
+
+        
+        Transform aimPoint = player.transform.Find("AimPoint");
+
+        if (!aimPoint)
+        {
+            // Try alternative names
+            aimPoint = player.transform.Find("AimTarget")
+                    ?? player.transform.Find("Aim");
+        }
+
+        if (!aimPoint)
+        {
+        
+            return;
+        }
+
+        const int playerLayer = 6;           // Player layer
+        const int playerUnhitableLayer = 14; // PlayerUnhitable layer
+
+        if (CurrentTimewarpMode == TimewarpMode.None)
+        {
+            // No timewarp: hit real player position
+            player.layer = playerLayer;
+            aimPoint.gameObject.layer = playerUnhitableLayer;
+
+        }
+        else
+        {
+            // Timewarp enabled: hit rewound position (aimpoint)
+            player.layer = playerUnhitableLayer;
+            aimPoint.gameObject.layer = playerLayer;
+
+        }
+        if (SeekerProjectilePrefab != null)
+        {
+            var comps = SeekerProjectilePrefab.GetComponents<Component>();
+            Component ps = null;
+
+            foreach (var c in comps)
+            {
+                if (c != null && c.GetType().Name == "ProjectileStandard")
+                {
+                    ps = c;
+                    break;
+                }
+            }
+
+            if (ps != null)
+            {
+                bool enableReject = (CurrentTimewarpMode == TimewarpMode.Conditional);
+                var field = ps.GetType().GetField("UseRealPositionReject");
+                if (field != null)
+                {
+                    field.SetValue(ps, enableReject);
+                    Debug.Log($"[RoundManager] Set ProjectileStandard.UseRealPositionReject = {enableReject}");
+                }
+                else
+                {
+                    Debug.LogWarning("[RoundManager] Field UseRealPositionReject not found on ProjectileStandard");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("[RoundManager] ProjectileStandard component not found on SeekerProjectilePrefab");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[RoundManager] SeekerProjectilePrefab is null");
+        }
+
+
+    }
 
     // ================= ROUND FLOW =================
     void StartRoundGameplay()
@@ -402,6 +525,7 @@ public class RoundManager : MonoBehaviour
         StartCoroutine(BindScoreDisplayNextFrame());
 
         RespawnPlayer();
+        ApplyTimewarpModeForPlayer();
 
         OnBotRoleChanged?.Invoke(_isSeeker);
         //OnTimeWarpChanged(IsTimeWarpEnabled);
@@ -429,8 +553,8 @@ public class RoundManager : MonoBehaviour
 
     void ApplyCondition(RoundCondition c)
     {
-        _isSeeker = (c.bot == BotRole.Seeker);
-        CurrentTimewarpMode =c.timewarp;
+        _isSeeker = LatencyTest ? BotIsSeeker : (c.bot == BotRole.Seeker);
+        CurrentTimewarpMode = LatencyTest ? TimeWarpmode : c.timewarp;
         CurrentLatencyMs = LatencyTest ? SimulatedLatencyMs : c.latencyMs;
 
 

@@ -9326,7 +9326,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 542ee955c189f1048b6241a1262755b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: fps.AI::HeatmapManager
-  HeatmapSource: {fileID: 11400000, guid: 1265f096b7fda1b46ada17e8f05bed88, type: 2}
+  HeatmapSource: {fileID: 11400000, guid: 7fd85df2f4ebd4e4cb3cdef0d0cb057f, type: 2}
   AllNodes:
   - {fileID: 2024585959}
   - {fileID: 630902664}
@@ -16060,6 +16060,20 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &840133047
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 840133042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9b0ce1bb69c96b49a7ac1098a7f5796, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: fps.Game::Unity.FPS.Game.Damageable
+  DamageMultiplier: 1
+  SensibilityToSelfdamage: 0.5
 --- !u!1001 &844414911
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -46080,8 +46094,8 @@ MonoBehaviour:
   - {fileID: 2729281214152228945}
   - {fileID: 2729281214152228942}
   - {fileID: 2729281214152228944}
-  LatencyTest: 0
-  SimulatedLatencyMs: 500
+  LatencyTest: 1
+  SimulatedLatencyMs: 0
   roundConditionFile: {fileID: 4900000, guid: d789d650bb8f0c44ba59b81dc90cb988, type: 3}
   currentRoundIndex: 0
   latinSquareFile: {fileID: 4900000, guid: a12398fb7b8b55843a8d5476ab954b25, type: 3}
@@ -46097,6 +46111,8 @@ MonoBehaviour:
   hiderTrueBotPrefab: {fileID: 2677989293437629138, guid: 03862f19d17b69e43b6ed80eebc91154,
     type: 3}
   hiderPastBotPrefab: {fileID: 5402154131380086054, guid: 434141f8b2355f64281847a1c55a59d8,
+    type: 3}
+  SeekerProjectilePrefab: {fileID: 3659995153115176983, guid: ec753d54f333bb944b8b04884ad63828,
     type: 3}
   enemySpawnPoint: {fileID: 1036273494}
 --- !u!4 &2021164507
@@ -52309,6 +52325,12 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 298744117520805562, guid: 761cdc9e4e883334cbdcea062d0befa7,
+        type: 3}
+      propertyPath: 'StartingWeapons.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8323776800172828795, guid: f6dc0ec279fa40041a785e6ded2ca62e,
+        type: 3}
     - target: {fileID: 814417836257332542, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}
       propertyPath: MaxSpeedOnGround
@@ -52527,6 +52549,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 840133045}
+    - targetCorrespondingSourceObject: {fileID: 1643745102531713927, guid: 761cdc9e4e883334cbdcea062d0befa7,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 840133047}
   m_SourcePrefab: {fileID: 100100000, guid: 761cdc9e4e883334cbdcea062d0befa7, type: 3}
 --- !u!1 &2729281214152228921 stripped
 GameObject:

@@ -149,19 +149,19 @@ MonoBehaviour:
   WeaponName: One Shot
   WeaponIcon: {fileID: 21300000, guid: 8cbb10368086f014a8b7fc8932e7f436, type: 3}
   CrosshairDataDefault:
-    CrosshairSprite: {fileID: 21300000, guid: 2962952d6e5ae7342a298d45a3945069, type: 3}
+    CrosshairSprite: {fileID: 21300000, guid: 2883dea87a05ddc4489db71bdbf6a412, type: 3}
     CrosshairSize: 40
-    CrosshairColor: {r: 0.4292453, g: 0.8855148, b: 1, a: 0.41960785}
+    CrosshairColor: {r: 1, g: 1, b: 1, a: 0.41960785}
   CrosshairDataTargetInSight:
-    CrosshairSprite: {fileID: 21300000, guid: 2962952d6e5ae7342a298d45a3945069, type: 3}
-    CrosshairSize: 30
-    CrosshairColor: {r: 0, g: 0.64177275, b: 1, a: 1}
+    CrosshairSprite: {fileID: 21300000, guid: 2883dea87a05ddc4489db71bdbf6a412, type: 3}
+    CrosshairSize: 40
+    CrosshairColor: {r: 1, g: 1, b: 1, a: 1}
   WeaponRoot: {fileID: 1505447205160222267}
   WeaponMuzzle: {fileID: 8334323006752503713}
   ShootType: 0
-  ProjectilePrefab: {fileID: 8924682559891268397, guid: dd654cb84cc16c343aeefb86ae4f93d1,
+  ProjectilePrefab: {fileID: 8924682559891268397, guid: ec753d54f333bb944b8b04884ad63828,
     type: 3}
-  DelayBetweenShots: 0.25
+  DelayBetweenShots: 0.75
   BulletSpreadAngle: 0
   BulletsPerShot: 1
   RecoilForce: 1
@@ -174,7 +174,7 @@ MonoBehaviour:
   EjectionPort: {fileID: 0}
   ShellCasingEjectionForce: 2
   ShellPoolSize: 1
-  AmmoReloadRate: 4
+  AmmoReloadRate: 2
   AmmoReloadDelay: 1
   MaxAmmo: 6
   AutomaticReleaseOnCharged: 0

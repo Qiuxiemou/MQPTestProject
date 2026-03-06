@@ -21,30 +21,34 @@ public class ParticipantLogManager : MonoBehaviour
 
     public void InitializeParticipant(int participantIndex)
     {
-        string logsRoot = GetProjectLogsPath();
+        //string logsRoot = GetProjectLogsPath();
 
-        ParticipantFolder = Path.Combine(
-            logsRoot,
-            $"participant_{participantIndex}"
-        );
+        //ParticipantFolder = Path.Combine(
+        //    logsRoot,
+        //    $"participant_{participantIndex}"
+        //);
+        string root = Path.Combine(Application.persistentDataPath, "ExperimentLogs");
+        Directory.CreateDirectory(root);
+
+        ParticipantFolder = Path.Combine(root, $"participant_{participantIndex}");
 
         Directory.CreateDirectory(ParticipantFolder);
 
         Debug.Log($"[ParticipantLogManager] Created: {ParticipantFolder}");
     }
 
-    string GetProjectLogsPath()
-    {
-        string root = Path.GetFullPath(
-            Path.Combine(Application.dataPath, "..")
-        );
+    //string GetProjectLogsPath()
+    //{
+    //    string root = Path.GetFullPath(
+    //        Path.Combine(Application.dataPath, "..")
+    //    );
 
-        string dir = Path.Combine(root, "Logs");
-        if (!Directory.Exists(dir))
-            Directory.CreateDirectory(dir);
+    //    string dir = Path.Combine(root, "Logs");
+    //    if (!Directory.Exists(dir))
+    //        Directory.CreateDirectory(dir);
 
-        return dir;
-    }
+    //    return dir;
+    //}
 
     public string CurrentRoundFolder { get; private set; }
     public void StartNewRound(int roundNumber)

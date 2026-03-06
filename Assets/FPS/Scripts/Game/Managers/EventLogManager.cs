@@ -54,46 +54,45 @@ namespace Unity.FPS.Game
             }
         }
 
+//        void InitCsvWriters()
+//    {
+//        _sessionId = System.DateTime.Now.ToString("yyyyMMdd_HHmmss");
 
-        void InitCsvWriters()
-    {
-        _sessionId = System.DateTime.Now.ToString("yyyyMMdd_HHmmss");
+//    #if UNITY_EDITOR
+//        string folder = Path.Combine(Application.dataPath, "Logs");
+//#else
+//        var projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+//        var folder = Path.Combine(projectRoot, "Logs", "GameLogs");
+//#endif
 
-    #if UNITY_EDITOR
-        string folder = Path.Combine(Application.dataPath, "Logs");
-#else
-        var projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
-        var folder = Path.Combine(projectRoot, "Logs", "GameLogs");
-#endif
+//            if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
 
-            if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+//        _eventsCsvPath = Path.Combine(folder, $"events_{_sessionId}.csv");
+//        _viewCsvPath   = Path.Combine(folder, $"view_{_sessionId}.csv");
+//        _worldCsvPath  = Path.Combine(folder, $"world_{_sessionId}.csv");
+//        _statsCsvPath  = Path.Combine(folder, $"stats_{_sessionId}.csv");
 
-        _eventsCsvPath = Path.Combine(folder, $"events_{_sessionId}.csv");
-        _viewCsvPath   = Path.Combine(folder, $"view_{_sessionId}.csv");
-        _worldCsvPath  = Path.Combine(folder, $"world_{_sessionId}.csv");
-        _statsCsvPath  = Path.Combine(folder, $"stats_{_sessionId}.csv");
+//        _eventsWriter = NewWriterWithHeader(_eventsCsvPath,
+//            "timestamp,event,shooter,target,damage,forward_delay_ms," +
+//            "hit_x,hit_y,hit_z,hitbox," +
+//            "client_x,client_y,client_z,client_hp,client_ratio," +
+//            "server_x,server_y,server_z,server_hp,server_ratio");
 
-        _eventsWriter = NewWriterWithHeader(_eventsCsvPath,
-            "timestamp,event,shooter,target,damage,forward_delay_ms," +
-            "hit_x,hit_y,hit_z,hitbox," +
-            "client_x,client_y,client_z,client_hp,client_ratio," +
-            "server_x,server_y,server_z,server_hp,server_ratio");
+//        _viewWriter = NewWriterWithHeader(_viewCsvPath,
+//            "timestamp,player,px,py,pz,yaw,pitch,roll,fx,fy,fz");
 
-        _viewWriter = NewWriterWithHeader(_viewCsvPath,
-            "timestamp,player,px,py,pz,yaw,pitch,roll,fx,fy,fz");
+//        _worldWriter = NewWriterWithHeader(_worldCsvPath,
+//            "session_id,wall_ts,game_t,entity_id,entity_type,pos_x,pos_y,pos_z,yaw,pitch,roll,hp");
 
-        _worldWriter = NewWriterWithHeader(_worldCsvPath,
-            "session_id,wall_ts,game_t,entity_id,entity_type,pos_x,pos_y,pos_z,yaw,pitch,roll,hp");
+//        _statsWriter = NewWriterWithHeader(_statsCsvPath,
+//            "session_id,wall_ts,total_shots,total_hits,accuracy_pct,delayed_hits,delayed_accuracy_pct");
 
-        _statsWriter = NewWriterWithHeader(_statsCsvPath,
-            "session_id,wall_ts,total_shots,total_hits,accuracy_pct,delayed_hits,delayed_accuracy_pct");
+//        _nextFlushTime = Time.unscaledTime + FlushEverySeconds;
 
-        _nextFlushTime = Time.unscaledTime + FlushEverySeconds;
-
-        #if UNITY_EDITOR
-            UnityEditor.AssetDatabase.Refresh(); 
-        #endif
-        }
+//        #if UNITY_EDITOR
+//            UnityEditor.AssetDatabase.Refresh(); 
+//        #endif
+//        }
 
         StreamWriter NewWriterWithHeader(string path, string header)
         {

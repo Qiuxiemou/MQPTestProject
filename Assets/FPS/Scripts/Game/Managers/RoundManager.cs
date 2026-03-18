@@ -22,6 +22,8 @@ public class RoundManager : MonoBehaviour
 
     public bool LatencyTest = false;
     public float SimulatedLatencyMs = 200f;
+    public TimewarpMode TimeWarpmode = TimewarpMode.None;
+    public bool BotIsSeeker = true;
 
     [Header("Study Config")]
     [SerializeField] private TextAsset roundConditionFile;
@@ -59,6 +61,8 @@ public class RoundManager : MonoBehaviour
     public GameObject hiderBotPrefab;
     public GameObject hiderTrueBotPrefab;
     public GameObject hiderPastBotPrefab;
+    public GameObject SeekerProjectilePrefab;
+    
     public Transform enemySpawnPoint;
 
     GameObject _futureBot;
@@ -344,7 +348,143 @@ public class RoundManager : MonoBehaviour
         }
     }
 
+    void ApplyTimewarpModeForPlayer()
+    {
+        if (!player) return;
 
+        
+        Transform aimPoint = player.transform.Find("AimPoint");
+
+        if (!aimPoint)
+        {
+            // Try alternative names
+            aimPoint = player.transform.Find("AimTarget")
+                    ?? player.transform.Find("Aim");
+        }
+
+        if (!aimPoint)
+        {
+        
+            return;
+        }
+
+        const int playerLayer = 6;           // Player layer
+        const int playerUnhitableLayer = 14; // PlayerUnhitable layer
+
+        if (CurrentTimewarpMode == TimewarpMode.None)
+        {
+            // No timewarp: hit real player position
+            player.layer = playerLayer;
+            aimPoint.gameObject.layer = playerUnhitableLayer;
+
+        }
+        else
+        {
+            // Timewarp enabled: hit rewound position (aimpoint)
+            player.layer = playerUnhitableLayer;
+            aimPoint.gameObject.layer = playerLayer;
+
+        }
+        if (SeekerProjectilePrefab != null)
+        {
+            var comps = SeekerProjectilePrefab.GetComponents<Component>();
+            Component ps = null;
+
+            foreach (var c in comps)
+            {
+                if (c != null && c.GetType().Name == "ProjectileStandard")
+                {
+                    ps = c;
+                    break;
+                }
+            }
+
+            if (ps != null)
+            {
+                bool enableReject = (CurrentTimewarpMode == TimewarpMode.Conditional);
+                var field = ps.GetType().GetField("UseRealPositionReject");
+                if (field != null)
+                {
+                    field.SetValue(ps, enableReject);
+                    Debug.Log($"[RoundManager] Set ProjectileStandard.UseRealPositionReject = {enableReject}");
+                }
+                else
+                {
+                    Debug.LogWarning("[RoundManager] Field UseRealPositionReject not found on ProjectileStandard");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("[RoundManager] ProjectileStandard component not found on SeekerProjectilePrefab");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[RoundManager] SeekerProjectilePrefab is null");
+        }
+
+    }
+
+
+    void ConfigureEnemyShootingBehavior()
+    {
+        if (seekerBotPrefab == null) return;
+
+        // Get EnemyController component (using reflection to avoid namespace issues)
+        var enemyController = seekerBotPrefab.GetComponent("EnemyController") as MonoBehaviour;
+
+        if (enemyController == null)
+        {
+            Debug.Log("[RoundManager] EnemyController not found on enemy bot");
+            return;
+        }
+
+        var type = enemyController.GetType();
+
+        // Configure based on TimewarpMode
+        switch (CurrentTimewarpMode)
+        {
+            case TimewarpMode.None:
+                // No timewarp: shoot at current position (no prediction)
+                SetField(type, enemyController, "UseBlendAim", true);
+                SetField(type, enemyController, "BlendToFuture", 0.6f);
+                SetField(type, enemyController, "BlendRadius", 0.15f);
+                Debug.Log("[RoundManager] Enemy shooting: No prediction (Mode: None)");
+                break;
+
+            case TimewarpMode.Normal:
+                // Normal timewarp: moderate prediction
+                SetField(type, enemyController, "UseBlendAim", true);
+                SetField(type, enemyController, "BlendToFuture", 0.1f);
+                SetField(type, enemyController, "BlendRadius", 0.15f);
+                Debug.Log("[RoundManager] Enemy shooting: Moderate prediction (Mode: Normal)");
+                break;
+
+            case TimewarpMode.Conditional:
+                // Conditional timewarp: high prediction
+                SetField(type, enemyController, "UseBlendAim", true);
+                SetField(type, enemyController, "BlendToFuture", 0.1f);
+                SetField(type, enemyController, "BlendRadius", 0.15f);
+                Debug.Log("[RoundManager] Enemy shooting: High prediction (Mode: Conditional)");
+                break;
+        }
+    }
+
+    void SetField(System.Type type, object obj, string fieldName, object value)
+    {
+        var field = type.GetField(fieldName,
+            System.Reflection.BindingFlags.Public |
+            System.Reflection.BindingFlags.Instance);
+
+        if (field != null)
+        {
+            field.SetValue(obj, value);
+        }
+        else
+        {
+            Debug.LogWarning($"[RoundManager] Field '{fieldName}' not found on EnemyController");
+        }
+    }
     // ================= ROUND FLOW =================
     void StartRoundGameplay()
     {
@@ -403,10 +543,11 @@ public class RoundManager : MonoBehaviour
 
         SpawnEnemyForCurrentRole();
         ApplyTimewarpMode();
-
+        ConfigureEnemyShootingBehavior();
         StartCoroutine(BindScoreDisplayNextFrame());
 
         RespawnPlayer();
+        ApplyTimewarpModeForPlayer();
 
         OnBotRoleChanged?.Invoke(_isSeeker);
         //OnTimeWarpChanged(IsTimeWarpEnabled);
@@ -434,8 +575,8 @@ public class RoundManager : MonoBehaviour
 
     void ApplyCondition(RoundCondition c)
     {
-        _isSeeker = (c.bot == BotRole.Seeker);
-        CurrentTimewarpMode =c.timewarp;
+        _isSeeker = LatencyTest ? BotIsSeeker : (c.bot == BotRole.Seeker);
+        CurrentTimewarpMode = LatencyTest ? TimeWarpmode : c.timewarp;
         CurrentLatencyMs = LatencyTest ? SimulatedLatencyMs : c.latencyMs;
 
 

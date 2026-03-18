@@ -126,7 +126,7 @@ namespace Unity.FPS.AI
         public float BlendToFuture = 0.3f;
         // Adds thickness to the region (meters)
 
-
+        public float BlendSigma = 0.15f;
         public float BlendRadius = 0.15f;
         public bool IsTargetInAttackRange => DetectionModule.IsTargetInAttackRange;
         public bool IsSeeingTarget => DetectionModule.IsSeeingTarget;
@@ -602,9 +602,33 @@ namespace Unity.FPS.AI
             }
         }
 
+        float SampleGaussian(float mean, float sigma)
+        {
+            float u1 = Mathf.Clamp(Random.value, 1e-7f, 1f);
+            float u2 = Mathf.Clamp(Random.value, 1e-7f, 1f);
+
+            // Box-Muller transform
+            float z = Mathf.Sqrt(-2f * Mathf.Log(u1)) * Mathf.Cos(2f * Mathf.PI * u2);
+
+            return mean + z * sigma;
+        }
+
         Vector3 PickAimInRegion(Vector3 a, Vector3 b)
         {
-            float t = UseBlendAim ? Random.Range(0f, 1f) : BlendToFuture;
+            float t;
+
+            if (UseBlendAim)
+            {
+                // Sample around BlendToFuture using a normal distribution
+                t = SampleGaussian(BlendToFuture, BlendSigma);
+
+                // Clamp to the valid lerp range
+                t = Mathf.Clamp01(t);
+            }
+            else
+            {
+                t = BlendToFuture;
+            }
 
             Vector3 p = Vector3.Lerp(a, b, t);
 
@@ -623,23 +647,18 @@ namespace Unity.FPS.AI
         {
             if (m_GameFlowManager.GameIsEnding)
                 return false;
-    
+
             float extendDistance = Vector3.Distance(enemyPosition, enemyFuture);
             Vector3 dir = (enemyFuture - enemyPosition).normalized;
             Vector3 extendedEnd = enemyFuture + dir * extendDistance;
+
             Debug.DrawLine(transform.position, enemyPosition, Color.red, 1f);
             Debug.DrawLine(transform.position, extendedEnd, Color.blue, 1f);
 
-            Vector3 aimPos;
-            if (UseBlendAim)
-            {
-                aimPos = PickAimInRegion(enemyPosition, extendedEnd);
-            }
-            else
-            {
-                aimPos = Vector3.Lerp(enemyPosition, extendedEnd, BlendToFuture);
-            }
+            Vector3 aimPos = PickAimInRegion(enemyPosition, extendedEnd);
+
             OrientWeaponsTowards(aimPos);
+
             if ((m_LastTimeWeaponSwapped + DelayAfterWeaponSwap) >= Time.time)
                 return false;
 

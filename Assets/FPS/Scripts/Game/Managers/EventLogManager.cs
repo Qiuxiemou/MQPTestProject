@@ -152,6 +152,7 @@ namespace Unity.FPS.Game
 
         void OnHitCsv(HitCsvEvent e)
         {
+            if (_eventsWriter == null) return;
             Vector3 cPos = e.ClientTf     ? e.ClientTf.position : Vector3.zero;
             float   cHp  = e.ClientHealth ? e.ClientHealth.CurrentHealth : -1f;
             float   cRt  = e.ClientHealth ? e.ClientHealth.GetRatio()    : -1f;
@@ -172,6 +173,7 @@ namespace Unity.FPS.Game
 
         void OnFire(FireShotEvent e)
         {
+            if (_eventsWriter == null) return;
             _eventsWriter.WriteLine($"{TS()},fire,{e.ShooterId},{e.WeaponId},,,,,,,,,,,,");
 
             BumpFlushCounter();
@@ -179,6 +181,7 @@ namespace Unity.FPS.Game
 
         void OnDeath(DeathEvent e)
         {
+            if (_eventsWriter == null) return;
             _eventsWriter.WriteLine($"{TS()},death,,{e.VictimId},,,,,,,,,,,,");
 
             BumpFlushCounter();
@@ -186,12 +189,14 @@ namespace Unity.FPS.Game
 
         void OnKeyPress(KeyPressEvent e)
         {
+            if (_eventsWriter == null) return;
             _eventsWriter.WriteLine($"{TS()},key,{e.PlayerId},{e.Key},{(e.Pressed ? "down" : "up")},,,,,,,,,,,,,");
             BumpFlushCounter();
         }
 
         void OnViewSample(ViewSampleEvent e)
         {
+            if (_viewWriter == null) return;
             var p = e.Position;
             var r = e.RotationEuler;
             var f = e.Forward;
@@ -256,6 +261,10 @@ namespace Unity.FPS.Game
             string eventsFolder = Path.Combine(roundFolder, "events");
             string worldFolder = Path.Combine(roundFolder, "world");
             string statsFolder = Path.Combine(roundFolder, "stats");
+
+            Directory.CreateDirectory(eventsFolder); 
+            Directory.CreateDirectory(worldFolder);  
+            Directory.CreateDirectory(statsFolder);  
 
             _eventsCsvPath = Path.Combine(eventsFolder, "events.csv");
             _viewCsvPath = Path.Combine(eventsFolder, "view.csv");

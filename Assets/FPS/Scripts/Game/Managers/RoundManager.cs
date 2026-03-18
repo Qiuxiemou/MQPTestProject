@@ -166,6 +166,11 @@ public class RoundManager : MonoBehaviour
         // Initialize participant in log manager
         ParticipantLogManager.Instance.InitializeParticipant(participantIndex);
 
+        SummaryLogManager.Instance.Init(
+            ParticipantLogManager.Instance.ParticipantFolder,
+            participantIndex
+        );
+
         List<int> orderRow = latinOrders[participantIndex];
 
         // Rebuild rounds list based on ID order
@@ -471,30 +476,40 @@ public class RoundManager : MonoBehaviour
 
         //SetGameplayPause(true);
         SetGameplayPause(false); 
-        Time.timeScale = 1f; 
+        Time.timeScale = 1f;
 
-        if (_futureBot != null)
-        {
-            Destroy(_futureBot);
-            _futureBot = null;
-        }
-
-        if (_trueBot != null)
-        {
-            Destroy(_trueBot);
-            _trueBot = null;
-        }
-
-        if (_pastBot != null)
-        {
-            Destroy(_pastBot);
-            _pastBot = null;
-        }
-
-        GameStatsLogManager.Instance?.EndRoundLogStats();
+        // --- destroy bots ---
+        if (_futureBot != null) { Destroy(_futureBot); _futureBot = null; }
+        if (_trueBot != null) { Destroy(_trueBot); _trueBot = null; }
+        if (_pastBot != null) { Destroy(_pastBot); _pastBot = null; }
 
         if (timerUI) timerUI.Hide();
         if (surveyUI) surveyUI.Show(currentRoundIndex);
+
+        // end round
+        GameStatsLogManager.Instance?.EndRoundLogStats();
+        // Log
+        SummaryLogManager.Instance.LogRound(
+            currentCondition.id,
+            CurrentLatencyMs,
+            _isSeeker ? "Seeker" : "Hider",
+            CurrentTimewarpMode.ToString(),
+            0, // score (replace later)
+            0, // enemy speed
+            0, // player speed
+            GameStatsLogManager.Instance.TotalShots,
+            GameStatsLogManager.Instance.TotalHits,
+            0, // error angle
+            GameStatsLogManager.Instance.Accuracy,
+            0, // corner shots
+            0, // ttk
+            0, // tth
+            0, // q1
+            0, // q2
+            0, // player dist
+            0, // bot dist
+            0  // mouse move
+        );
     }
 
     void EndStudy()

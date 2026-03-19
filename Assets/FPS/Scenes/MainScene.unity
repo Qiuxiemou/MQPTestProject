@@ -40192,6 +40192,7 @@ GameObject:
   - component: {fileID: 1737504311}
   - component: {fileID: 1737504312}
   - component: {fileID: 1737504313}
+  - component: {fileID: 1737504314}
   m_Layer: 0
   m_Name: LogManager
   m_TagString: Untagged
@@ -40282,6 +40283,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5656366161e8818439aa41b486170003, type: 3}
   m_Name: 
   m_EditorClassIdentifier: fps.Game::ParticipantLogManager
+--- !u!114 &1737504314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1737504307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c19902f7d82f28d42b9b6634bbfbab50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: fps.Game::SummaryLogManager
 --- !u!1001 &1748447090
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -46088,7 +46101,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c7747893f578244ebf571f0db1588b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: fps.Game::RoundManager
-  roundLengthSeconds: 5
+  roundLengthSeconds: 10
   disableWhilePaused:
   - {fileID: 2729281214152228945}
   - {fileID: 2729281214152228942}
@@ -54058,22 +54071,22 @@ PrefabInstance:
     - target: {fileID: 319410335075788178, guid: c996b53e9f849234393d1e90f68d1679,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 319410335075788178, guid: c996b53e9f849234393d1e90f68d1679,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 319410335075788178, guid: c996b53e9f849234393d1e90f68d1679,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 116.585
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 319410335075788178, guid: c996b53e9f849234393d1e90f68d1679,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -212.55
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 610429965154294984, guid: c996b53e9f849234393d1e90f68d1679,
         type: 3}
@@ -54348,17 +54361,17 @@ PrefabInstance:
     - target: {fileID: 8250413824482692630, guid: c996b53e9f849234393d1e90f68d1679,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8250413824482692630, guid: c996b53e9f849234393d1e90f68d1679,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8250413824482692630, guid: c996b53e9f849234393d1e90f68d1679,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -30
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8826354702754706539, guid: c996b53e9f849234393d1e90f68d1679,
         type: 3}

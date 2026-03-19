@@ -569,7 +569,7 @@ MonoBehaviour:
   ShootType: 1
   ProjectilePrefab: {fileID: 8924682559891268397, guid: ec753d54f333bb944b8b04884ad63828,
     type: 3}
-  DelayBetweenShots: 1
+  DelayBetweenShots: 0.4
   BulletSpreadAngle: 1
   BulletsPerShot: 1
   RecoilForce: 1
@@ -582,9 +582,9 @@ MonoBehaviour:
   EjectionPort: {fileID: 0}
   ShellCasingEjectionForce: 2
   ShellPoolSize: 1
-  AmmoReloadRate: 2
-  AmmoReloadDelay: 1
-  MaxAmmo: 6
+  AmmoReloadRate: 10000
+  AmmoReloadDelay: 0.1
+  MaxAmmo: 10000
   AutomaticReleaseOnCharged: 0
   MaxChargeDuration: 2
   AmmoUsedOnStartCharge: 1
@@ -918,7 +918,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 15
+  m_Speed: 10
   m_Acceleration: 50
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -1661,6 +1661,11 @@ PrefabInstance:
         type: 3}
       propertyPath: ColorModule.gradient.maxGradient.m_NumColorKeys
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7951582856014658560, guid: 3f5b545b9a1e74c418b061bba5bb9e2c,
+        type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -427,9 +427,68 @@ public class RoundManager : MonoBehaviour
             Debug.LogWarning("[RoundManager] SeekerProjectilePrefab is null");
         }
 
-
     }
 
+
+    void ConfigureEnemyShootingBehavior()
+    {
+        if (seekerBotPrefab == null) return;
+
+        // Get EnemyController component (using reflection to avoid namespace issues)
+        var enemyController = seekerBotPrefab.GetComponent("EnemyController") as MonoBehaviour;
+
+        if (enemyController == null)
+        {
+            Debug.Log("[RoundManager] EnemyController not found on enemy bot");
+            return;
+        }
+
+        var type = enemyController.GetType();
+
+        // Configure based on TimewarpMode
+        switch (CurrentTimewarpMode)
+        {
+            case TimewarpMode.None:
+                // No timewarp: shoot at current position (no prediction)
+                SetField(type, enemyController, "UseBlendAim", true);
+                SetField(type, enemyController, "BlendToFuture", 0.6f);
+                SetField(type, enemyController, "BlendRadius", 0.15f);
+                Debug.Log("[RoundManager] Enemy shooting: No prediction (Mode: None)");
+                break;
+
+            case TimewarpMode.Normal:
+                // Normal timewarp: moderate prediction
+                SetField(type, enemyController, "UseBlendAim", true);
+                SetField(type, enemyController, "BlendToFuture", 0.1f);
+                SetField(type, enemyController, "BlendRadius", 0.15f);
+                Debug.Log("[RoundManager] Enemy shooting: Moderate prediction (Mode: Normal)");
+                break;
+
+            case TimewarpMode.Conditional:
+                // Conditional timewarp: high prediction
+                SetField(type, enemyController, "UseBlendAim", true);
+                SetField(type, enemyController, "BlendToFuture", 0.1f);
+                SetField(type, enemyController, "BlendRadius", 0.15f);
+                Debug.Log("[RoundManager] Enemy shooting: High prediction (Mode: Conditional)");
+                break;
+        }
+    }
+
+    void SetField(System.Type type, object obj, string fieldName, object value)
+    {
+        var field = type.GetField(fieldName,
+            System.Reflection.BindingFlags.Public |
+            System.Reflection.BindingFlags.Instance);
+
+        if (field != null)
+        {
+            field.SetValue(obj, value);
+        }
+        else
+        {
+            Debug.LogWarning($"[RoundManager] Field '{fieldName}' not found on EnemyController");
+        }
+    }
     // ================= ROUND FLOW =================
     void StartRoundGameplay()
     {
@@ -496,7 +555,7 @@ public class RoundManager : MonoBehaviour
 
         SpawnEnemyForCurrentRole();
         ApplyTimewarpMode();
-
+        ConfigureEnemyShootingBehavior();
         StartCoroutine(BindScoreDisplayNextFrame());
 
         RespawnPlayer();
@@ -570,30 +629,40 @@ public class RoundManager : MonoBehaviour
 
         //SetGameplayPause(true);
         SetGameplayPause(false); 
-        Time.timeScale = 1f; 
+        Time.timeScale = 1f;
 
-        if (_futureBot != null)
-        {
-            Destroy(_futureBot);
-            _futureBot = null;
-        }
-
-        if (_trueBot != null)
-        {
-            Destroy(_trueBot);
-            _trueBot = null;
-        }
-
-        if (_pastBot != null)
-        {
-            Destroy(_pastBot);
-            _pastBot = null;
-        }
-
-        GameStatsLogManager.Instance?.EndRoundLogStats();
+        // --- destroy bots ---
+        if (_futureBot != null) { Destroy(_futureBot); _futureBot = null; }
+        if (_trueBot != null) { Destroy(_trueBot); _trueBot = null; }
+        if (_pastBot != null) { Destroy(_pastBot); _pastBot = null; }
 
         if (timerUI) timerUI.Hide();
         if (surveyUI) surveyUI.Show(currentRoundIndex);
+
+        // end round
+        GameStatsLogManager.Instance?.EndRoundLogStats();
+        // Log
+        SummaryLogManager.Instance.LogRound(
+            currentCondition.id,
+            CurrentLatencyMs,
+            _isSeeker ? "Seeker" : "Hider",
+            CurrentTimewarpMode.ToString(),
+            0, // score (replace later)
+            0, // enemy speed
+            0, // player speed
+            GameStatsLogManager.Instance.TotalShots,
+            GameStatsLogManager.Instance.TotalHits,
+            0, // error angle
+            GameStatsLogManager.Instance.Accuracy,
+            0, // corner shots
+            0, // ttk
+            0, // tth
+            0, // q1
+            0, // q2
+            0, // player dist
+            0, // bot dist
+            0  // mouse move
+        );
     }
 
     void EndStudy()

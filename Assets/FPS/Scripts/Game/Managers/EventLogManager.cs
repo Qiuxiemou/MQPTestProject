@@ -241,6 +241,7 @@ namespace Unity.FPS.Game
 
         void OnFire(FireShotEvent e)
         {
+            if (_eventsWriter == null) return;
             _eventsWriter.WriteLine($"{TS()},fire,{e.ShooterId},{e.WeaponId},,,,,,,,,,,,");
 
             BumpFlushCounter();
@@ -248,6 +249,7 @@ namespace Unity.FPS.Game
 
         void OnDeath(DeathEvent e)
         {
+            if (_eventsWriter == null) return;
             _eventsWriter.WriteLine($"{TS()},death,,{e.VictimId},,,,,,,,,,,,");
 
             BumpFlushCounter();
@@ -269,7 +271,6 @@ namespace Unity.FPS.Game
         void OnViewSample(ViewSampleEvent e)
         {
             if (_viewWriter == null) return;
-
             var p = e.Position;
             var r = e.RotationEuler;
             var f = e.Forward;

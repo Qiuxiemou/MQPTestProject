@@ -7,7 +7,6 @@ using Unity.FPS.Game;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
-
 public class RoundManager : MonoBehaviour
 {
     public static RoundManager Instance { get; private set; }
@@ -422,7 +421,7 @@ public class RoundManager : MonoBehaviour
                 SetField(type, enemyController, "UseBlendAim", true);
                 SetField(type, enemyController, "BlendToFuture", 0.6f);
                 SetField(type, enemyController, "BlendRadius", 0.15f);
-                Debug.Log("[RoundManager] Enemy shooting: No prediction (Mode: None)");
+                //Debug.Log("[RoundManager] Enemy shooting: No prediction (Mode: None)");
                 break;
 
             case TimewarpMode.Normal:
@@ -430,7 +429,7 @@ public class RoundManager : MonoBehaviour
                 SetField(type, enemyController, "UseBlendAim", true);
                 SetField(type, enemyController, "BlendToFuture", 0.1f);
                 SetField(type, enemyController, "BlendRadius", 0.15f);
-                Debug.Log("[RoundManager] Enemy shooting: Moderate prediction (Mode: Normal)");
+                //Debug.Log("[RoundManager] Enemy shooting: Moderate prediction (Mode: Normal)");
                 break;
 
             case TimewarpMode.Conditional:
@@ -438,7 +437,7 @@ public class RoundManager : MonoBehaviour
                 SetField(type, enemyController, "UseBlendAim", true);
                 SetField(type, enemyController, "BlendToFuture", 0.1f);
                 SetField(type, enemyController, "BlendRadius", 0.15f);
-                Debug.Log("[RoundManager] Enemy shooting: High prediction (Mode: Conditional)");
+                //Debug.Log("[RoundManager] Enemy shooting: High prediction (Mode: Conditional)");
                 break;
         }
     }
@@ -604,28 +603,7 @@ public class RoundManager : MonoBehaviour
         // end round
         GameStatsLogManager.Instance?.EndRoundLogStats();
         // Log
-        //SummaryLogManager.Instance.LogRound(
-        //    currentCondition.id,
-        //    currentRoundIndex,
-        //    CurrentLatencyMs,
-        //    _isSeeker ? "Hider" : "Seeker",
-        //    CurrentTimewarpMode.ToString(),
-        //    0, // score (replace later)
-        //    0, // enemy speed
-        //    0, // player speed
-        //    //GameStatsLogManager.Instance.TotalShots,
-        //    //GameStatsLogManager.Instance.TotalHits,
-        //    0, // error angle
-        //    //GameStatsLogManager.Instance.Accuracy,
-        //    0, // corner shots
-        //    0, // ttk
-        //    0, // tth
-        //    //0, // q1
-        //    //0, // q2
-        //    0, // player dist
-        //    0, // bot dist
-        //    0  // mouse move
-        //);
+        //SummaryLogManager.Instance.LogRound();
     }
 
     void EndStudy()
@@ -1004,13 +982,15 @@ public class RoundManager : MonoBehaviour
 
         SummaryLogManager.Instance.SetSurvey(q1, q2);
 
+        int finalScore = ScoreProvider.Instance != null? ScoreProvider.Instance.GetScore() : 0;
+
         SummaryLogManager.Instance.LogRound(
             currentCondition.id,
             currentRoundIndex,
             CurrentLatencyMs,
             _isSeeker ? "Hider" : "Seeker",
             CurrentTimewarpMode.ToString(),
-            0, // score (replace later)
+            finalScore, 
             0, // enemy speed
             0, // player speed
                //GameStatsLogManager.Instance.TotalShots,

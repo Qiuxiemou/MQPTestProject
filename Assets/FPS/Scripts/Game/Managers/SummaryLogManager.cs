@@ -20,9 +20,6 @@ public class SummaryLogManager : MonoBehaviour
 
     float surveyQ1 = 0;
     float surveyQ2 = 0;
-
-
-
     void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }

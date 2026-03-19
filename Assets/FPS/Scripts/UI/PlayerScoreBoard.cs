@@ -89,6 +89,16 @@ namespace Unity.FPS.UI
                 score -= 1;
 
             ScoreText.text = $"Score: {score}";
+
+            if (ScoreProvider.Instance != null)
+            {
+                ScoreProvider.Instance.SetScore(score);
+                Debug.Log($"[Score] {score}");
+            }
+            else
+            {
+                Debug.Log("[ScoreProvider] NULL");
+            }
         }
 
         void OnDestroy()

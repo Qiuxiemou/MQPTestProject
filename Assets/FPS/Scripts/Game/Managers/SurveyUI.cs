@@ -62,7 +62,7 @@ public class SurveyUI : MonoBehaviour
         if (exitButton) exitButton.onClick.AddListener(OnExit);
 
         //DontDestroyOnLoad(gameObject);
-        Debug.Log("[DEBUG] SurveyUI Awake");
+        //Debug.Log("[DEBUG] SurveyUI Awake");
     }
 
     static void Setup(Slider s)
@@ -87,8 +87,8 @@ public class SurveyUI : MonoBehaviour
         if (submitButton)
             submitButton.interactable = false;
 
-        Debug.Log("[DEBUG] SurveyUI shown");
-        Debug.Log($"[DEBUG] Time.timeScale = {Time.timeScale}");
+        //Debug.Log("[DEBUG] SurveyUI shown");
+        //Debug.Log($"[DEBUG] Time.timeScale = {Time.timeScale}");
     }
 
     public void Hide() => gameObject.SetActive(false);

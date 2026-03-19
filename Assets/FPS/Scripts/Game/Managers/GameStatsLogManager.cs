@@ -14,9 +14,6 @@ namespace Unity.FPS.Game
 
         int damageDealt = 0;
         int damageReceived = 0;
-        public int TotalShots => totalShotsFired;
-        public int TotalHits => totalHits;
-        public float Accuracy => totalShotsFired > 0 ? (float)totalHits / totalShotsFired * 100f : 0f;
         void Awake()
         {
             if (Instance != null && Instance != this) { Destroy(gameObject); return; }

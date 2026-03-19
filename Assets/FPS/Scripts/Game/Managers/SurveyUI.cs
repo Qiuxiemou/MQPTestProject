@@ -108,9 +108,9 @@ public class SurveyUI : MonoBehaviour
         */
         {
             round = _roundShown,
-            smoothness = lagSlider ? lagSlider.value : 3f,
-            responsiveness = hiderSlider ? hiderSlider.value : 3f,
-            fairness = seekerSlider ? seekerSlider.value : 3f
+            lag = lagSlider ? lagSlider.value : 3f,
+            hider = hiderSlider ? hiderSlider.value : 3f,
+            seeker = seekerSlider ? seekerSlider.value : 3f
         };
 
         Hide();

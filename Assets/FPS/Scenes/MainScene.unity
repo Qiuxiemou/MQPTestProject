@@ -16039,6 +16039,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: fps.AI::PlayerLatency
   player: {fileID: 2729281214152228946}
   latency: 5
+  offset: {x: 0, y: 1.6, z: 0}
 --- !u!135 &840133045
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -46102,13 +46103,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c7747893f578244ebf571f0db1588b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: fps.Game::RoundManager
-  roundLengthSeconds: 10
+  roundLengthSeconds: 15
   disableWhilePaused:
   - {fileID: 2729281214152228945}
   - {fileID: 2729281214152228942}
   - {fileID: 2729281214152228944}
-  LatencyTest: 1
+  LatencyTest: 0
   SimulatedLatencyMs: 0
+  TimeWarpmode: 0
+  BotIsSeeker: 0
   roundConditionFile: {fileID: 4900000, guid: d789d650bb8f0c44ba59b81dc90cb988, type: 3}
   currentRoundIndex: 0
   latinSquareFile: {fileID: 4900000, guid: a12398fb7b8b55843a8d5476ab954b25, type: 3}

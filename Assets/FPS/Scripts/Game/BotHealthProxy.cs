@@ -122,31 +122,35 @@ namespace Unity.FPS.Game
             if (serverHealth != null) serverHealth.TakeDamage(damage, source);
         }
 
-        
+
         public void TakeDamage(float damage, GameObject source)
         {
             LM.write($"{transform.root.name} takeDamage | Mode={currentMode}");
 
+            bool hasLOS = HasLineOfSightFromFutureToPlayer();
+
+            bool shotAroundCorner = !hasLOS;
+
+            bool acceptShot = true;
+
             switch (currentMode)
             {
                 case TimewarpMode.None:
-                    // No timewarp -> backwards propagation
+                    acceptShot = true;
                     if (futureHealth != null)
-                    {
-
                         StartCoroutine(DamageBackwards(damage, source));
-                    }
                     break;
 
                 case TimewarpMode.Normal:
-                    // Always forward (classic timewarp)
+                    acceptShot = true;
                     if (pastHealth != null)
                         StartCoroutine(DamageForwards(damage, source));
                     break;
 
                 case TimewarpMode.Conditional:
-                    // Only forward if LOS from future bot
-                    if (HasLineOfSightFromFutureToPlayer())
+                    acceptShot = hasLOS;
+
+                    if (hasLOS)
                     {
                         LM.write("CTW: LOS valid -> forward");
                         StartCoroutine(DamageForwards(damage, source));
@@ -157,6 +161,32 @@ namespace Unity.FPS.Game
                     }
                     break;
             }
+
+            // Log Hit Event
+            EmitHitEvent(damage, source, acceptShot, shotAroundCorner);
+        }
+
+        void EmitHitEvent(float damage, GameObject source, bool acceptedShot, bool shotAroundCorner)
+        {
+            EventManager.Broadcast(new HitCsvEvent
+            {
+                ShooterId = source ? source.name : "Unknown",
+                TargetId = gameObject.name,
+                Damage = damage,
+                ForwardDelayMs = forwardDelayMs,
+                HitPoint = transform.position,
+
+                AcceptShot = acceptedShot,
+                ShotAroundCorner = shotAroundCorner,
+
+                ClientTf = transform,
+                ClientHealth = clientHealth,
+
+                ServerTf = pastHealth.transform,   // or trueHealth depending on your config
+                ServerHealth = pastHealth
+            });
+
+            //LM.write($"[ShotEvent] accepted={accepted} | corner={shotAroundCorner}");
         }
 
         bool HasLineOfSightFromFutureToPlayer()
@@ -223,7 +253,6 @@ namespace Unity.FPS.Game
                 Damage = damage,
                 ForwardDelayMs = forwardDelayMs,
                 HitPoint = transform.position,
-                HitBox = true,
                 ClientTf = transform,
                 ClientHealth = clientHealth,
                 ServerTf = serverHealth.transform,

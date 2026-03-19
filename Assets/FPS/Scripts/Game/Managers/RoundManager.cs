@@ -30,7 +30,10 @@ public class RoundManager : MonoBehaviour
 
     private List<RoundCondition> rounds;
     public int currentRoundIndex = 0;
+    public int CurrentRoundIndex => currentRoundIndex;
+
     private RoundCondition currentCondition;
+    public int CurrentRoundID => currentCondition.id;
 
     [SerializeField] private TextAsset latinSquareFile;
 
@@ -112,6 +115,8 @@ public class RoundManager : MonoBehaviour
     readonly List<SurveyData> _buffer = new();
     //string _surveyCsvPath;
     //string _roleLogPath;
+    public int ParticipantID { get; private set; }
+    public int CurrentLatinRow { get; private set; }
 
 
     // ---------------- UNITY ----------------
@@ -164,13 +169,26 @@ public class RoundManager : MonoBehaviour
         // Load Latin square order
         var latinOrders = LoadLatinSquare(latinSquareFile);
 
-        // Pick row for this participant
-        int participantIndex = GetAndIncrementParticipantIndex(latinOrders.Count);
+        // Get true participant ID (keeps increasing)
+        int participantID = GetAndIncrementParticipantID();
+        ParticipantID = participantID;
+
+        // Compute Latin row (cycles)
+        CurrentLatinRow = participantID % latinOrders.Count;
 
         // Initialize participant in log manager
-        ParticipantLogManager.Instance.InitializeParticipant(participantIndex);
+        ParticipantLogManager.Instance.InitializeParticipant(participantID);
 
+<<<<<<< Updated upstream
         List<int> orderRow = latinOrders[participantIndex];
+=======
+        SummaryLogManager.Instance.Init(
+            ParticipantLogManager.Instance.ParticipantFolder,
+            participantID
+        );
+
+        List<int> orderRow = latinOrders[participantID];
+>>>>>>> Stashed changes
 
         // Rebuild rounds list based on ID order
         rounds = new List<RoundCondition>();
@@ -190,7 +208,7 @@ public class RoundManager : MonoBehaviour
 
         // Log ID order for this participant
         StringBuilder orderLog = new StringBuilder();
-        orderLog.Append($"[RoundManager] Participant {participantIndex} order: ");
+        orderLog.Append($"[RoundManager] Participant {participantID} order: ");
 
         for (int i = 0; i < rounds.Count; i++)
         {
@@ -207,24 +225,19 @@ public class RoundManager : MonoBehaviour
         //StartNextRound();
     }
 
-    private int GetAndIncrementParticipantIndex(int totalSequences)
+    private int GetAndIncrementParticipantID()
     {
-        int index = 0;
+        int id = 0;
 
         if (File.Exists(_participantCounterPath))
         {
             string content = File.ReadAllText(_participantCounterPath);
-            int.TryParse(content, out index);
+            int.TryParse(content, out id);
         }
 
-        // Save incremented value
-        index = index % totalSequences;
+        File.WriteAllText(_participantCounterPath, (id + 1).ToString());
 
-        int nextIndex = (index + 1) % totalSequences;
-
-        File.WriteAllText(_participantCounterPath, nextIndex.ToString());
-
-        return index;
+        return id;
     }
 
     private List<List<int>> LoadLatinSquare(TextAsset csvFile)
@@ -442,6 +455,14 @@ public class RoundManager : MonoBehaviour
 
     void StartNextRound()
     {
+        EventLogManager.Instance.SetRoundContext(
+            ParticipantID,
+            CurrentLatinRow,
+            currentRoundIndex,  
+            CurrentLatencyMs,
+            _isSeeker ? "Seeker" : "Hider",
+            CurrentTimewarpMode.ToString()
+        );
 
         LM.write($"Start Next Round Index: {currentRoundIndex}");
 
@@ -454,7 +475,7 @@ public class RoundManager : MonoBehaviour
         currentCondition = rounds[currentRoundIndex];
         currentRoundIndex++;
 
-        ParticipantLogManager.Instance.StartNewRound(currentCondition.id);
+        ParticipantLogManager.Instance.StartNewRound(currentRoundIndex - 1);
 
         EventLogManager.Instance.StartNewRound(
             ParticipantLogManager.Instance.CurrentRoundFolder

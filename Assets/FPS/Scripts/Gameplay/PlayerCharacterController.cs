@@ -133,6 +133,10 @@ namespace Unity.FPS.Gameplay
         const float k_JumpGroundingPreventionTime = 0.2f;
         const float k_GroundCheckDistanceInAir = 0.07f;
 
+        // Log Player Input
+        float _logTimer = 0f;
+        float LOG_INTERVAL = 0.1f;
+
         void Awake()
         {
             ActorsManager actorsManager = FindFirstObjectByType<ActorsManager>();
@@ -214,6 +218,9 @@ namespace Unity.FPS.Gameplay
             UpdateCharacterHeight(false);
 
             HandleCharacterMovement();
+
+            // Log Player Input
+            HandleLogging();
         }
 
         void OnDie()
@@ -261,6 +268,39 @@ namespace Unity.FPS.Gameplay
                         }
                     }
                 }
+            }
+        }
+
+        // Log player input
+        void HandleLogging()
+        {
+            if (EventLogManager.Instance == null) return;
+            if (RoundManager.Instance == null) return;
+
+            Camera cam = GetComponentInChildren<Camera>();
+            if (cam == null) return;
+
+            float mx = Input.GetAxis("Mouse X");
+            float my = Input.GetAxis("Mouse Y");
+
+            _logTimer += Time.deltaTime;
+
+            if (_logTimer >= LOG_INTERVAL)
+            {
+                _logTimer = 0f;
+
+                float rotX = cam.transform.localEulerAngles.x; // pitch (up/down)
+                float rotY = transform.eulerAngles.y;          // yaw (left/right)
+                float rotZ = 0f;
+
+                Vector3 combinedRot = new Vector3(rotX, rotY, rotZ);
+
+                EventLogManager.Instance.LogPlayerInput(
+                    transform.position,
+                    combinedRot,
+                    mx,
+                    my
+                );
             }
         }
 

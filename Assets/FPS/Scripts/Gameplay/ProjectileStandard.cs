@@ -336,7 +336,9 @@ namespace Unity.FPS.Gameplay
                 Damage = Damage,
                 //ForwardDelayMs = proxyForLog ? BotHealthProxy.forwardDelayMs : 0f,
                 HitPoint = point,
-                HitBox = hitBox,
+
+                AcceptShot = true,
+                ShotAroundCorner = false,
 
 
                 ClientTf = proxyForLog ? proxyForLog.transform : null,

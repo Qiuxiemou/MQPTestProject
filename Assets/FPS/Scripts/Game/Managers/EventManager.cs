@@ -102,7 +102,8 @@ namespace Unity.FPS.Game
         public float  ForwardDelayMs;
 
         public Vector3 HitPoint;
-        public bool    HitBox;
+        public bool ShotAroundCorner;
+        public bool AcceptShot;
 
         public Transform ClientTf;
         public Health    ClientHealth;

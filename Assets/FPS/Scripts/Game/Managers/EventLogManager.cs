@@ -65,48 +65,6 @@ namespace Unity.FPS.Game
                 CloseWriters();
             }
         }
-
-<<<<<<< Updated upstream
-//        void InitCsvWriters()
-//    {
-//        _sessionId = System.DateTime.Now.ToString("yyyyMMdd_HHmmss");
-
-//    #if UNITY_EDITOR
-//        string folder = Path.Combine(Application.dataPath, "Logs");
-//#else
-//        var projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
-//        var folder = Path.Combine(projectRoot, "Logs", "GameLogs");
-//#endif
-
-//            if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
-
-//        _eventsCsvPath = Path.Combine(folder, $"events_{_sessionId}.csv");
-//        _viewCsvPath   = Path.Combine(folder, $"view_{_sessionId}.csv");
-//        _worldCsvPath  = Path.Combine(folder, $"world_{_sessionId}.csv");
-//        _statsCsvPath  = Path.Combine(folder, $"stats_{_sessionId}.csv");
-
-//        _eventsWriter = NewWriterWithHeader(_eventsCsvPath,
-//            "timestamp,event,shooter,target,damage,forward_delay_ms," +
-//            "hit_x,hit_y,hit_z,hitbox," +
-//            "client_x,client_y,client_z,client_hp,client_ratio," +
-//            "server_x,server_y,server_z,server_hp,server_ratio");
-
-//        _viewWriter = NewWriterWithHeader(_viewCsvPath,
-//            "timestamp,player,px,py,pz,yaw,pitch,roll,fx,fy,fz");
-
-//        _worldWriter = NewWriterWithHeader(_worldCsvPath,
-//            "session_id,wall_ts,game_t,entity_id,entity_type,pos_x,pos_y,pos_z,yaw,pitch,roll,hp");
-
-//        _statsWriter = NewWriterWithHeader(_statsCsvPath,
-//            "session_id,wall_ts,total_shots,total_hits,accuracy_pct,delayed_hits,delayed_accuracy_pct");
-
-//        _nextFlushTime = Time.unscaledTime + FlushEverySeconds;
-
-//        #if UNITY_EDITOR
-//            UnityEditor.AssetDatabase.Refresh(); 
-//        #endif
-//        }
-=======
         // ================= INIT =================
         public void StartNewRound(string roundFolder)
         {
@@ -151,7 +109,6 @@ namespace Unity.FPS.Game
             _statsWriter = NewWriterWithHeader(_statsCsvPath,
                 "session_id,wall_ts,total_shots,total_hits,accuracy_pct,delayed_hits,delayed_accuracy_pct,damage_dealt,damage_received");
         }
->>>>>>> Stashed changes
 
         StreamWriter NewWriterWithHeader(string path, string header)
         {
@@ -236,14 +193,8 @@ namespace Unity.FPS.Game
 
         void OnHitCsv(HitCsvEvent e)
         {
-<<<<<<< Updated upstream
-            Vector3 cPos = e.ClientTf     ? e.ClientTf.position : Vector3.zero;
-            float   cHp  = e.ClientHealth ? e.ClientHealth.CurrentHealth : -1f;
-            float   cRt  = e.ClientHealth ? e.ClientHealth.GetRatio()    : -1f;
-=======
             // ===== SAFETY =====
             if (_shotEventWriter == null) return;
->>>>>>> Stashed changes
 
             LM.write("OnHitCsv triggered");
 
@@ -287,30 +238,6 @@ namespace Unity.FPS.Game
             );
         }
 
-        bool IsLineOfSightBlocked(Transform from, Transform to)
-        {
-            if (from == null || to == null) return false;
-
-            Vector3 origin = from.position + Vector3.up * 1.5f;
-            Vector3 target = to.position + Vector3.up * 1.5f;
-
-            Vector3 dir = target - origin;
-            float dist = dir.magnitude;
-
-            // optional: use layer mask like your proxy
-            int mask = LayerMask.GetMask("Wall", "PlayerUnhitable");
-
-            if (Physics.Raycast(origin, dir.normalized, out RaycastHit hit, dist, mask))
-            {
-                // if hit is NOT target -> blocked
-                if (hit.transform != to && !hit.transform.IsChildOf(to))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
 
         void OnFire(FireShotEvent e)
         {
@@ -328,9 +255,6 @@ namespace Unity.FPS.Game
 
         void OnKeyPress(KeyPressEvent e)
         {
-<<<<<<< Updated upstream
-            _eventsWriter.WriteLine($"{TS()},key,{e.PlayerId},{e.Key},{(e.Pressed ? "down" : "up")},,,,,,,,,,,,,");
-=======
             if (_playerInputWriter == null) return;
 
             _playerInputWriter.WriteLine(
@@ -339,17 +263,13 @@ namespace Unity.FPS.Game
                 $"0,0,0,0,0,0"
             );
 
->>>>>>> Stashed changes
             BumpFlushCounter();
         }
 
         void OnViewSample(ViewSampleEvent e)
         {
-<<<<<<< Updated upstream
-=======
             if (_viewWriter == null) return;
 
->>>>>>> Stashed changes
             var p = e.Position;
             var r = e.RotationEuler;
             var f = e.Forward;
@@ -428,28 +348,6 @@ namespace Unity.FPS.Game
                                             .ToLocalTime()
                                             .ToString("yyyy-MM-dd HH:mm:ss.fff");
 
-<<<<<<< Updated upstream
-            _eventsCsvPath = Path.Combine(eventsFolder, "events.csv");
-            _viewCsvPath = Path.Combine(eventsFolder, "view.csv");
-            _worldCsvPath = Path.Combine(worldFolder, "world.csv");
-            _statsCsvPath = Path.Combine(statsFolder, "stats.csv");
-
-            _eventsWriter = NewWriterWithHeader(_eventsCsvPath,
-                "timestamp,event,shooter,target,damage,forward_delay_ms," +
-                "hit_x,hit_y,hit_z,hitbox," +
-                "client_x,client_y,client_z,client_hp,client_ratio," +
-                "server_x,server_y,server_z,server_hp,server_ratio");
-
-            _viewWriter = NewWriterWithHeader(_viewCsvPath,
-                "timestamp,player,px,py,pz,yaw,pitch,roll,fx,fy,fz");
-
-            _worldWriter = NewWriterWithHeader(_worldCsvPath,
-                "session_id,wall_ts,game_t,entity_id,entity_type,pos_x,pos_y,pos_z,yaw,pitch,roll,hp");
-
-            _statsWriter = NewWriterWithHeader(_statsCsvPath,
-                "session_id,wall_ts,total_shots,total_hits,accuracy_pct, delayed_hits,delayed_accuracy_pct,damage_dealt,damage_received"
-            );
-=======
             _worldWriter.WriteLine(
                 $"{San(sessionId)},{wall},{gameTime:F3}," +
                 $"{San(entityId)},{San(entityType)}," +
@@ -457,7 +355,6 @@ namespace Unity.FPS.Game
                 $"{euler.y:F1},{euler.x:F1},{euler.z:F1}," +
                 $"{hp:F1}");
             BumpFlushCounter();
->>>>>>> Stashed changes
         }
     }
 }

@@ -179,16 +179,12 @@ public class RoundManager : MonoBehaviour
         // Initialize participant in log manager
         ParticipantLogManager.Instance.InitializeParticipant(participantID);
 
-<<<<<<< Updated upstream
-        List<int> orderRow = latinOrders[participantIndex];
-=======
         SummaryLogManager.Instance.Init(
             ParticipantLogManager.Instance.ParticipantFolder,
             participantID
         );
 
         List<int> orderRow = latinOrders[participantID];
->>>>>>> Stashed changes
 
         // Rebuild rounds list based on ID order
         rounds = new List<RoundCondition>();

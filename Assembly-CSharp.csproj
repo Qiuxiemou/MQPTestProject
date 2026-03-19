@@ -124,10 +124,7 @@
     <None Include="Assets\FPS\Prefabs\RootObjects\_ReadMe_RootObjects.txt" />
     <None Include="Assets\Resources\Config\game_config.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\SDFFunctions.hlsl" />
-<<<<<<< Updated upstream
-=======
     <None Include="Assets\Logs\EventLogs\EventLog_20250916_125713.txt" />
->>>>>>> Stashed changes
     <None Include="Assets\FPS\Prefabs\Level\BaseObjects\_ReadMe_BaseObjects.txt" />
     <None Include="Assets\Resources\Config\round_conditions.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface.shader" />

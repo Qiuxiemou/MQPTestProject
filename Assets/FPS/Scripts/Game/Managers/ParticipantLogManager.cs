@@ -7,6 +7,7 @@ public class ParticipantLogManager : MonoBehaviour
 
     public string ParticipantFolder { get; private set; }
 
+    //[SerializeField] bool usePersistentPath = false;
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -21,35 +22,45 @@ public class ParticipantLogManager : MonoBehaviour
 
     public void InitializeParticipant(int participantIndex)
     {
-        //string logsRoot = GetProjectLogsPath();
+        ////// If log to project folder, uncomment below and comment log to App data
+        string logsRoot = GetProjectLogsPath();
 
-        //ParticipantFolder = Path.Combine(
-        //    logsRoot,
-        //    $"participant_{participantIndex}"
-        //);
-        string root = Path.Combine(Application.persistentDataPath, "ExperimentLogs");
-        Directory.CreateDirectory(root);
+        ParticipantFolder = Path.Combine(
+            logsRoot,
+            $"participant_{participantIndex}"
+        );
+        ////// end of log to project folder
 
-        ParticipantFolder = Path.Combine(root, $"participant_{participantIndex}");
+        ////// If log to App data, uncomment below and commment above
+        //string root = Path.Combine(Application.persistentDataPath, "ExperimentLogs");
+        //Directory.CreateDirectory(root);
+        //ParticipantFolder = Path.Combine(root, $"participant_{participantIndex}");
+        ////// end of log to App data
+
+        ////// uncomment this if choose both to toggle
+        // string root;
+        //if (usePersistentPath)
+        //    root = Path.Combine(Application.persistentDataPath, "ExperimentLogs");
+        //else
+        //    root = GetProjectLogsPath();
+        ////// end of toggle
 
         Directory.CreateDirectory(ParticipantFolder);
 
         Debug.Log($"[ParticipantLogManager] Created: {ParticipantFolder}");
     }
+    string GetProjectLogsPath()
+    {
+        string root = Path.GetFullPath(
+            Path.Combine(Application.dataPath, "..")
+        );
 
-    //string GetProjectLogsPath()
-    //{
-    //    string root = Path.GetFullPath(
-    //        Path.Combine(Application.dataPath, "..")
-    //    );
+        string dir = Path.Combine(root, "Logs");
+        if (!Directory.Exists(dir))
+            Directory.CreateDirectory(dir);
 
-    //    string dir = Path.Combine(root, "Logs");
-    //    if (!Directory.Exists(dir))
-    //        Directory.CreateDirectory(dir);
-
-    //    return dir;
-    //}
-
+        return dir;
+    }
     public string CurrentRoundFolder { get; private set; }
     public void StartNewRound(int roundNumber)
     {

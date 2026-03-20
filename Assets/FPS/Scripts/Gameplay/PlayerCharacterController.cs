@@ -283,6 +283,8 @@ namespace Unity.FPS.Gameplay
             float mx = Input.GetAxis("Mouse X");
             float my = Input.GetAxis("Mouse Y");
 
+            SummaryLogManager.Instance?.AddMouseMovement(mx, my);
+
             _logTimer += Time.deltaTime;
 
             if (_logTimer >= LOG_INTERVAL)

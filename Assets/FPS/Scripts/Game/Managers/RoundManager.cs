@@ -72,6 +72,8 @@ public class RoundManager : MonoBehaviour
     GameObject _trueBot;
     GameObject _pastBot;
 
+    float lastEnemySpeed = 0f;
+
     // ================= STATE =================
     public int CurrentRound { get; private set; } = 1;
     public bool RoundRunning { get; private set; }
@@ -279,6 +281,17 @@ public class RoundManager : MonoBehaviour
         } else
         {
             SummaryLogManager.Instance?.UpdateMovement(player.transform, CurrentEnemy.transform);
+
+            // Check enemy speed for logging
+            if (CurrentEnemy != null)
+            {
+                var agent = CurrentEnemy.GetComponent<UnityEngine.AI.NavMeshAgent>();
+                if (agent != null)
+                {
+                    lastEnemySpeed = agent.speed;
+                }
+            }
+            // end of check enemy speed
         }
     }
 
@@ -623,8 +636,7 @@ public class RoundManager : MonoBehaviour
 
         // end round
         GameStatsLogManager.Instance?.EndRoundLogStats();
-        // Log
-        //SummaryLogManager.Instance.LogRound();
+        // Log Summary
     }
 
     void EndStudy()
@@ -914,6 +926,9 @@ public class RoundManager : MonoBehaviour
 
         RespawnPlayer();
         SpawnEnemyForCurrentRole();
+
+        // Score
+        StartCoroutine(BindScoreDisplayNextFrame());
     }
 
     // ---------------- SCENE / UI ----------------
@@ -922,10 +937,10 @@ public class RoundManager : MonoBehaviour
         Time.timeScale = 1f;
 
         var systems = FindObjectsByType<EventSystem>(FindObjectsSortMode.None);
-        Debug.Log($"[DEBUG] EventSystem count = {systems.Length}");
+        //Debug.Log($"[DEBUG] EventSystem count = {systems.Length}");
 
-        foreach (var es in systems)
-            Debug.Log($"[DEBUG] EventSystem: {es.gameObject.name}, active={es.gameObject.activeInHierarchy}");
+        //foreach (var es in systems)
+        //    Debug.Log($"[DEBUG] EventSystem: {es.gameObject.name}, active={es.gameObject.activeInHierarchy}");
 
 
         if (systems.Length > 1)
@@ -969,13 +984,10 @@ public class RoundManager : MonoBehaviour
     public void SubmitSurvey(SurveyData data)
     {
         string surveyFolder = ParticipantLogManager.Instance.CurrentRoundFolder;
-
         string surveyPath = Path.Combine(surveyFolder, "survey.csv");
 
         StringBuilder sb = new StringBuilder();
-
         sb.AppendLine("timestamp,round,lag,hider,seeker");
-
         sb.AppendLine(
             $"{DateTime.Now:o},{data.round},{data.lag}," +
             $"{data.hider},{data.seeker}"
@@ -983,16 +995,38 @@ public class RoundManager : MonoBehaviour
 
         File.WriteAllText(surveyPath, sb.ToString(), Encoding.UTF8);
 
-        // Summary log
-        float q1 = data.lag;
+        ////// Summary log
 
+        // ---------------- Survey ----------------
+        float q1 = data.lag;
         float q2 = IsSeeker
             ? data.hider   // player is hider
             : data.seeker; // player is seeker
-
         SummaryLogManager.Instance.SetSurvey(q1, q2);
 
+        // ---------------- Score ----------------
         int finalScore = ScoreProvider.Instance != null? ScoreProvider.Instance.GetScore() : 0;
+        //Debug.Log("ScoreProvider: " + ScoreProvider.Instance);
+        Debug.Log("ScoreFinal: " + finalScore);
+
+        // ---------------- Player Speed ----------------
+        float playerSpeed = 0f;
+        var player = GameObject.FindWithTag("Player");
+
+        if (player != null)
+        {
+            var controller = player.GetComponent("PlayerCharacterController");
+            if (controller != null)
+            {
+                var field = controller.GetType().GetField("MaxSpeedOnGround");
+                if (field != null)
+                {
+                    playerSpeed = (float)field.GetValue(controller);
+                }
+            }
+        }
+        // ---------------- Enemy Speed ----------------
+        float enemySpeed = lastEnemySpeed;
 
         SummaryLogManager.Instance.LogRound(
             currentCondition.id,
@@ -1001,22 +1035,22 @@ public class RoundManager : MonoBehaviour
             _isSeeker ? "Hider" : "Seeker",
             CurrentTimewarpMode.ToString(),
             finalScore, 
-            0, // enemy speed
-            0, // player speed
+            enemySpeed, 
+            playerSpeed, 
                //GameStatsLogManager.Instance.TotalShots,
                //GameStatsLogManager.Instance.TotalHits,
             0, // error angle
                //GameStatsLogManager.Instance.Accuracy,
             0, // corner shots
             0, // ttk
-            //0, // tth
+               //0, // tth
                //0, // q1
                //0, // q2
-            0, // player dist
-            0, // bot dist
-            0  // mouse move
+            SummaryLogManager.Instance.GetPlayerDistance(), // player distance
+            SummaryLogManager.Instance.GetBotDistance(), // bot distance
+            SummaryLogManager.Instance.GetMouseMovement()  // mouse move
         );
-        // end of Summary log
+        ////// end of Summary log
 
         CurrentRound += 1;
     }

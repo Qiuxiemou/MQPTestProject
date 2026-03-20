@@ -212,22 +212,12 @@ public class SummaryLogManager : MonoBehaviour
 
         speedSamples++;
     }
-
-    public void AddMouseMovement(float mx, float my)
-    {
-        totalMouseMovement += Mathf.Abs(mx) + Mathf.Abs(my);
-    }
-
-    public void CountShotAroundCorner()
-    { 
-        cornerShots++;
-    }
-
-    public void CountHits()
-    {
-        totalHits++;
-    }
-
+    public float GetPlayerDistance() { return playerDistance; }
+    public float GetBotDistance() { return botDistance;}
+    public void AddMouseMovement(float mx, float my) { totalMouseMovement += Mathf.Abs(mx) + Mathf.Abs(my); }
+    public float GetMouseMovement() { return totalMouseMovement; }
+    public void CountShotAroundCorner() { cornerShots++; }
+    public void CountHits() { totalHits++; }
     public void OnKilled()
     {
         float ttk = Time.time - roundStartTime;

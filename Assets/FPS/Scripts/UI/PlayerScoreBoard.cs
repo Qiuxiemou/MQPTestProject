@@ -93,7 +93,6 @@ namespace Unity.FPS.UI
             if (ScoreProvider.Instance != null)
             {
                 ScoreProvider.Instance.SetScore(score);
-                Debug.Log($"[Score] {score}");
             }
             else
             {

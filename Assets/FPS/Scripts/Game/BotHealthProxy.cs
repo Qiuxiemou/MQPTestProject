@@ -193,7 +193,7 @@ namespace Unity.FPS.Game
                 ClientTf = transform,
                 ClientHealth = clientHealth,
 
-                ServerTf = pastHealth.transform,   // or trueHealth depending on your config
+                ServerTf = pastHealth.transform,   
                 ServerHealth = pastHealth
             });
 

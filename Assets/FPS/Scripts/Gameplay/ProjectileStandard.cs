@@ -265,30 +265,6 @@ namespace Unity.FPS.Gameplay
 
         void OnHit(Vector3 point, Vector3 normal, Collider collider)
         {
-            //LM.write($"[ProjectileStandard] OnHit Triggered");
-
-            // ================= BASIC REFERENCES =================
-            //BotHealthProxy proxy = collider.GetComponentInParent<BotHealthProxy>();
-            //Health health = collider.GetComponentInParent<Health>();
-
-            //GameObject ownerGO = proxy ? proxy.gameObject
-            //                    : health ? health.gameObject
-            //                    : collider.transform.root.gameObject;
-
-            //Transform playerTf = GameObject.FindGameObjectWithTag("Player")?.transform;
-
-            //Transform botTf = null;
-
-            //if (proxy != null)
-            //{
-            //    // 🔥 Choose which bot represents "truth"
-            //    botTf = proxy.futureHealth ? proxy.futureHealth.transform : proxy.transform;
-            //}
-
-            //bool isBotHit = proxy != null;
-            //bool isPlayerHit = collider.CompareTag("Player");
-            //bool isWorldHit = !isBotHit && !isPlayerHit;
-
             GameObject owner = m_ProjectileBase.Owner;
             Transform playerTf = GameObject.FindGameObjectWithTag("Player")?.transform;
 
@@ -300,7 +276,7 @@ namespace Unity.FPS.Gameplay
                               : collider.transform.root.gameObject;
 
             bool isBotHit = proxy != null;
-            bool isPlayerHit = collider.CompareTag("Player") || collider.CompareTag("AimPointHitbox");
+            bool isPlayerHit = collider.CompareTag("Player") || collider.CompareTag(AimPointHitboxTag);
 
             string eventType = isBotHit ? "bot_hit"
                              : isPlayerHit ? "player_hit"
@@ -329,12 +305,37 @@ namespace Unity.FPS.Gameplay
                     if (RealPlayerFullyBehindCover(realCC, shooterOrigin))
                     {
                         Debug.Log("[Projectile] REJECTED: Real player fully behind cover");
+                        EventManager.Broadcast(new HitCsvEvent
+                        {
+                            EventType = "player_hit",
+                            ShooterId = owner ? m_ProjectileBase.Owner.name : "Unknown",
+                            TargetId = collider.name,
+                            Damage = Damage,
+                            HitPoint = point,
+
+                            AcceptShot = false,
+                            ShotAroundCorner = true
+
+                        });
+
                         Destroy(gameObject);
                         return;
                     }
                     else
                     {
                         Debug.Log("[Projectile] ACCEPTED: Real player exposed");
+                        EventManager.Broadcast(new HitCsvEvent
+                        {
+                            EventType = "player_hit",
+                            ShooterId = owner ? m_ProjectileBase.Owner.name : "Unknown",
+                            TargetId = collider.name,
+                            Damage = Damage,
+                            HitPoint = point,
+
+                            AcceptShot = true,
+                            ShotAroundCorner = false
+
+                        });
                     }
 
                     if (realHealth != null)
@@ -358,33 +359,6 @@ namespace Unity.FPS.Gameplay
                     }
                 }
             }
-
-            //var proxyForLog = collider.GetComponentInParent<BotHealthProxy>();
-            //var health = collider.GetComponentInParent<Health>();
-            //var ownerGO = proxyForLog ? proxyForLog.gameObject
-            //        : health ? health.gameObject
-            //        : collider.transform.root.gameObject;
-            //bool hitBox = false;
-            //hitBox = collider.CompareTag("Bot");
-
-            //EventManager.Broadcast(new HitCsvEvent
-            //{
-            //    EventType = proxyForLog ? "client_hit" : "world_hit",
-            //    ShooterId = m_ProjectileBase.Owner ? m_ProjectileBase.Owner.name : "Unknown",
-            //    TargetId = ownerGO.name,
-            //    Damage = Damage,
-            //    //ForwardDelayMs = proxyForLog ? BotHealthProxy.forwardDelayMs : 0f,
-            //    HitPoint = point,
-
-            //    AcceptShot = true,
-            //    ShotAroundCorner = false,
-
-
-            //    ClientTf = proxyForLog ? proxyForLog.transform : null,
-            //    ClientHealth = proxyForLog ? proxyForLog.GetComponent<Health>() : null,
-            //    ServerTf = proxyForLog ? (proxyForLog.serverHealth ? proxyForLog.serverHealth.transform : null) : null,
-            //    ServerHealth = proxyForLog ? proxyForLog.serverHealth : null
-            //});
 
             // ================= SHOT LOGIC =================
 
@@ -416,32 +390,32 @@ namespace Unity.FPS.Gameplay
                 // ---------- PLAYER → BOT ----------
                 else if (shooterIsPlayer && isBotHit && proxy != null)
                 {
-                    Transform futureBotTf = proxy.futureHealth
-                        ? proxy.futureHealth.transform
-                        : null;
+                    //    Transform futureBotTf = proxy.futureHealth
+                    //        ? proxy.futureHealth.transform
+                    //        : null;
 
-                    Transform capsuleTf = playerTf.Find("Capsule");
+                    //    Transform capsuleTf = playerTf.Find("Capsule");
 
-                    if (futureBotTf != null)
-                    {
-                        shotAroundCorner = IsLineOfSightBlocked(futureBotTf.position, capsuleTf.position);
-                    }
+                    //    if (futureBotTf != null)
+                    //    {
+                    //        shotAroundCorner = IsLineOfSightBlocked(futureBotTf.position, capsuleTf.position);
+                    //    }
 
-                    // identify which bot got hit
-                    if (proxy.futureHealth &&
-                        collider.transform.IsChildOf(proxy.futureHealth.transform))
-                    {
-                        hitObjectName = "FutureBot";
-                    }
-                    else if (proxy.pastHealth &&
-                             collider.transform.IsChildOf(proxy.pastHealth.transform))
-                    {
-                        hitObjectName = "PastBot";
-                    }
-                    else
-                    {
-                        hitObjectName = "Bot_Unknown";
-                    }
+                    //    // identify which bot got hit
+                    //    if (proxy.futureHealth &&
+                    //        collider.transform.IsChildOf(proxy.futureHealth.transform))
+                    //    {
+                    //        hitObjectName = "FutureBot";
+                    //    }
+                    //    else if (proxy.pastHealth &&
+                    //             collider.transform.IsChildOf(proxy.pastHealth.transform))
+                    //    {
+                    //        hitObjectName = "PastBot";
+                    //    }
+                    //    else
+                    //    {
+                    //        hitObjectName = "Bot_Unknown";
+                    //    }
                 }
 
                 // ---------- WORLD ----------

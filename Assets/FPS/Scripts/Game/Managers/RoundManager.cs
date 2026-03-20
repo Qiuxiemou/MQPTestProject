@@ -276,6 +276,9 @@ public class RoundManager : MonoBehaviour
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
+        } else
+        {
+            SummaryLogManager.Instance?.UpdateMovement(player.transform, CurrentEnemy.transform);
         }
     }
 
@@ -559,6 +562,8 @@ public class RoundManager : MonoBehaviour
 
         roundStartUI.Show(_isSeeker);
         waitingForPlayerInput = true;
+
+        SummaryLogManager.Instance.StartRound(player.transform, CurrentEnemy.transform);
 
     }
 
@@ -901,21 +906,14 @@ public class RoundManager : MonoBehaviour
     //    );
     //}
 
-    public void RespawnPlayerAfterDeath()
+    public void RespawnAfterDeath()
     {
         LM.write("[RoundManager] Player died -> respawning");
 
-        RespawnPlayer();
-        SpawnEnemyForCurrentRole();
-    }
-
-    public void RespawnBotAfterDeath()
-    {
-        LM.write("[RoundManager] Bot died -> respawning");
+        SummaryLogManager.Instance.OnKilled();
 
         RespawnPlayer();
         SpawnEnemyForCurrentRole();
-
     }
 
     // ---------------- SCENE / UI ----------------
@@ -1011,7 +1009,7 @@ public class RoundManager : MonoBehaviour
                //GameStatsLogManager.Instance.Accuracy,
             0, // corner shots
             0, // ttk
-            0, // tth
+            //0, // tth
                //0, // q1
                //0, // q2
             0, // player dist

@@ -72,7 +72,7 @@ namespace Unity.FPS.Game
             // If RoundManager exists → show survey instead
             if (RoundManager.Instance != null)
             {
-                RoundManager.Instance.RespawnPlayerAfterDeath();
+                RoundManager.Instance.RespawnAfterDeath();
                 return;
             }
 

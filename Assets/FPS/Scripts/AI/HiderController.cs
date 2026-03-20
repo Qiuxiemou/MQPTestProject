@@ -949,7 +949,7 @@ namespace Unity.FPS.AI
             ///
             if (RoundManager.Instance != null)
             {
-                RoundManager.Instance.RespawnPlayerAfterDeath();
+                RoundManager.Instance.RespawnAfterDeath();
                 return;
             }
 

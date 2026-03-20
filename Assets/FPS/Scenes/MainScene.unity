@@ -40247,6 +40247,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: fps.Game::Unity.FPS.Game.WorldStateLogManager
   includeCamera: 0
+  _sessionId: 
 --- !u!114 &1737504311
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -43001,7 +43002,7 @@ Transform:
   m_GameObject: {fileID: 1880157104}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0.6820012, z: 0, w: 0.73135114}
-  m_LocalPosition: {x: 70, y: 2, z: 15}
+  m_LocalPosition: {x: 73, y: 2, z: 17}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -52498,17 +52499,17 @@ PrefabInstance:
     - target: {fileID: 8746678193447392789, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 72.92
+      value: 73
       objectReference: {fileID: 0}
     - target: {fileID: 8746678193447392789, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.24
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8746678193447392789, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 16.23
+      value: 17
       objectReference: {fileID: 0}
     - target: {fileID: 8746678193447392789, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}

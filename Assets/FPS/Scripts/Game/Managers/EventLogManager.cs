@@ -260,6 +260,16 @@ namespace Unity.FPS.Game
                 score,
                 errorAngle
             );
+
+            if (e.ShotAroundCorner)
+            {
+                SummaryLogManager.Instance.CountShotAroundCorner();
+            }
+
+            if (e.EventType == "bot_damaged")
+            {
+                SummaryLogManager.Instance.CountHits();
+            }
         }
 
 

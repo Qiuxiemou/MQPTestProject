@@ -20,6 +20,33 @@ public class SummaryLogManager : MonoBehaviour
 
     float surveyQ1 = 0;
     float surveyQ2 = 0;
+
+    // ===== MOVEMENT =====
+    Vector3 lastPlayerPos;
+    Vector3 lastBotPos;
+    float playerDistance = 0f;
+    float botDistance = 0f;
+
+    // ===== SPEED =====
+    float totalPlayerSpeed = 0f;
+    float totalBotSpeed = 0f;
+    int speedSamples = 0;
+
+    // ===== MOUSE =====
+    float totalMouseMovement = 0f;
+
+    // ===== CORNER =====
+    int cornerShots = 0;
+
+    // ===== TIME =====
+    float roundStartTime;
+    float lastHitTime = -1f;
+    float totalTimeToHit = 0f;
+
+    float totalTimeToKill = 0f;
+    int killCount = 0;
+
+
     void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
@@ -41,7 +68,7 @@ public class SummaryLogManager : MonoBehaviour
             File.WriteAllText(summaryPath,
                 "sessionID,latinRow,round,sessionStart,now,latency,role,timewarp," +
                 "score,enemySpeed,playerSpeed,totalShots,totalHits,errorAngle,accuracy," +
-                "cornerShots,ttkAvg,tthAvg,q1,q2,playerDist,botDist,mouseMove\n"
+                "cornerShots,ttkAvg,q1,q2,playerDist,botDist,mouseMove\n"
             );
         }
     }
@@ -50,24 +77,28 @@ public class SummaryLogManager : MonoBehaviour
     {
         if (e.ShooterId == "Player") totalShots++;
     }
-
     void OnHit(HitEvent e)
     {
-        // Player shot someone
         if (e.ShooterId == "Player")
         {
             totalHits++;
-            damageDealt += Mathf.RoundToInt(e.Damage);
 
-            if (e.TargetId.Contains("HitBox"))
-                delayedBotHits++;
+            float now = Time.time;
+
+            if (lastHitTime > 0f)
+            {
+                totalTimeToHit += (now - lastHitTime);
+                //hitCountForTTH++;
+            }
+
+            lastHitTime = now;
         }
 
-        // Player got shot
         if (e.TargetId == "Player")
         {
             damageReceived += Mathf.RoundToInt(e.Damage);
         }
+        
     }
 
     public void SetSurvey(float q1, float q2)
@@ -91,7 +122,7 @@ public class SummaryLogManager : MonoBehaviour
         //float accuracy,
         int cornerShots,
         float ttk,
-        float tth,
+        //float tth, // Remove this
         //float q1,
         //float q2,
         float playerDist,
@@ -99,14 +130,23 @@ public class SummaryLogManager : MonoBehaviour
         float mouseMove
     )
     {
-        float acc = this.totalShots > 0? (float)this.totalHits / this.totalShots * 100f : 0f;
+        //float acc = this.totalShots > 0? (float)this.totalHits / this.totalShots * 100f : 0f;
+
+        float acc = totalShots > 0 ? (float)totalHits / totalShots * 100f : 0f;
+
+        float avgPlayerSpeed = speedSamples > 0 ? totalPlayerSpeed / speedSamples : 0f;
+        float avgBotSpeed = speedSamples > 0 ? totalBotSpeed / speedSamples : 0f;
+
+        //float avgTTH = hitCountForTTH > 0 ? totalTimeToHit / hitCountForTTH : 0f;
+        float avgTTK = killCount > 0 ? totalTimeToKill / killCount : 0f;
+
         string line =
             $"{sessionId},{latinRow},{round}," +
             $"{Time.realtimeSinceStartup},{System.DateTime.Now:o}," +
             $"{latency},{role},{timewarp}," +
             $"{score},{enemySpeed},{playerSpeed}," +
-            $"{this.totalShots},{this.totalHits},{errorAngle},{acc}," +
-            $"{cornerShots},{ttk},{tth},{surveyQ1},{surveyQ2}," +
+            $"{totalShots},{totalHits},{errorAngle},{acc}," +
+            $"{cornerShots},{avgTTK},{surveyQ1},{surveyQ2}," +
             $"{playerDist},{botDist},{mouseMove}";
 
         File.AppendAllText(summaryPath, line + "\n", Encoding.UTF8);
@@ -119,5 +159,79 @@ public class SummaryLogManager : MonoBehaviour
         damageReceived = 0;
         surveyQ1 = 0;
         surveyQ2 = 0;
+    }
+
+    public void StartRound(Transform player, Transform bot)
+    {
+        roundStartTime = Time.time;
+
+        lastPlayerPos = player.position;
+        lastBotPos = bot.position;
+
+        playerDistance = 0f;
+        botDistance = 0f;
+
+        totalPlayerSpeed = 0f;
+        totalBotSpeed = 0f;
+        speedSamples = 0;
+
+        totalMouseMovement = 0f;
+
+        cornerShots = 0;
+
+        lastHitTime = -1f;
+        totalTimeToHit = 0f;
+        //hitCountForTTH = 0;
+
+        totalTimeToKill = 0f;
+        killCount = 0;
+    }
+
+    public void UpdateMovement(Transform player, Transform bot)
+    {
+        float dt = Time.deltaTime;
+        if (dt <= 0f) return;
+
+        // ===== PLAYER =====
+        float pDist = Vector3.Distance(player.position, lastPlayerPos);
+        playerDistance += pDist;
+
+        float pSpeed = pDist / dt;
+        totalPlayerSpeed += pSpeed;
+
+        lastPlayerPos = player.position;
+
+        // ===== BOT =====
+        float bDist = Vector3.Distance(bot.position, lastBotPos);
+        botDistance += bDist;
+
+        float bSpeed = bDist / dt;
+        totalBotSpeed += bSpeed;
+
+        lastBotPos = bot.position;
+
+        speedSamples++;
+    }
+
+    public void AddMouseMovement(float mx, float my)
+    {
+        totalMouseMovement += Mathf.Abs(mx) + Mathf.Abs(my);
+    }
+
+    public void CountShotAroundCorner()
+    { 
+        cornerShots++;
+    }
+
+    public void CountHits()
+    {
+        totalHits++;
+    }
+
+    public void OnKilled()
+    {
+        float ttk = Time.time - roundStartTime;
+        totalTimeToKill += ttk;
+        killCount++;
     }
 }

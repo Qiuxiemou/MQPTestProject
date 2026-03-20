@@ -7,7 +7,6 @@ using Unity.FPS.Game;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
-
 public class RoundManager : MonoBehaviour
 {
     public static RoundManager Instance { get; private set; }
@@ -92,12 +91,10 @@ public class RoundManager : MonoBehaviour
     IScoreDisplay scoreDisplay;
     public GameObject CurrentEnemy => _futureBot;
 
-
     public interface IScoreDisplay
     {
         void SetEnemy(GameObject enemy);
     }
-
     public void RegisterScoreDisplay(IScoreDisplay display)
     {
         scoreDisplay = display;
@@ -109,7 +106,6 @@ public class RoundManager : MonoBehaviour
             scoreDisplay.SetEnemy(_futureBot);
         }
     }
-
 
     // ================= LOGGING =================
     readonly List<SurveyData> _buffer = new();
@@ -130,29 +126,6 @@ public class RoundManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
-
-        //string logsDir = GetProjectLogsPath();
-
-        //_surveyCsvPath = Path.Combine(
-        //    logsDir,
-        //    $"survey_log_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.csv"
-        //);
-
-        //_roleLogPath = Path.Combine(
-        //    logsDir,
-        //    $"role_log_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.csv"
-        //);
-
-        //_participantCounterPath = Path.Combine(
-        //    GetProjectLogsPath(),
-        //    "participant_counter.txt"
-        //);
-
-        //File.WriteAllText(_surveyCsvPath,
-        //    "timestamp,round,smoothness,responsiveness,fairness,qoe,fun,notes\n");
-
-        //File.WriteAllText(_roleLogPath,
-        //    "timestamp,round,timeRemaining,role\n");
 
         string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
         string logsDir = Path.Combine(root, "Logs");
@@ -180,8 +153,7 @@ public class RoundManager : MonoBehaviour
         ParticipantLogManager.Instance.InitializeParticipant(participantID);
 
         SummaryLogManager.Instance.Init(
-            ParticipantLogManager.Instance.ParticipantFolder,
-            participantID
+            ParticipantLogManager.Instance.ParticipantFolder
         );
 
         List<int> orderRow = latinOrders[participantID];
@@ -453,7 +425,7 @@ public class RoundManager : MonoBehaviour
                 SetField(type, enemyController, "UseBlendAim", true);
                 SetField(type, enemyController, "BlendToFuture", 0.6f);
                 SetField(type, enemyController, "BlendRadius", 0.15f);
-                Debug.Log("[RoundManager] Enemy shooting: No prediction (Mode: None)");
+                //Debug.Log("[RoundManager] Enemy shooting: No prediction (Mode: None)");
                 break;
 
             case TimewarpMode.Normal:
@@ -461,7 +433,7 @@ public class RoundManager : MonoBehaviour
                 SetField(type, enemyController, "UseBlendAim", true);
                 SetField(type, enemyController, "BlendToFuture", 0.1f);
                 SetField(type, enemyController, "BlendRadius", 0.15f);
-                Debug.Log("[RoundManager] Enemy shooting: Moderate prediction (Mode: Normal)");
+                //Debug.Log("[RoundManager] Enemy shooting: Moderate prediction (Mode: Normal)");
                 break;
 
             case TimewarpMode.Conditional:
@@ -469,7 +441,7 @@ public class RoundManager : MonoBehaviour
                 SetField(type, enemyController, "UseBlendAim", true);
                 SetField(type, enemyController, "BlendToFuture", 0.1f);
                 SetField(type, enemyController, "BlendRadius", 0.15f);
-                Debug.Log("[RoundManager] Enemy shooting: High prediction (Mode: Conditional)");
+                //Debug.Log("[RoundManager] Enemy shooting: High prediction (Mode: Conditional)");
                 break;
         }
     }
@@ -642,27 +614,7 @@ public class RoundManager : MonoBehaviour
         // end round
         GameStatsLogManager.Instance?.EndRoundLogStats();
         // Log
-        SummaryLogManager.Instance.LogRound(
-            currentCondition.id,
-            CurrentLatencyMs,
-            _isSeeker ? "Seeker" : "Hider",
-            CurrentTimewarpMode.ToString(),
-            0, // score (replace later)
-            0, // enemy speed
-            0, // player speed
-            GameStatsLogManager.Instance.TotalShots,
-            GameStatsLogManager.Instance.TotalHits,
-            0, // error angle
-            GameStatsLogManager.Instance.Accuracy,
-            0, // corner shots
-            0, // ttk
-            0, // tth
-            0, // q1
-            0, // q2
-            0, // player dist
-            0, // bot dist
-            0  // mouse move
-        );
+        //SummaryLogManager.Instance.LogRound();
     }
 
     void EndStudy()
@@ -1012,17 +964,6 @@ public class RoundManager : MonoBehaviour
         Cursor.lockState = paused ? CursorLockMode.None : CursorLockMode.Locked;
         Cursor.visible = paused;
     }
-
-    //public void SubmitSurvey(SurveyData data)
-    //{
-    //    _buffer.Add(data);
-    //    CurrentRound += 1;
-
-    //    //Time.timeScale = 1f;
-
-    //    //SceneManager.LoadScene("MainScene");
-    //    //StartNextRound();
-    //}
     public void SubmitSurvey(SurveyData data)
     {
         string surveyFolder = Path.Combine(
@@ -1034,17 +975,49 @@ public class RoundManager : MonoBehaviour
 
         StringBuilder sb = new StringBuilder();
 
-        sb.AppendLine("timestamp,round,smoothness,responsiveness,fairness,qoe,fun,notes");
-
-        string notes = (data.notes ?? "").Replace(",", ";");
+        sb.AppendLine("timestamp,round,lag,hider,seeker");
 
         sb.AppendLine(
-            $"{DateTime.Now:o},{data.round},{data.smoothness}," +
-            $"{data.responsiveness},{data.fairness}," +
-            $"{data.qoe},{data.fun},{notes}"
+            $"{DateTime.Now:o},{data.round},{data.lag}," +
+            $"{data.hider},{data.seeker}"
         );
 
         File.WriteAllText(surveyPath, sb.ToString(), Encoding.UTF8);
+
+        // Summary log
+        float q1 = data.lag;
+
+        float q2 = IsSeeker
+            ? data.hider   // player is hider
+            : data.seeker; // player is seeker
+
+        SummaryLogManager.Instance.SetSurvey(q1, q2);
+
+        int finalScore = ScoreProvider.Instance != null? ScoreProvider.Instance.GetScore() : 0;
+
+        SummaryLogManager.Instance.LogRound(
+            currentCondition.id,
+            currentRoundIndex,
+            CurrentLatencyMs,
+            _isSeeker ? "Hider" : "Seeker",
+            CurrentTimewarpMode.ToString(),
+            finalScore, 
+            0, // enemy speed
+            0, // player speed
+               //GameStatsLogManager.Instance.TotalShots,
+               //GameStatsLogManager.Instance.TotalHits,
+            0, // error angle
+               //GameStatsLogManager.Instance.Accuracy,
+            0, // corner shots
+            0, // ttk
+            0, // tth
+               //0, // q1
+               //0, // q2
+            0, // player dist
+            0, // bot dist
+            0  // mouse move
+        );
+        // end of Summary log
 
         CurrentRound += 1;
     }
@@ -1064,26 +1037,18 @@ public class RoundManager : MonoBehaviour
         if (_buffer.Count == 0) return;
 
         var sb = new StringBuilder();
-        sb.AppendLine("timestamp,round,smoothness,responsiveness,fairness,qoe,fun,notes");
+        sb.AppendLine("timestamp,round,lag,hider,seeker");
 
         foreach (var d in _buffer)
         {
-            var notes = (d.notes ?? "").Replace(",", ";");
+
             sb.AppendLine(
-                $"{DateTime.Now:o},{d.round},{d.smoothness},{d.responsiveness}," +
-                $"{d.fairness},{d.qoe},{d.fun},{notes}");
+                $"{DateTime.Now:o},{d.round},{d.lag},{d.hider}," +
+                $"{d.seeker}");
         }
 
         //File.WriteAllText(_surveyCsvPath, sb.ToString(), Encoding.UTF8);
         _buffer.Clear();
-    }
-
-    static string GetProjectLogsPath()
-    {
-        string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
-        string dir = Path.Combine(root, "Logs", "SurveyLogs");
-        if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
-        return dir;
     }
 }
 
@@ -1091,10 +1056,7 @@ public class RoundManager : MonoBehaviour
 public struct SurveyData
 {
     public int round;
-    public float smoothness;
-    public float responsiveness;
-    public float fairness;
-    public float qoe;
-    public float fun;
-    public string notes;
+    public float lag;
+    public float hider;
+    public float seeker;
 }

@@ -104,6 +104,7 @@ namespace Unity.FPS.Game
         public Vector3 HitPoint;
         public bool ShotAroundCorner;
         public bool AcceptShot;
+        public float HitsErrorAngle;
 
         public Transform ClientTf;
         public Health    ClientHealth;

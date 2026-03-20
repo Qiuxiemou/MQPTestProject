@@ -60,11 +60,11 @@ public class ParticipantLogManager : MonoBehaviour
 
         Directory.CreateDirectory(CurrentRoundFolder);
 
-        Directory.CreateDirectory(Path.Combine(CurrentRoundFolder, "condition"));
-        Directory.CreateDirectory(Path.Combine(CurrentRoundFolder, "events"));
-        Directory.CreateDirectory(Path.Combine(CurrentRoundFolder, "world"));
-        Directory.CreateDirectory(Path.Combine(CurrentRoundFolder, "stats"));
-        Directory.CreateDirectory(Path.Combine(CurrentRoundFolder, "survey"));
+        //Directory.CreateDirectory(Path.Combine(CurrentRoundFolder, "condition"));
+        //Directory.CreateDirectory(Path.Combine(CurrentRoundFolder, "events"));
+        //Directory.CreateDirectory(Path.Combine(CurrentRoundFolder, "world"));
+        //Directory.CreateDirectory(Path.Combine(CurrentRoundFolder, "stats"));
+        //Directory.CreateDirectory(Path.Combine(CurrentRoundFolder, "survey"));
 
         Debug.Log($"[ParticipantLogManager] Round folder ready: {CurrentRoundFolder}");
     }
@@ -81,7 +81,7 @@ public class ParticipantLogManager : MonoBehaviour
 
     public void SaveRoundCondition(int roundId, string role, float latency, string timewarp, float roundLength)
     {
-        string conditionFolder = Path.Combine(CurrentRoundFolder, "condition");
+        string conditionFolder = CurrentRoundFolder;
 
         RoundConditionData data = new RoundConditionData
         {

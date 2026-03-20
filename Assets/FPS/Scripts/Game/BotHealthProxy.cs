@@ -91,9 +91,7 @@ namespace Unity.FPS.Game
         {
             Debug.Log("Health Propagating backwards");
             LM.write("Health pass backwards");
-
-            futureHealth.TakeDamage(damage, source);
-
+            
             if (forwardDelayMs > 0f)
                 yield return new WaitForSeconds(forwardDelayMs / 1000f);
 
@@ -104,7 +102,10 @@ namespace Unity.FPS.Game
                 yield return new WaitForSeconds(forwardDelayMs / 1000f);
 
             if (pastHealth != null)
+            {
                 pastHealth.TakeDamage(damage, source);
+                futureHealth.TakeDamage(damage, source);
+            }
         }
 
         public IEnumerator DamageForwards(float damage, GameObject source) // Back propagate = false; time warp = true
@@ -112,14 +113,23 @@ namespace Unity.FPS.Game
             Debug.Log("Health Propagating forwards");
             LM.write("Health pass forward");
 
-            pastHealth.TakeDamage(damage, source);
+            //pastHealth.TakeDamage(damage, source);
 
-            if (futureHealth != null) futureHealth.TakeDamage(damage, source);
+            //if (futureHealth != null) futureHealth.TakeDamage(damage, source);
 
             if (forwardDelayMs > 0f)
                 yield return new WaitForSeconds(forwardDelayMs / 1000f);
 
             if (serverHealth != null) serverHealth.TakeDamage(damage, source);
+
+            if (forwardDelayMs > 0f)
+                yield return new WaitForSeconds(forwardDelayMs / 1000f);
+
+            if (pastHealth != null) 
+            {
+                pastHealth.TakeDamage(damage, source);
+                futureHealth.TakeDamage(damage, source);
+            }
         }
 
 
@@ -170,6 +180,7 @@ namespace Unity.FPS.Game
         {
             EventManager.Broadcast(new HitCsvEvent
             {
+                EventType = "bot_damaged",
                 ShooterId = source ? source.name : "Unknown",
                 TargetId = gameObject.name,
                 Damage = damage,

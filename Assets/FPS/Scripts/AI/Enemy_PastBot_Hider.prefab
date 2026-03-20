@@ -240,6 +240,7 @@ MonoBehaviour:
   missMaxRange: 30
   Animator: {fileID: 0}
   KnownDetectedTarget: {fileID: 0}
+  KnownDetectedActor: {fileID: 0}
 --- !u!1 &5402154131380086054
 GameObject:
   m_ObjectHideFlags: 0
@@ -261,7 +262,7 @@ GameObject:
   - component: {fileID: 5404990913696761157}
   m_Layer: 9
   m_Name: Enemy_PastBot_Hider
-  m_TagString: Untagged
+  m_TagString: Bot
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -355,6 +356,12 @@ MonoBehaviour:
   AttackRangeColor: {r: 1, g: 0, b: 0, a: 1}
   DetectionRangeColor: {r: 0, g: 0, b: 1, a: 1}
   m_PatrolNodes: []
+  debugKnownPlayer: {fileID: 0}
+  debugKnownTarget: {fileID: 0}
+  UseBlendAim: 1
+  BlendToFuture: 0.3
+  BlendSigma: 0.15
+  BlendRadius: 0.15
   LastSeenPlayerPosition: {x: 0, y: 0, z: 0}
   HasLastSeenPlayer: 0
   TimeSinceLastSeenPlayer: 0
@@ -400,6 +407,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxHealth: 100
   CriticalHealthRatio: 0.3
+  pastHealth: {fileID: 0}
+  futureHealth: {fileID: 0}
 --- !u!114 &8931734156047379636
 MonoBehaviour:
   m_ObjectHideFlags: 0

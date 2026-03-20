@@ -570,7 +570,7 @@ MonoBehaviour:
   ProjectilePrefab: {fileID: 8924682559891268397, guid: ec753d54f333bb944b8b04884ad63828,
     type: 3}
   DelayBetweenShots: 0.4
-  BulletSpreadAngle: 1
+  BulletSpreadAngle: 0
   BulletsPerShot: 1
   RecoilForce: 1
   AimZoomRatio: 1
@@ -845,6 +845,7 @@ MonoBehaviour:
   debugKnownTarget: {fileID: 0}
   UseBlendAim: 1
   BlendToFuture: 0.3
+  BlendSigma: 0.15
   BlendRadius: 0.15
   LastSeenPlayerPosition: {x: 0, y: 0, z: 0}
   HasLastSeenPlayer: 0

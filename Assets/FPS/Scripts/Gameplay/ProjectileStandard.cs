@@ -267,6 +267,45 @@ namespace Unity.FPS.Gameplay
         {
             //LM.write($"[ProjectileStandard] OnHit Triggered");
 
+            // ================= BASIC REFERENCES =================
+            //BotHealthProxy proxy = collider.GetComponentInParent<BotHealthProxy>();
+            //Health health = collider.GetComponentInParent<Health>();
+
+            //GameObject ownerGO = proxy ? proxy.gameObject
+            //                    : health ? health.gameObject
+            //                    : collider.transform.root.gameObject;
+
+            //Transform playerTf = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+            //Transform botTf = null;
+
+            //if (proxy != null)
+            //{
+            //    // 🔥 Choose which bot represents "truth"
+            //    botTf = proxy.futureHealth ? proxy.futureHealth.transform : proxy.transform;
+            //}
+
+            //bool isBotHit = proxy != null;
+            //bool isPlayerHit = collider.CompareTag("Player");
+            //bool isWorldHit = !isBotHit && !isPlayerHit;
+
+            GameObject owner = m_ProjectileBase.Owner;
+            Transform playerTf = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+            BotHealthProxy proxy = collider.GetComponentInParent<BotHealthProxy>();
+            Health health = collider.GetComponentInParent<Health>();
+
+            GameObject ownerGO = proxy ? proxy.gameObject
+                              : health ? health.gameObject
+                              : collider.transform.root.gameObject;
+
+            bool isBotHit = proxy != null;
+            bool isPlayerHit = collider.CompareTag("Player") || collider.CompareTag("AimPointHitbox");
+
+            string eventType = isBotHit ? "bot_hit"
+                             : isPlayerHit ? "player_hit"
+                             : "world_hit";
+
             // damage
             if (AreaOfDamage)
             {
@@ -306,7 +345,7 @@ namespace Unity.FPS.Gameplay
                 else
                 {
                     // Existing behavior for bots/proxies/world
-                    var proxy = collider.GetComponentInParent<BotHealthProxy>();
+                    //var proxy = collider.GetComponentInParent<BotHealthProxy>();
                     if (proxy != null)
                     {
                         proxy.TakeDamage(Damage, m_ProjectileBase.Owner);
@@ -320,32 +359,140 @@ namespace Unity.FPS.Gameplay
                 }
             }
 
-            var proxyForLog = collider.GetComponentInParent<BotHealthProxy>();
-            var health = collider.GetComponentInParent<Health>();
-            var ownerGO = proxyForLog ? proxyForLog.gameObject
-                    : health ? health.gameObject
-                    : collider.transform.root.gameObject;
-            bool hitBox = false;
-            hitBox = collider.CompareTag("Bot");
+            //var proxyForLog = collider.GetComponentInParent<BotHealthProxy>();
+            //var health = collider.GetComponentInParent<Health>();
+            //var ownerGO = proxyForLog ? proxyForLog.gameObject
+            //        : health ? health.gameObject
+            //        : collider.transform.root.gameObject;
+            //bool hitBox = false;
+            //hitBox = collider.CompareTag("Bot");
 
-            EventManager.Broadcast(new HitCsvEvent
+            //EventManager.Broadcast(new HitCsvEvent
+            //{
+            //    EventType = proxyForLog ? "client_hit" : "world_hit",
+            //    ShooterId = m_ProjectileBase.Owner ? m_ProjectileBase.Owner.name : "Unknown",
+            //    TargetId = ownerGO.name,
+            //    Damage = Damage,
+            //    //ForwardDelayMs = proxyForLog ? BotHealthProxy.forwardDelayMs : 0f,
+            //    HitPoint = point,
+
+            //    AcceptShot = true,
+            //    ShotAroundCorner = false,
+
+
+            //    ClientTf = proxyForLog ? proxyForLog.transform : null,
+            //    ClientHealth = proxyForLog ? proxyForLog.GetComponent<Health>() : null,
+            //    ServerTf = proxyForLog ? (proxyForLog.serverHealth ? proxyForLog.serverHealth.transform : null) : null,
+            //    ServerHealth = proxyForLog ? proxyForLog.serverHealth : null
+            //});
+
+            // ================= SHOT LOGIC =================
+
+            string hitObjectName = ownerGO.name;
+
+            bool shotAroundCorner = false;
+
+            if (owner != null && playerTf != null)
             {
-                EventType = proxyForLog ? "client_hit" : "world_hit",
-                ShooterId = m_ProjectileBase.Owner ? m_ProjectileBase.Owner.name : "Unknown",
-                TargetId = ownerGO.name,
-                Damage = Damage,
-                //ForwardDelayMs = proxyForLog ? BotHealthProxy.forwardDelayMs : 0f,
-                HitPoint = point,
+                bool shooterIsBot = owner.CompareTag("Bot");
+                bool shooterIsPlayer = owner.CompareTag("Player");
 
-                AcceptShot = true,
-                ShotAroundCorner = false,
+                // ---------- BOT → PLAYER ----------
+                if (shooterIsBot && isPlayerHit)
+                {
+                    Transform botTf = owner.transform;
 
+                    // use player's REAL body (capsule), not aimpoint
+                    Transform capsuleTf = playerTf.Find("Capsule");
 
-                ClientTf = proxyForLog ? proxyForLog.transform : null,
-                ClientHealth = proxyForLog ? proxyForLog.GetComponent<Health>() : null,
-                ServerTf = proxyForLog ? (proxyForLog.serverHealth ? proxyForLog.serverHealth.transform : null) : null,
-                ServerHealth = proxyForLog ? proxyForLog.serverHealth : null
-            });
+                    if (botTf != null && capsuleTf != null)
+                    {
+                        shotAroundCorner = IsLineOfSightBlocked(botTf.position, capsuleTf.position);
+                    }
+
+                    hitObjectName = "Player_AimPoint";
+                }
+
+                // ---------- PLAYER → BOT ----------
+                else if (shooterIsPlayer && isBotHit && proxy != null)
+                {
+                    Transform futureBotTf = proxy.futureHealth
+                        ? proxy.futureHealth.transform
+                        : null;
+
+                    Transform capsuleTf = playerTf.Find("Capsule");
+
+                    if (futureBotTf != null)
+                    {
+                        shotAroundCorner = IsLineOfSightBlocked(futureBotTf.position, capsuleTf.position);
+                    }
+
+                    // identify which bot got hit
+                    if (proxy.futureHealth &&
+                        collider.transform.IsChildOf(proxy.futureHealth.transform))
+                    {
+                        hitObjectName = "FutureBot";
+                    }
+                    else if (proxy.pastHealth &&
+                             collider.transform.IsChildOf(proxy.pastHealth.transform))
+                    {
+                        hitObjectName = "PastBot";
+                    }
+                    else
+                    {
+                        hitObjectName = "Bot_Unknown";
+                    }
+                }
+
+                // ---------- WORLD ----------
+                else
+                {
+                    shotAroundCorner = false;
+                    hitObjectName = collider.gameObject.name;
+
+                    EventManager.Broadcast(new HitCsvEvent
+                    {
+                        EventType = "world_hit",
+                        ShooterId = owner ? m_ProjectileBase.Owner.name : "Unknown",
+                        TargetId = hitObjectName,
+                        Damage = Damage,
+                        HitPoint = point,
+
+                        ShotAroundCorner = shotAroundCorner,
+                        //AcceptShot = true, // or your logic
+                        //HitsErrorAngle = errorAngle,
+                    });
+                }
+            }
+
+            //// ================= ERROR ANGLE =================
+            //float errorAngle = 0f;
+
+            //if (playerTf != null && owner != null)
+            //{
+            //    Transform botTf = null;
+
+            //    if (proxy != null && proxy.futureHealth != null)
+            //        botTf = proxy.futureHealth.transform;
+
+            //    if (botTf != null)
+            //    {
+            //        Vector3 playerPos = playerTf.position + Vector3.up * 1.5f;
+            //        Vector3 botPos = botTf.position + Vector3.up * 1.5f;
+
+            //        Vector3 toBot = (botPos - playerPos).normalized;
+
+            //        Vector3 shotDir = m_ProjectileBase != null
+            //            ? m_ProjectileBase.InitialDirection.normalized
+            //            : transform.forward;
+
+            //        errorAngle = Vector3.Angle(shotDir, toBot);
+            //    }
+            //}
+
+            // ================= BROADCAST =================
+           
+
 
             // impact vfx
             if (ImpactVfx)
@@ -408,6 +555,29 @@ namespace Unity.FPS.Gameplay
             // Self Destruct
             Destroy(this.gameObject);
         
+        }
+
+        bool IsLineOfSightBlocked(Vector3 origin, Vector3 target)
+        {
+            Vector3 dir = target - origin;
+            float dist = dir.magnitude;
+
+            if (Physics.Raycast(origin, dir.normalized, out RaycastHit hit, dist))
+            {
+                float targetDist = dist;
+                if (hit.distance < targetDist - 0.01f)
+                {
+                    Debug.DrawRay(origin, dir, Color.red, 0.5f);
+                    return true;
+                }
+                else
+                {
+                    Debug.DrawRay(origin, dir, Color.green, 0.5f);
+                    return false;
+                }
+            }
+
+            return false; // clear LOS
         }
 
         void OnDrawGizmosSelected()

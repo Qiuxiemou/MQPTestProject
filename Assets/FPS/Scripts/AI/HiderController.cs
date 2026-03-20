@@ -1,5 +1,7 @@
+using Mono.Cecil;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Net;
 using Unity.FPS.Game;
@@ -592,9 +594,9 @@ namespace Unity.FPS.AI
 
             //Log($"RecomputePeekPositions: A={closestA.name}, B={closestB.name}, C={closestC.name}");
 
-            Debug.DrawLine(origin, _peekLeftPos, Color.green, 2f);
-            Debug.DrawLine(origin, _peekRightPos, Color.blue, 2f);
-            Debug.DrawLine(origin, _peekThirdPos, Color.yellow, 2f);
+            //Debug.DrawLine(origin, _peekLeftPos, Color.green, 2f);
+            //Debug.DrawLine(origin, _peekRightPos, Color.blue, 2f);
+            //Debug.DrawLine(origin, _peekThirdPos, Color.yellow, 2f);
         }
 
 
@@ -641,9 +643,9 @@ namespace Unity.FPS.AI
                     targetRot,
                     Time.deltaTime * OrientationSpeed);
 
-                Debug.DrawRay(transform.position + Vector3.up, lookDir * 2f, Color.yellow);
-                Debug.DrawRay(transform.position + Vector3.up, leftDir * 2f, Color.green);
-                Debug.DrawRay(transform.position + Vector3.up, rightDir * 2f, Color.blue);
+                //Debug.DrawRay(transform.position + Vector3.up, lookDir * 2f, Color.yellow);
+                //Debug.DrawRay(transform.position + Vector3.up, leftDir * 2f, Color.green);
+                //Debug.DrawRay(transform.position + Vector3.up, rightDir * 2f, Color.blue);
 
 
                 // Immediately stop scanning if player is seen
@@ -713,10 +715,10 @@ namespace Unity.FPS.AI
                 NavMeshAgent.SetDestination(_currentCoverTarget);
 
                 ////Log($"MoveToRandomNearbyCover: moving to idle cover index={idx} at {_currentCoverTarget}");
-                if (showDebugCover)
-                    Debug.DrawLine(transform.position + Vector3.up,
-                                   _currentCoverTarget + Vector3.up,
-                                   Color.cyan, 1f);
+                //if (showDebugCover)
+                //    Debug.DrawLine(transform.position + Vector3.up,
+                //                   _currentCoverTarget + Vector3.up,
+                //                   Color.cyan, 1f);
             }
             else
             {
@@ -841,7 +843,7 @@ namespace Unity.FPS.AI
                 if (NavMesh.SamplePosition(randomChoice.pos, out NavMeshHit navHit, 2f, NavMesh.AllAreas))
                 {
                     NavMeshAgent.SetDestination(navHit.position);
-                    Debug.DrawLine(transform.position + Vector3.up, navHit.position + Vector3.up, Color.magenta, 1f);
+                    //Debug.DrawLine(transform.position + Vector3.up, navHit.position + Vector3.up, Color.magenta, 1f);
                     //LM.write($"[HIDER] Random chosen cover = {navHit.position}");
                 }
                 return;
@@ -876,8 +878,8 @@ namespace Unity.FPS.AI
                 //LM.write($"  Candidate {i}: Score={scores[i]:F2}, Probability={probability:F1}%{marker}");
 
                 // Draw debug lines - chosen one is bright blue, others are dim
-                Color debugColor = (i == chosenIndex) ? Color.blue : new Color(0.5f, 0.5f, 0.5f, 0.3f);
-                Debug.DrawLine(playerPos + Vector3.up, candidates[i].pos + Vector3.up, debugColor, 0.5f);
+                //Color debugColor = (i == chosenIndex) ? Color.blue : new Color(0.5f, 0.5f, 0.5f, 0.3f);
+                //Debug.DrawLine(playerPos + Vector3.up, candidates[i].pos + Vector3.up, debugColor, 0.5f);
             }
 
             // ---------- Move to chosen cover ----------
@@ -886,7 +888,7 @@ namespace Unity.FPS.AI
             if (NavMesh.SamplePosition(chosenPos, out NavMeshHit finalHit, 2f, NavMesh.AllAreas))
             {
                 NavMeshAgent.SetDestination(finalHit.position);
-                Debug.DrawLine(transform.position + Vector3.up, finalHit.position + Vector3.up, Color.cyan, 1f);
+                //Debug.DrawLine(transform.position + Vector3.up, finalHit.position + Vector3.up, Color.cyan, 1f);
                 //LM.write($"[HIDER] Weighted random chosen cover = {finalHit.position}");
             }
             else
@@ -923,6 +925,13 @@ namespace Unity.FPS.AI
             //        ////Log("OnDamaged: forwarded to DetectionModule.OnDamaged");
             //    }
             //}
+            EventManager.Broadcast(new HitCsvEvent
+            {
+                EventType = "bot_die",
+                ShooterId = damageSource ? damageSource.name : "Unknown",
+                TargetId = this.name,
+                Damage = damage,
+            });
 
             if (damageSource && !damageSource.GetComponent<HiderController>())
             {
@@ -931,9 +940,9 @@ namespace Unity.FPS.AI
 
                 //onDamaged?.Invoke();
             }
+
         }
 
-        
         void OnDie()
         {
             ////Log("OnDie: unregistering and destroying hider");

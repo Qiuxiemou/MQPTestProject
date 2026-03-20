@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Codice.CM.Common;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -156,7 +157,8 @@ public class RoundManager : MonoBehaviour
             ParticipantLogManager.Instance.ParticipantFolder
         );
 
-        List<int> orderRow = latinOrders[participantID];
+        //List<int> orderRow = latinOrders[participantID];
+        List<int> orderRow = latinOrders[CurrentLatinRow];
 
         // Rebuild rounds list based on ID order
         rounds = new List<RoundCondition>();
@@ -190,7 +192,6 @@ public class RoundManager : MonoBehaviour
 
 
         BindUIIfNeeded();
-        //StartNextRound();
     }
 
     private int GetAndIncrementParticipantID()
@@ -482,14 +483,7 @@ public class RoundManager : MonoBehaviour
 
     void StartNextRound()
     {
-        EventLogManager.Instance.SetRoundContext(
-            ParticipantID,
-            CurrentLatinRow,
-            currentRoundIndex,  
-            CurrentLatencyMs,
-            _isSeeker ? "Seeker" : "Hider",
-            CurrentTimewarpMode.ToString()
-        );
+        
 
         LM.write($"Start Next Round Index: {currentRoundIndex}");
 
@@ -502,7 +496,7 @@ public class RoundManager : MonoBehaviour
         currentCondition = rounds[currentRoundIndex];
         currentRoundIndex++;
 
-        ParticipantLogManager.Instance.StartNewRound(currentRoundIndex - 1);
+        ParticipantLogManager.Instance.StartNewRound(currentRoundIndex);
 
         EventLogManager.Instance.StartNewRound(
             ParticipantLogManager.Instance.CurrentRoundFolder
@@ -513,6 +507,17 @@ public class RoundManager : MonoBehaviour
         LM.write($"[RoundManager] Starting round {currentCondition.id}");
 
         ApplyCondition(currentCondition);
+
+
+        EventLogManager.Instance.SetRoundContext(
+            ParticipantID,
+            CurrentLatinRow,
+            currentRoundIndex,
+            CurrentRoundID,
+            CurrentLatencyMs,
+            _isSeeker ? "Seeker" : "Hider",
+            CurrentTimewarpMode.ToString()
+        );
 
         ParticipantLogManager.Instance.SaveRoundCondition(
             currentCondition.id,
@@ -715,7 +720,6 @@ public class RoundManager : MonoBehaviour
         foreach (var r in root.GetComponentsInChildren<Renderer>(true))
         {
             r.enabled = visible;
-            LM.write($"Renderer {r.name} enabled = {r.enabled}");
         }
         
         foreach (var p in root.GetComponentsInChildren<Projector>(true))
@@ -966,10 +970,7 @@ public class RoundManager : MonoBehaviour
     }
     public void SubmitSurvey(SurveyData data)
     {
-        string surveyFolder = Path.Combine(
-            ParticipantLogManager.Instance.CurrentRoundFolder,
-            "survey"
-        );
+        string surveyFolder = ParticipantLogManager.Instance.CurrentRoundFolder;
 
         string surveyPath = Path.Combine(surveyFolder, "survey.csv");
 

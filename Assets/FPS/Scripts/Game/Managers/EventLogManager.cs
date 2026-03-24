@@ -1,8 +1,8 @@
 using System.IO;
 using System.Text;
-using UnityEditor.Graphs;
+//using UnityEditor.Graphs;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
+//using UnityEngine.SocialPlatforms.Impl;
 
 namespace Unity.FPS.Game
 {
@@ -95,7 +95,8 @@ namespace Unity.FPS.Game
             // ---------- Shot Event ----------
             _shotEventPath = Path.Combine(root, "ShotEvent.csv");
             _shotEventWriter = NewWriterWithHeader(_shotEventPath,
-                "time,participantID,latinRow,round,conditionID,latency,role,timewarp,eventType,shooterID,damage,hitObject,shotAroundCorner,acceptShot,score,errorAngle");
+                "time,participantID,latinRow,round,conditionID,latency,role,timewarp,eventType,shooterID,damage,hitObject,shotAroundCorner,acceptShot,score,errorAngle,"
+                    +"player_x,player_y,player_z,bot_x,bot_y,bot_z");
 
             // ----------World Log----------
             _worldCsvPath = Path.Combine(root, "world.csv");
@@ -386,12 +387,27 @@ namespace Unity.FPS.Game
         {
             if (_shotEventWriter == null) return;
 
+            // ===== GET PLAYER =====
+            Transform playerTf = GameObject.FindGameObjectWithTag("Player")?.transform;
+            Vector3 playerPos = playerTf ? playerTf.position : Vector3.zero;
+
+            // ===== GET BOT =====
+            Vector3 botPos = Vector3.zero;
+
+            var enemy = RoundManager.Instance?.CurrentEnemy;
+            if (enemy != null)
+            {
+                botPos = enemy.transform.position;
+            }
+
             _shotEventWriter.WriteLine(
                 $"{CustomTime()},{_participantID},{_latinRow},{_roundID},{_roundConditionID},{_latency},{_role},{_timewarp}," +
                 $"{eventType},{San(shooterId)},{damage:F2},{San(hitObject)}," +
                 $"{(shotAroundCorner ? 1 : 0)}," +
                 $"{(acceptShot ? 1 : 0)}," +
-                $"{score},{errorAngle:F3}"
+                $"{score},{errorAngle:F3}," +
+                $"{playerPos.x:F3},{playerPos.y:F3},{playerPos.z:F3}," +
+                $"{botPos.x:F3},{botPos.y:F3},{botPos.z:F3}"
             );
 
             BumpFlushCounter();

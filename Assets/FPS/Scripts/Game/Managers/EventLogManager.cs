@@ -3,6 +3,7 @@ using System.Text;
 using UnityEditor.Graphs;
 using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
+using Unity.FPS.AI;
 
 namespace Unity.FPS.Game
 {
@@ -103,11 +104,13 @@ namespace Unity.FPS.Game
             //    "session_id,wall_ts,game_t,entity_id,entity_type,pos_x,pos_y,pos_z,yaw,pitch,roll,hp");
 
             _worldWriter = NewWriterWithHeader(_worldCsvPath,
-                "time,participantID,latinRow,round,conditionID,latency,role,timewarp" +
+                "time,participantID,latinRow,round,conditionID,latency,role,timewarp," +
                 "player_x,player_y,player_z," +
                 "cam_rot_x,cam_rot_y,cam_rot_z," +
                 "futureBot_x,futureBot_y,futureBot_z," +
-                "pastBot_x,pastBot_y,pastBot_z"
+                "futureBot_forward_x,futureBot_forward_y,futureBot_forward_z," +
+                "pastBot_x,pastBot_y,pastBot_z,"+
+                "playerCanSeeBot,botCanSeePlayer"
             );
 
             // ---------- Other logs ----------
@@ -326,6 +329,7 @@ namespace Unity.FPS.Game
             if (_playerInputWriter == null) return;
 
             Vector3 futureBotPos = Vector3.zero;
+           
             Vector3 pastBotPos = Vector3.zero;
 
             bool hasFuture = false;
@@ -343,7 +347,8 @@ namespace Unity.FPS.Game
                     if (proxy.futureHealth != null)
                     {
                         futureBotPos = proxy.futureHealth.transform.position;
-                        hasFuture = true;
+                        
+                        hasFuture = true;                    
                     }
 
                     // ===== PAST BOT =====
@@ -357,7 +362,8 @@ namespace Unity.FPS.Game
                 {
                     // fallback: single bot (seeker case)
                     futureBotPos = enemy.transform.position;
-                    hasFuture = true;
+                   
+                    hasFuture = true;              
                 }
             }
 
@@ -456,10 +462,14 @@ namespace Unity.FPS.Game
 
             // ================= BOT =================
             Vector3 futureBotPos = Vector3.zero;
+            Vector3 futureBotForward = Vector3.zero;
             Vector3 pastBotPos = Vector3.zero;
 
+            bool botCanSeePlayer = false;
             bool hasFuture = false;
             bool hasPast = false;
+
+          
 
             var enemy = RoundManager.Instance?.CurrentEnemy;
 
@@ -472,7 +482,9 @@ namespace Unity.FPS.Game
                     if (proxy.futureHealth != null)
                     {
                         futureBotPos = proxy.futureHealth.transform.position;
+                        futureBotForward = enemy.transform.forward;
                         hasFuture = true;
+                       
                     }
 
                     if (proxy.pastHealth != null)
@@ -484,7 +496,9 @@ namespace Unity.FPS.Game
                 else
                 {
                     futureBotPos = enemy.transform.position;
+                    futureBotForward = enemy.transform.forward;
                     hasFuture = true;
+                    
                 }
             }
 
@@ -496,6 +510,9 @@ namespace Unity.FPS.Game
                 $"{(hasFuture ? futureBotPos.x.ToString("F3") : "")}," +
                 $"{(hasFuture ? futureBotPos.y.ToString("F3") : "")}," +
                 $"{(hasFuture ? futureBotPos.z.ToString("F3") : "")}," +
+                $"{(hasFuture ? futureBotForward.x.ToString("F3") : "")}," +
+                $"{(hasFuture ? futureBotForward.y.ToString("F3") : "")}," +
+                $"{(hasFuture ? futureBotForward.z.ToString("F3") : "")}," +
                 $"{(hasPast ? pastBotPos.x.ToString("F3") : "")}," +
                 $"{(hasPast ? pastBotPos.y.ToString("F3") : "")}," +
                 $"{(hasPast ? pastBotPos.z.ToString("F3") : "")}"

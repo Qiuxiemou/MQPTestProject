@@ -61,7 +61,8 @@ public class SummaryLogManager : MonoBehaviour
     public void Init(string participantFolder)
     {
 
-        summaryPath = Path.Combine(participantFolder, "summary.csv");
+        // summaryPath = Path.Combine(participantFolder, "summary.csv");
+        summaryPath = Path.Combine(participantFolder, $"summary_{sessionId}.csv");
 
         if (!File.Exists(summaryPath))
         {

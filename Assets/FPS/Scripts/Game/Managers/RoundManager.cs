@@ -156,7 +156,8 @@ public class RoundManager : MonoBehaviour
         ParticipantLogManager.Instance.InitializeParticipant(participantID);
 
         SummaryLogManager.Instance.Init(
-            ParticipantLogManager.Instance.ParticipantFolder
+            ParticipantLogManager.Instance.ParticipantFolder,
+            participantID
         );
 
         //List<int> orderRow = latinOrders[participantID];
@@ -533,6 +534,17 @@ public class RoundManager : MonoBehaviour
             CurrentLatencyMs,
             _isSeeker ? "Seeker" : "Hider",
             CurrentTimewarpMode.ToString()
+        );
+
+        SummaryLogManager.Instance.SetRoundContext(
+            ParticipantID,
+            CurrentLatinRow,
+            currentRoundIndex,
+            CurrentRoundID,
+            CurrentLatencyMs,
+            _isSeeker ? "Seeker" : "Hider",
+            CurrentTimewarpMode.ToString(),
+            System.DateTime.Now.ToString("yyyyMMdd_HHmmss")
         );
 
         ParticipantLogManager.Instance.SaveRoundCondition(
@@ -983,6 +995,7 @@ public class RoundManager : MonoBehaviour
     }
     public void SubmitSurvey(SurveyData data)
     {
+        //// Survey log
         string surveyFolder = ParticipantLogManager.Instance.CurrentRoundFolder;
         string surveyPath = Path.Combine(surveyFolder, "survey.csv");
 
@@ -992,8 +1005,8 @@ public class RoundManager : MonoBehaviour
             $"{DateTime.Now:o},{data.round},{data.lag}," +
             $"{data.hider},{data.seeker}"
         );
-
-        File.WriteAllText(surveyPath, sb.ToString(), Encoding.UTF8);
+        //File.WriteAllText(surveyPath, sb.ToString(), Encoding.UTF8);
+        ////// End of survey log
 
         ////// Summary log
 
@@ -1029,11 +1042,11 @@ public class RoundManager : MonoBehaviour
         float enemySpeed = lastEnemySpeed;
 
         SummaryLogManager.Instance.LogRound(
-            currentCondition.id,
-            currentRoundIndex,
-            CurrentLatencyMs,
-            _isSeeker ? "Hider" : "Seeker",
-            CurrentTimewarpMode.ToString(),
+            //currentCondition.id,
+            //currentRoundIndex,
+            //CurrentLatencyMs,
+            //_isSeeker ? "Hider" : "Seeker",
+            //CurrentTimewarpMode.ToString(),
             finalScore, 
             enemySpeed, 
             playerSpeed, 

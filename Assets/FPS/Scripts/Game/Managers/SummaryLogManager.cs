@@ -46,6 +46,16 @@ public class SummaryLogManager : MonoBehaviour
     float totalTimeToKill = 0f;
     int killCount = 0;
 
+    // ================= ROUND CONTEXT =================
+    int _participantID;
+    int _latinRow;
+    int _roundID;
+    int _roundConditionID;
+    float _latency;
+    string _role;
+    string _timewarp;
+
+    string _time;
 
     void Awake()
     {
@@ -58,22 +68,41 @@ public class SummaryLogManager : MonoBehaviour
         EventManager.AddListener<HitEvent>(OnHit);
     }
 
-    public void Init(string participantFolder)
+    public void Init(string participantFolder, int participantID)
     {
 
         // summaryPath = Path.Combine(participantFolder, "summary.csv");
-        summaryPath = Path.Combine(participantFolder, $"summary_{sessionId}.csv");
+        summaryPath = Path.Combine(participantFolder, $"summary_{participantID}.csv");
 
         if (!File.Exists(summaryPath))
         {
+            //File.WriteAllText(summaryPath,
+            //    "sessionID,latinRow,round,sessionStart,now,latency,role,timewarp," +
+            //    "score,enemySpeed,playerSpeed,totalShots,totalHits,errorAngle,accuracy," +
+            //    "cornerShots,ttkAvg,q1,q2,playerDist,botDist,mouseMove\n"
+            //);
             File.WriteAllText(summaryPath,
-                "sessionID,latinRow,round,sessionStart,now,latency,role,timewarp," +
-                "score,enemySpeed,playerSpeed,totalShots,totalHits,errorAngle,accuracy," +
-                "cornerShots,ttkAvg,q1,q2,playerDist,botDist,mouseMove\n"
+                "startRoundTime," +
+                "participantID,latinRow,roundNumber,conditionID,latency,role,timewarp," +
+                "enemySpeed,playerSpeed," +
+                "totalShots,totalHits,errorAngle,accuracy,cornerShots,ttkAvg,score," +
+                "playerDist,botDist,mouseMove," +
+                "surveyQ1,surveyQ2" +
+                "\n"
             );
         }
     }
-
+    public void SetRoundContext(int participantID, int latinRow, int roundID, int roundConditionID, float latency, string role, string timewarp, string time)
+    {
+        _participantID = participantID;
+        _latinRow = latinRow;
+        _roundID = roundID;
+        _roundConditionID = roundConditionID;
+        _latency = latency;
+        _role = role;
+        _timewarp = timewarp;
+        _time = time;
+    }
     void OnFireShot(FireShotEvent e)
     {
         if (e.ShooterId == "Player") totalShots++;
@@ -109,11 +138,11 @@ public class SummaryLogManager : MonoBehaviour
     }
 
     public void LogRound(
-        int latinRow,
-        int round,
-        float latency,
-        string role,
-        string timewarp,
+        //int latinRow,
+        //int round,
+        //float latency,
+        //string role,
+        //string timewarp,
         int score,
         float enemySpeed,
         float playerSpeed,
@@ -142,13 +171,13 @@ public class SummaryLogManager : MonoBehaviour
         float avgTTK = killCount > 0 ? totalTimeToKill / killCount : 0f;
 
         string line =
-            $"{sessionId},{latinRow},{round}," +
-            $"{Time.realtimeSinceStartup},{System.DateTime.Now:o}," +
-            $"{latency},{role},{timewarp}," +
-            $"{score},{enemySpeed},{playerSpeed}," +
-            $"{totalShots},{totalHits},{errorAngle},{acc}," +
-            $"{cornerShots},{avgTTK},{surveyQ1},{surveyQ2}," +
-            $"{playerDist},{botDist},{mouseMove}";
+            $"{_time},{_participantID},{_latinRow},{_roundID},{_roundConditionID}," +
+            //$"{Time.realtimeSinceStartup},{System.DateTime.Now:o}," +
+            $"{_latency},{_role},{_timewarp}," +
+            $"{enemySpeed},{playerSpeed}," +
+            $"{totalShots},{totalHits},{errorAngle},{acc},{cornerShots},{avgTTK},{score}," +
+            $"{playerDist},{botDist},{mouseMove}," +
+            $"{surveyQ1},{surveyQ2}";
 
         File.AppendAllText(summaryPath, line + "\n", Encoding.UTF8);
 

@@ -77,7 +77,7 @@ public class SummaryLogManager : MonoBehaviour
         if (!File.Exists(summaryPath))
         {
             //File.WriteAllText(summaryPath,
-            //    "sessionID,latinRow,round,sessionStart,now,latency,role,timewarp," +
+            //    "sessionID,latinRow,round,sessionStart,now,latency,rcole,timewarp," +
             //    "score,enemySpeed,playerSpeed,totalShots,totalHits,errorAngle,accuracy," +
             //    "cornerShots,ttkAvg,q1,q2,playerDist,botDist,mouseMove\n"
             //);

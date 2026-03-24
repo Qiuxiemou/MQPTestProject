@@ -564,7 +564,7 @@ public class RoundManager : MonoBehaviour
 
         ParticipantLogManager.Instance.SaveRoundCondition(
             currentCondition.id,
-            _isSeeker ? "Seeker" : "Hider",
+            _isSeeker ? "Hider" : "Seeker",
             CurrentLatencyMs,
             CurrentTimewarpMode.ToString(),
             roundLengthSeconds

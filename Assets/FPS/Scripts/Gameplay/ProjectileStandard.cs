@@ -245,12 +245,12 @@ namespace Unity.FPS.Gameplay
             // Sample a few points on the real capsule
             Vector3[] samples =
             {
-        center,
-        center + up * half,
-        center - up * half,
-        center + right * radius,
-        center - right * radius
-    };
+                center,
+                center + up * half,
+                center - up * half,
+                center + right * radius,
+                center - right * radius
+            };
 
             // If ANY point is visible (not blocked by world), then player is NOT fully behind cover.
             for (int i = 0; i < samples.Length; i++)
@@ -299,52 +299,61 @@ namespace Unity.FPS.Gameplay
             }
             else
             {
-                if (UseRealPositionReject && collider.CompareTag(AimPointHitboxTag))
+                bool acceptShot = true;
+                bool shotAroundCorner = false;
+
+                Health realHealth = null;
+                CharacterController realCC = null;
+
+                if (collider.CompareTag(AimPointHitboxTag))
                 {
                     Debug.Log("[Projectile] Hit delayed AimPoint hitbox");
-                    CharacterController realCC = collider.GetComponentInParent<CharacterController>();
-                    Health realHealth = collider.GetComponentInParent<Health>();
+                    realCC = collider.GetComponentInParent<CharacterController>();
+                    realHealth = collider.GetComponentInParent<Health>();
 
-             
+
                     Vector3 shooterOrigin = m_ProjectileBase != null ? m_ProjectileBase.InitialPosition : Root.position;
 
-       
+
                     if (RealPlayerFullyBehindCover(realCC, shooterOrigin))
                     {
-                        Debug.Log("[Projectile] REJECTED: Real player fully behind cover");
-                        EventManager.Broadcast(new HitCsvEvent
+                        shotAroundCorner = true;
+                        if (UseRealPositionReject)
                         {
-                            EventType = "player_hit",
-                            ShooterId = owner ? m_ProjectileBase.Owner.name : "Unknown",
-                            TargetId = collider.name,
-                            Damage = Damage,
-                            HitPoint = point,
+                            acceptShot = false;
+                            Destroy(gameObject);
+                            Debug.Log("[Projectile] REJECTED: Real player fully behind cover");
+                            EventManager.Broadcast(new HitCsvEvent
+                            {
+                                EventType = "player_hit",
+                                ShooterId = owner ? m_ProjectileBase.Owner.name : "Unknown",
+                                TargetId = collider.name,
+                                Damage = Damage,
+                                HitPoint = point,
 
-                            AcceptShot = false,
-                            ShotAroundCorner = true
-
-                        });
-
-                        Destroy(gameObject);
-                        return;
+                                AcceptShot = acceptShot,
+                                ShotAroundCorner = shotAroundCorner
+                            });
+                            return;
+                        }
                     }
                     else
                     {
                         Debug.Log("[Projectile] ACCEPTED: Real player exposed");
-                        EventManager.Broadcast(new HitCsvEvent
-                        {
-                            EventType = "player_hit",
-                            ShooterId = owner ? m_ProjectileBase.Owner.name : "Unknown",
-                            TargetId = collider.name,
-                            Damage = Damage,
-                            HitPoint = point,
-
-                            AcceptShot = true,
-                            ShotAroundCorner = false
-
-                        });
+                        shotAroundCorner = false;
+                        acceptShot = true;
                     }
+                    EventManager.Broadcast(new HitCsvEvent
+                    {
+                        EventType = "player_hit",
+                        ShooterId = owner ? m_ProjectileBase.Owner.name : "Unknown",
+                        TargetId = collider.name,
+                        Damage = Damage,
+                        HitPoint = point,
 
+                        AcceptShot = acceptShot,
+                        ShotAroundCorner = shotAroundCorner
+                    });
                     if (realHealth != null)
                     {
                         realHealth.TakeDamage(Damage, m_ProjectileBase.Owner);
@@ -354,6 +363,7 @@ namespace Unity.FPS.Gameplay
                 {
                     // Existing behavior for bots/proxies/world
                     //var proxy = collider.GetComponentInParent<BotHealthProxy>();
+
                     if (proxy != null)
                     {
                         proxy.TakeDamage(Damage, m_ProjectileBase.Owner);
@@ -365,13 +375,84 @@ namespace Unity.FPS.Gameplay
                             damageable.InflictDamage(Damage, false, m_ProjectileBase.Owner);
                     }
                 }
+
+                // OLD LOGIC (for reference, to compare with new logic above)   
+                //=================================================================
+                //if (UseRealPositionReject && collider.CompareTag(AimPointHitboxTag))
+                //{
+                //    Debug.Log("[Projectile] Hit delayed AimPoint hitbox");
+                //    CharacterController realCC = collider.GetComponentInParent<CharacterController>();
+                //    Health realHealth = collider.GetComponentInParent<Health>();
+
+
+                //    Vector3 shooterOrigin = m_ProjectileBase != null ? m_ProjectileBase.InitialPosition : Root.position;
+
+
+                //    if (RealPlayerFullyBehindCover(realCC, shooterOrigin))
+                //    {
+                //        Debug.Log("[Projectile] REJECTED: Real player fully behind cover");
+                //        EventManager.Broadcast(new HitCsvEvent
+                //        {
+                //            EventType = "player_hit",
+                //            ShooterId = owner ? m_ProjectileBase.Owner.name : "Unknown",
+                //            TargetId = collider.name,
+                //            Damage = Damage,
+                //            HitPoint = point,
+
+                //            AcceptShot = false,
+                //            ShotAroundCorner = true
+
+                //        });
+
+                //        Destroy(gameObject);
+                //        return;
+                //    }
+                //    else
+                //    {
+                //        Debug.Log("[Projectile] ACCEPTED: Real player exposed");
+                //        EventManager.Broadcast(new HitCsvEvent
+                //        {
+                //            EventType = "player_hit",
+                //            ShooterId = owner ? m_ProjectileBase.Owner.name : "Unknown",
+                //            TargetId = collider.name,
+                //            Damage = Damage,
+                //            HitPoint = point,
+
+                //            AcceptShot = true,
+                //            ShotAroundCorner = false
+
+                //        });
+                //    }
+
+                //    if (realHealth != null)
+                //    {
+                //        realHealth.TakeDamage(Damage, m_ProjectileBase.Owner);
+                //    }
+                //}
+                //else
+                //{
+                //    // Existing behavior for bots/proxies/world
+                //    //var proxy = collider.GetComponentInParent<BotHealthProxy>();
+
+                //    if (proxy != null)
+                //    {
+                //        proxy.TakeDamage(Damage, m_ProjectileBase.Owner);
+                //    }
+                //    else
+                //    {
+                //        Damageable damageable = collider.GetComponent<Damageable>();
+                //        if (damageable)
+                //            damageable.InflictDamage(Damage, false, m_ProjectileBase.Owner);
+                //    }
+                //}
+                //================================================================
             }
 
             // ================= SHOT LOGIC =================
 
             string hitObjectName = ownerGO.name;
 
-            bool shotAroundCorner = false;
+            bool shotIsAroundCorner = false;
 
             if (owner != null && playerTf != null)
             {
@@ -388,7 +469,7 @@ namespace Unity.FPS.Gameplay
 
                     if (botTf != null && capsuleTf != null)
                     {
-                        shotAroundCorner = IsLineOfSightBlocked(botTf.position, capsuleTf.position);
+                        shotIsAroundCorner = IsLineOfSightBlocked(botTf.position, capsuleTf.position);
                     }
 
                     hitObjectName = "Player_AimPoint";
@@ -428,7 +509,7 @@ namespace Unity.FPS.Gameplay
                 // ---------- WORLD ----------
                 else
                 {
-                    shotAroundCorner = false;
+                    shotIsAroundCorner = false;
                     hitObjectName = collider.gameObject.name;
 
                     EventManager.Broadcast(new HitCsvEvent
@@ -439,7 +520,9 @@ namespace Unity.FPS.Gameplay
                         Damage = Damage,
                         HitPoint = point,
 
-                        ShotAroundCorner = shotAroundCorner,
+                        ShotAroundCorner = shotIsAroundCorner,
+                        //AcceptShot = true, // or your logic
+                        //HitsErrorAngle = errorAngle,
                     });
                 }
             }

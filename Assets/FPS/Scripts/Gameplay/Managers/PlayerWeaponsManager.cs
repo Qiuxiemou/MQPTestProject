@@ -117,6 +117,13 @@ namespace Unity.FPS.Gameplay
             }
 
             SwitchWeapon(true);
+
+            RoundManager.OnRoundWeaponChanged += HandleRoundWeaponChanged;
+        }
+
+        void OnDestroy()
+        {
+            RoundManager.OnRoundWeaponChanged -= HandleRoundWeaponChanged;
         }
 
         void Update()
@@ -160,26 +167,27 @@ namespace Unity.FPS.Gameplay
             }
 
             // weapon switch handling
-            if (!IsAiming &&
-                (activeWeapon == null || !activeWeapon.IsCharging) &&
-                (m_WeaponSwitchState == WeaponSwitchState.Up || m_WeaponSwitchState == WeaponSwitchState.Down))
-            {
-                int switchWeaponInput = m_InputHandler.GetSwitchWeaponInput();
-                if (switchWeaponInput != 0)
-                {
-                    bool switchUp = switchWeaponInput > 0;
-                    SwitchWeapon(switchUp);
-                }
-                else
-                {
-                    switchWeaponInput = m_InputHandler.GetSelectWeaponInput();
-                    if (switchWeaponInput != 0)
-                    {
-                        if (GetWeaponAtSlotIndex(switchWeaponInput - 1) != null)
-                            SwitchToWeaponIndex(switchWeaponInput - 1);
-                    }
-                }
-            }
+            //if (AllowWeaponSwitching &&
+            //    !IsAiming &&
+            //    (activeWeapon == null || !activeWeapon.IsCharging) &&
+            //    (m_WeaponSwitchState == WeaponSwitchState.Up || m_WeaponSwitchState == WeaponSwitchState.Down))
+            //{
+            //    int switchWeaponInput = m_InputHandler.GetSwitchWeaponInput();
+            //    if (switchWeaponInput != 0)
+            //    {
+            //        bool switchUp = switchWeaponInput > 0;
+            //        SwitchWeapon(switchUp);
+            //    }
+            //    else
+            //    {
+            //        switchWeaponInput = m_InputHandler.GetSelectWeaponInput();
+            //        if (switchWeaponInput != 0)
+            //        {
+            //            if (GetWeaponAtSlotIndex(switchWeaponInput - 1) != null)
+            //                SwitchToWeaponIndex(switchWeaponInput - 1);
+            //        }
+            //    }
+            //}
 
             // Pointing at enemy handling
             IsPointingAtEnemy = false;
@@ -562,6 +570,11 @@ namespace Unity.FPS.Gameplay
             {
                 newWeapon.ShowWeapon(true);
             }
+        }
+
+        void HandleRoundWeaponChanged(int weponIndex)
+        {
+            SwitchToWeaponIndex(weponIndex,true);
         }
     }
 }

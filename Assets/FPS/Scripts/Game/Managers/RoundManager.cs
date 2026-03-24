@@ -26,6 +26,16 @@ public class RoundManager : MonoBehaviour
     public TimewarpMode TimeWarpmode = TimewarpMode.None;
     public bool BotIsSeeker = true;
 
+    // ================= SPEED & WEAPON =================
+    [Header("Weapon and Speed Setting")]
+    public float CurrentSpeed { get; private set; }
+    public float TestSpeed = 10;
+    public int CurrentWeaponIndex { get; private set; }
+    public int TestWeapon = 0;
+
+    public static System.Action<int> OnRoundWeaponChanged;
+
+
     [Header("Study Config")]
     [SerializeField] private TextAsset roundConditionFile;
 
@@ -43,12 +53,6 @@ public class RoundManager : MonoBehaviour
     // ================= TIME WARP =================
     [Header("Time Warp Settings")]
     public TimewarpMode CurrentTimewarpMode { get; private set; }
-
-    // ================= SPEED & WEAPON =================
-    [Header("Weapon and Speed Setting")]
-    public float CurrentSpeed { get; private set; }
-    public string CurrentWeapon { get; private set; }
-
     // ================= UI =================
     [Header("UI References")]
     public TimerUI timerUI;
@@ -561,7 +565,8 @@ public class RoundManager : MonoBehaviour
         RespawnPlayer();
         ApplyTimewarpModeForPlayer();
         ApplyPlayerSpeed();
-        ApplyWeapon();
+
+        OnRoundWeaponChanged?.Invoke(CurrentWeaponIndex);
 
         OnBotRoleChanged?.Invoke(_isSeeker);
         //OnTimeWarpChanged(IsTimeWarpEnabled);
@@ -594,11 +599,11 @@ public class RoundManager : MonoBehaviour
         _isSeeker = LatencyTest ? BotIsSeeker : (c.bot == BotRole.Seeker);
         CurrentTimewarpMode = LatencyTest ? TimeWarpmode : c.timewarp;
         CurrentLatencyMs = LatencyTest ? SimulatedLatencyMs : c.latencyMs;
-        CurrentSpeed = c.speed;
-        CurrentWeapon = c.weapon;
+        CurrentSpeed = LatencyTest ? TestSpeed : c.speed;
+        CurrentWeaponIndex = LatencyTest ? TestWeapon : c.weapon;
 
         LM.write(
-            $"[RoundManager] Condition → Bot={c.bot}, Latency={c.latencyMs}, Timewarp={c.timewarp}"
+            $"[RoundManager] Condition → Bot={_isSeeker}, Latency={CurrentTimewarpMode}, Timewarp={CurrentLatencyMs}, Speed = {CurrentSpeed}, Weapon = {CurrentWeaponIndex}"
         );
     }
 
@@ -702,49 +707,8 @@ public class RoundManager : MonoBehaviour
             var field = controller.GetType().GetField("MaxSpeedOnGround");
             if (field != null)
             {
-                field.SetValue(controller, currentCondition.speed);
+                field.SetValue(controller, CurrentSpeed);
             }
-        }
-    }
-
-    void ApplyWeapon()
-    {
-        if (player == null) return;
-
-        var weaponManager = player.GetComponent("PlayerWeaponsManager");
-        if (weaponManager == null)
-        {
-            Debug.LogError("PlayerWeaponsManager not found on player");
-            return;
-        }
-
-        int weaponIndex = 0;
-
-        switch (currentCondition.weapon)
-        {
-            case "rifle":
-                weaponIndex = 0;
-                break;
-
-            case "smg":
-                weaponIndex = 1;
-                break;
-
-            default:
-                weaponIndex = 0;
-                break;
-        }
-
-        // Call SwitchToWeaponIndex(int, bool)
-        var method = weaponManager.GetType().GetMethod("SwitchToWeaponIndex");
-
-        if (method != null)
-        {
-            method.Invoke(weaponManager, new object[] { weaponIndex, true }); // force = true
-        }
-        else
-        {
-            Debug.LogError("SwitchToWeaponIndex method not found!");
         }
     }
 

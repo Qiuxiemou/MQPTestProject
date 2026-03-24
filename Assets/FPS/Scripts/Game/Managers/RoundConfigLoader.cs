@@ -42,7 +42,7 @@ public static class RoundConfigLoader
                     latencyMs = int.Parse(tokens[2].Trim()),
                     timewarp = Enum.Parse<TimewarpMode>(tokens[3].Trim(), true),
                     speed = float.Parse(tokens[4].Trim()),
-                    weapon = tokens[5].Trim().ToLower()
+                    weapon = int.Parse(tokens[5].Trim())
                 };
 
                 conditions.Add(condition);

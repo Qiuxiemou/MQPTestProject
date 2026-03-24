@@ -21,5 +21,5 @@ public class RoundCondition
     public int latencyMs;
     public TimewarpMode timewarp;
     public float speed;
-    public string weapon;
+    public int weapon;
 }

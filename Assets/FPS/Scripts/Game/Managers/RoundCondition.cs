@@ -20,4 +20,6 @@ public class RoundCondition
     public BotRole bot;
     public int latencyMs;
     public TimewarpMode timewarp;
+    public float speed;
+    public string weapon;
 }

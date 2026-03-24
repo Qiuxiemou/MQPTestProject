@@ -569,8 +569,8 @@ MonoBehaviour:
   ShootType: 1
   ProjectilePrefab: {fileID: 8924682559891268397, guid: ec753d54f333bb944b8b04884ad63828,
     type: 3}
-  DelayBetweenShots: 0.4
-  BulletSpreadAngle: 0
+  DelayBetweenShots: 0.5
+  BulletSpreadAngle: 0.2
   BulletsPerShot: 1
   RecoilForce: 1
   AimZoomRatio: 1
@@ -1182,18 +1182,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MinReactionTime: 0
-  MaxReactionTime: 0.75
+  MaxReactionTime: 0.5
   ViewAngle: 150
   DetectionRange: 9999
   CloseDetectionRange: 15
   PeripheralAlertRange: 6
-  AttackRange: 15
+  AttackRange: 30
   DetectionSourcePoint: {fileID: 383052773966006021}
   ObstructionLayers:
     serializedVersion: 2
     m_Bits: 8768
-  KnownTargetTimeout: 1
-  missMaxRange: 30
+  KnownTargetTimeout: 1.5
+  missMaxRange: 50
   Animator: {fileID: 0}
   KnownDetectedTarget: {fileID: 0}
   KnownDetectedActor: {fileID: 0}

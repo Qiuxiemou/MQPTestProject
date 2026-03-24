@@ -27,7 +27,7 @@ public static class RoundConfigLoader
             // Expect: id | player | latency | timewarp
             var tokens = line.Split('|');
 
-            if (tokens.Length != 4)
+            if (tokens.Length != 6)
             {
                 Debug.LogError($"[RoundConfigLoader] Invalid line: {line}");
                 continue;
@@ -40,7 +40,9 @@ public static class RoundConfigLoader
                     id = int.Parse(tokens[0].Trim()),
                     bot = Enum.Parse<BotRole>(tokens[1].Trim(), true),
                     latencyMs = int.Parse(tokens[2].Trim()),
-                    timewarp = Enum.Parse<TimewarpMode>(tokens[3].Trim(), true)
+                    timewarp = Enum.Parse<TimewarpMode>(tokens[3].Trim(), true),
+                    speed = float.Parse(tokens[4].Trim()),
+                    weapon = tokens[5].Trim().ToLower()
                 };
 
                 conditions.Add(condition);

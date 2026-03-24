@@ -1,33 +1,38 @@
-# id | bot | latency(ms) | timewarp
+# id | bot | latency(ms) | timewarp | speed | weapon
 
-1  | Seeker | 0   | None
-2  | Seeker | 50  | None
-3  | Seeker | 100 | None
-4  | Seeker | 150 | None
-5  | Seeker | 200 | None
+1  | Seeker | 0   | None | 8 | rifle
+2  | Seeker | 30  | None | 8 | rifle
+3  | Seeker | 70  | None | 8 | rifle
+4  | Seeker | 150 | None | 8 | rifle
 
-6  | Hider  | 0   | None
-7  | Hider  | 50  | None
-8  | Hider  | 100 | None
-9  | Hider  | 150 | None
-10 | Hider  | 200 | None
+5  | Hider  | 0   | None | 8 | rifle
+6  | Hider  | 30  | None | 8 | rifle
+7  | Hider  | 70  | None | 8 | rifle
+8  | Hider  | 150 | None | 8 | rifle
 
-11 | Seeker | 50  | Normal
-12 | Seeker | 100 | Normal
-13 | Seeker | 150 | Normal
-14 | Seeker | 200 | Normal
+9  | Seeker | 30  | Normal | 8 | rifle
+10 | Seeker | 70  | Normal | 8 | rifle
+11 | Seeker | 150 | Normal | 8 | rifle
 
-15 | Hider  | 50  | Normal
-16 | Hider  | 100 | Normal
-17 | Hider  | 150 | Normal
-18 | Hider  | 200 | Normal
+12 | Hider  | 30  | Normal | 8 | rifle
+13 | Hider  | 70  | Normal | 8 | rifle
+14 | Hider  | 150 | Normal | 8 | rifle
 
-19 | Seeker | 50  | Conditional
-20 | Seeker | 100 | Conditional
-21 | Seeker | 150 | Conditional
-22 | Seeker | 200 | Conditional
+15 | Seeker | 30  | Conditional | 8 | rifle
+16 | Seeker | 70  | Conditional | 8 | rifle
+17 | Seeker | 150 | Conditional | 8 | rifle
 
-23 | Hider  | 50  | Conditional
-24 | Hider  | 100 | Conditional
-25 | Hider  | 150 | Conditional
-26 | Hider  | 200 | Conditional
+18 | Hider  | 30  | Conditional | 8 | rifle
+19 | Hider  | 70  | Conditional | 8 | rifle
+20 | Hider  | 150 | Conditional | 8 | rifle
+
+# Speed
+21 | Seeker | 150 | Normal | 4 | rifle
+22 | Hider  | 150 | Normal | 4 | rifle
+
+23 | Seeker | 150 | Normal | 16 | rifle
+24 | Hider  | 150 | Normal | 16 | rifle
+
+# Weapon
+25 | Seeker | 150 | Normal | 8 | smg
+26 | Seeker | 150 | None   | 8 | smg 

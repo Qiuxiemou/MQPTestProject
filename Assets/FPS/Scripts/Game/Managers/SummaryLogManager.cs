@@ -67,7 +67,7 @@ public class SummaryLogManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         sessionId = System.DateTime.Now.ToString("yyyyMMdd_HHmmss");
-        EventManager.AddListener<FireShotEvent>(OnFireShot);
+        //EventManager.AddListener<FireShotEvent>(OnFireShot);
         EventManager.AddListener<HitEvent>(OnHit);
     }
 
@@ -109,25 +109,49 @@ public class SummaryLogManager : MonoBehaviour
         _speed = speed;
         _weaponIndex = weaponIndex;
     }
-    void OnFireShot(FireShotEvent e)
-    {
-        if (e.ShooterId == "Player") totalShots++;
-    }
+    //void OnFireShot(FireShotEvent e)
+    //{
+    //    if (e.ShooterId == "Player") totalShots++;
+    //}
     void OnHit(HitEvent e)
     {
+        totalShots++;
+
         if (e.ShooterId == "Player")
         {
-            totalHits++;
-
-            float now = Time.time;
-
-            if (lastHitTime > 0f)
+            if (e.TargetId == "Enemy_PastBot_Hider(Clone)" ||  e.TargetId == "EnemyHider(Clone)")
             {
-                totalTimeToHit += (now - lastHitTime);
-                //hitCountForTTH++;
+                totalHits++;
+
+                float now = Time.time;
+
+                if (lastHitTime > 0f)
+                {
+                    totalTimeToHit += (now - lastHitTime);
+                    //hitCountForTTH++;
+                }
+
+                lastHitTime = now;
+            }
+            
+        } else
+        {
+            if (e.TargetId == "AimPoint")
+            {
+                totalHits++;
+
+                float now = Time.time;
+
+                if (lastHitTime > 0f)
+                {
+                    totalTimeToHit += (now - lastHitTime);
+                    //hitCountForTTH++;
+                }
+
+                lastHitTime = now;
+
             }
 
-            lastHitTime = now;
         }
 
         if (e.TargetId == "Player")

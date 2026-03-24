@@ -49,6 +49,8 @@ namespace Unity.FPS.UI
                     SetEnemy(enemy);
                 }
             }
+
+            EventManager.AddListener<HitEvent>(OnHit);
         }
 
         void OnEnable()
@@ -160,6 +162,19 @@ namespace Unity.FPS.UI
             // reset score each round
             score = IsSeeker ? 5000 : 1000;
             ScoreText.text = $"Score: {score}";
+        }
+
+        void OnHit(HitEvent evt)
+        {
+            if (evt.ShooterId == "Player")
+            {
+                if (evt.TargetId != "Enemy_PastBot_Hider(Clone)" && evt.TargetId != "EnemyHider(Clone)")
+                {
+                    score -= 100;
+                }
+
+
+            }
         }
     }
 }

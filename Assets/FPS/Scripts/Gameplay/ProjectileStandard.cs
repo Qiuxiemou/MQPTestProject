@@ -282,6 +282,13 @@ namespace Unity.FPS.Gameplay
                              : isPlayerHit ? "player_hit"
                              : "world_hit";
 
+            EventManager.Broadcast(new HitEvent
+            {
+                ShooterId = owner != null ? owner.name : "Unknown",
+                TargetId = ownerGO != null ? ownerGO.name : "Unknown",
+                Damage = Damage,
+            });
+
             // damage
             if (AreaOfDamage)
             {

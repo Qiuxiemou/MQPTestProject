@@ -21091,7 +21091,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -56}
-  m_SizeDelta: {x: 200, y: 50}
+  m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &875889571
 MonoBehaviour:
@@ -21147,7 +21147,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -57469,11 +57469,11 @@ MonoBehaviour:
   - {fileID: 2729281214152228942}
   - {fileID: 2729281214152228944}
   LatencyTest: 0
-  SimulatedLatencyMs: 1000
+  SimulatedLatencyMs: 150
   TimeWarpmode: 1
-  BotIsSeeker: 0
+  BotIsSeeker: 1
   TestSpeed: 10
-  TestWeapon: 1
+  TestWeapon: 0
   roundConditionFile: {fileID: 4900000, guid: d789d650bb8f0c44ba59b81dc90cb988, type: 3}
   currentRoundIndex: 0
   latinSquareFile: {fileID: 4900000, guid: a12398fb7b8b55843a8d5476ab954b25, type: 3}
@@ -64568,6 +64568,11 @@ PrefabInstance:
       propertyPath: MovementSharpnessOnGround
       value: 30
       objectReference: {fileID: 0}
+    - target: {fileID: 1403933375132323333, guid: 761cdc9e4e883334cbdcea062d0befa7,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.719
+      objectReference: {fileID: 0}
     - target: {fileID: 1643745102531713927, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}
       propertyPath: m_Layer
@@ -64606,7 +64611,7 @@ PrefabInstance:
     - target: {fileID: 3625601170703586302, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1
+      value: 1.276
       objectReference: {fileID: 0}
     - target: {fileID: 5295897402228882445, guid: 761cdc9e4e883334cbdcea062d0befa7,
         type: 3}

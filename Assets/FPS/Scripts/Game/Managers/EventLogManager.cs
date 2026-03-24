@@ -271,10 +271,10 @@ namespace Unity.FPS.Game
                 SummaryLogManager.Instance.CountShotAroundCorner();
             }
 
-            if (e.EventType == "bot_damaged")
-            {
-                SummaryLogManager.Instance.CountHits();
-            }
+            //if (e.EventType == "bot_damaged")
+            //{
+            //    SummaryLogManager.Instance.CountHits();
+            //}
         }
 
 

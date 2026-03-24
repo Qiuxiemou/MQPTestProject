@@ -543,7 +543,7 @@ public class RoundManager : MonoBehaviour
             currentRoundIndex,
             CurrentRoundID,
             CurrentLatencyMs,
-            _isSeeker ? "Seeker" : "Hider",
+            _isSeeker ? "Hider" : "Seeker",
             CurrentTimewarpMode.ToString(),
             CurrentSpeed,
             CurrentWeaponIndex
@@ -555,7 +555,7 @@ public class RoundManager : MonoBehaviour
             currentRoundIndex,
             CurrentRoundID,
             CurrentLatencyMs,
-            _isSeeker ? "Seeker" : "Hider",
+            _isSeeker ? "Hider" : "Seeker",
             CurrentTimewarpMode.ToString(),
             System.DateTime.Now.ToString("yyyyMMdd_HHmmss"),
             CurrentSpeed,

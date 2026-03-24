@@ -69,6 +69,16 @@ namespace Unity.FPS.AI
             _detectionLayerMask = LayerMask.GetMask("Player");
         }
 
+        void Update()
+        {
+            if (gameObject.layer == LayerMask.NameToLayer("Enemy"))
+            {
+                if (EventLogManager.Instance != null)
+                {
+                    EventLogManager.Instance.SetBotCanSeePlayer(IsSeeingTarget);
+                }
+            }
+        }
 
         public virtual void HandleTargetDetection(Actor selfActor, Collider[] selfColliders)
         {

@@ -35,7 +35,10 @@ namespace Unity.FPS.Game
         string _role;
         string _timewarp;
         float _speed;
-        int _weaponIndex; 
+        int _weaponIndex;
+
+
+        bool botCanSeePlayer = false;
 
         // ================= UNITY =================
         void Awake()
@@ -106,7 +109,8 @@ namespace Unity.FPS.Game
             //    "session_id,wall_ts,game_t,entity_id,entity_type,pos_x,pos_y,pos_z,yaw,pitch,roll,hp");
 
             _worldWriter = NewWriterWithHeader(_worldCsvPath,
-                "time,participantID,latinRow,round,conditionID,latency,role,timewarp" +
+                "time,participantID,latinRow,round,conditionID,latency,role,timewarp," +
+                "enemySpeed,playerSpeed,weapon,"+
                 "player_x,player_y,player_z," +
                 "cam_rot_x,cam_rot_y,cam_rot_z," +
                 "futureBot_x,futureBot_y,futureBot_z," +
@@ -484,7 +488,7 @@ namespace Unity.FPS.Game
             Vector3 futureBotForward = Vector3.zero;
             Vector3 pastBotPos = Vector3.zero;
 
-            bool botCanSeePlayer = false;
+
             bool hasFuture = false;
             bool hasPast = false;
 
@@ -534,10 +538,18 @@ namespace Unity.FPS.Game
                 $"{(hasFuture ? futureBotForward.z.ToString("F3") : "")}," +
                 $"{(hasPast ? pastBotPos.x.ToString("F3") : "")}," +
                 $"{(hasPast ? pastBotPos.y.ToString("F3") : "")}," +
-                $"{(hasPast ? pastBotPos.z.ToString("F3") : "")}"
+                $"{(hasPast ? pastBotPos.z.ToString("F3") : "")}," +
+                $"0," +
+                $"{(botCanSeePlayer ? 1 : 0)}"
             );
 
             BumpFlushCounter();
+        }
+
+        //Help Function
+        public void SetBotCanSeePlayer(bool value)
+        {
+            botCanSeePlayer = value;
         }
     }
 }

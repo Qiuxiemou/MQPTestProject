@@ -433,39 +433,9 @@ namespace Unity.FPS.Gameplay
                         HitPoint = point,
 
                         ShotAroundCorner = shotAroundCorner,
-                        //AcceptShot = true, // or your logic
-                        //HitsErrorAngle = errorAngle,
                     });
                 }
             }
-
-            //// ================= ERROR ANGLE =================
-            //float errorAngle = 0f;
-
-            //if (playerTf != null && owner != null)
-            //{
-            //    Transform botTf = null;
-
-            //    if (proxy != null && proxy.futureHealth != null)
-            //        botTf = proxy.futureHealth.transform;
-
-            //    if (botTf != null)
-            //    {
-            //        Vector3 playerPos = playerTf.position + Vector3.up * 1.5f;
-            //        Vector3 botPos = botTf.position + Vector3.up * 1.5f;
-
-            //        Vector3 toBot = (botPos - playerPos).normalized;
-
-            //        Vector3 shotDir = m_ProjectileBase != null
-            //            ? m_ProjectileBase.InitialDirection.normalized
-            //            : transform.forward;
-
-            //        errorAngle = Vector3.Angle(shotDir, toBot);
-            //    }
-            //}
-
-            // ================= BROADCAST =================
-           
 
 
             // impact vfx

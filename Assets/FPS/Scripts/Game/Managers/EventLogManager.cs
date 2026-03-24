@@ -34,6 +34,8 @@ namespace Unity.FPS.Game
         float _latency;
         string _role;
         string _timewarp;
+        float _speed;
+        int _weaponIndex; 
 
         // ================= UNITY =================
         void Awake()
@@ -90,12 +92,12 @@ namespace Unity.FPS.Game
             // ---------- Player Input ----------
             _playerInputPath = Path.Combine(root, "PlayerInput.csv");
             _playerInputWriter = NewWriterWithHeader(_playerInputPath,
-                "time,participantID,latinRow,round,conditionID,latency,role,timewarp,mouseX,mouseY,key,eventType,posX,posY,posZ,rotX,rotY,rotZ,futureBotPosX,futureBotPosY,futureBotPosZ,pastBotPosX,pastBotPosY,pastBotPosZ");
+                "time,participantID,latinRow,round,conditionID,latency,role,timewarp,enemySpeed,playerSpeed,weapon,mouseX,mouseY,key,eventType,posX,posY,posZ,rotX,rotY,rotZ,futureBotPosX,futureBotPosY,futureBotPosZ,pastBotPosX,pastBotPosY,pastBotPosZ");
 
             // ---------- Shot Event ----------
             _shotEventPath = Path.Combine(root, "ShotEvent.csv");
             _shotEventWriter = NewWriterWithHeader(_shotEventPath,
-                "time,participantID,latinRow,round,conditionID,latency,role,timewarp,eventType,shooterID,damage,hitObject,shotAroundCorner,acceptShot,score,errorAngle,"
+                "time,participantID,latinRow,round,conditionID,latency,role,timewarp,enemySpeed,playerSpeed,weapon,eventType,shooterID,damage,hitObject,shotAroundCorner,acceptShot,score,errorAngle,"
                     +"player_x,player_y,player_z,bot_x,bot_y,bot_z");
 
             // ----------World Log----------
@@ -104,7 +106,7 @@ namespace Unity.FPS.Game
             //    "session_id,wall_ts,game_t,entity_id,entity_type,pos_x,pos_y,pos_z,yaw,pitch,roll,hp");
 
             _worldWriter = NewWriterWithHeader(_worldCsvPath,
-                "time,participantID,latinRow,round,conditionID,latency,role,timewarp" +
+                "time,participantID,latinRow,round,conditionID,latency,role,timewarp,enemySpeed,playerSpeed,weapon" +
                 "player_x,player_y,player_z," +
                 "cam_rot_x,cam_rot_y,cam_rot_z," +
                 "futureBot_x,futureBot_y,futureBot_z," +
@@ -178,7 +180,7 @@ namespace Unity.FPS.Game
         static string San(string s) => string.IsNullOrEmpty(s) ? "" : s.Replace(",", "_");
 
         // ================= CONTEXT =================
-        public void SetRoundContext(int participantID, int latinRow, int roundID, int roundConditionID, float latency, string role, string timewarp)
+        public void SetRoundContext(int participantID, int latinRow, int roundID, int roundConditionID, float latency, string role, string timewarp, float speed, int weaponIndex)
         {
             _participantID = participantID;
             _latinRow = latinRow;
@@ -187,6 +189,8 @@ namespace Unity.FPS.Game
             _latency = latency;
             _role = role;
             _timewarp = timewarp;
+            _speed = speed;
+            _weaponIndex = weaponIndex;
         }
         string CustomTime()
         {
@@ -295,7 +299,7 @@ namespace Unity.FPS.Game
             if (_playerInputWriter == null) return;
 
             _playerInputWriter.WriteLine(
-                $"{CustomTime()},{_participantID},{_latinRow},{_roundID},{_roundConditionID},{_latency},{_role},{_timewarp}," +
+                $"{CustomTime()},{_participantID},{_latinRow},{_roundID},{_roundConditionID},{_latency},{_role},{_timewarp},{_speed},{_speed},{_weaponIndex}," +
                 $"0,0,{San(e.Key.ToString())},{(e.Pressed ? "down" : "up")}," +
                 $"0,0,0,0,0,0"
             );
@@ -372,7 +376,7 @@ namespace Unity.FPS.Game
             string PBZ = hasPast ? pastBotPos.z.ToString("F3") : "";
 
             _playerInputWriter.WriteLine(
-                $"{CustomTime()},{_participantID},{_latinRow},{_roundID},{_roundConditionID},{_latency},{_role},{_timewarp}," +
+                $"{CustomTime()},{_participantID},{_latinRow},{_roundID},{_roundConditionID},{_latency},{_role},{_timewarp},{_speed},{_speed},{_weaponIndex}," +
                 $"{mx:F3},{my:F3},,," +
                 $"{pos.x:F3},{pos.y:F3},{pos.z:F3}," +
                 $"{rot.x:F3},{rot.y:F3},{rot.z:F3}," +
@@ -401,7 +405,7 @@ namespace Unity.FPS.Game
             }
 
             _shotEventWriter.WriteLine(
-                $"{CustomTime()},{_participantID},{_latinRow},{_roundID},{_roundConditionID},{_latency},{_role},{_timewarp}," +
+                $"{CustomTime()},{_participantID},{_latinRow},{_roundID},{_roundConditionID},{_latency},{_role},{_timewarp},{_speed},{_speed},{_weaponIndex}," +
                 $"{eventType},{San(shooterId)},{damage:F2},{San(hitObject)}," +
                 $"{(shotAroundCorner ? 1 : 0)}," +
                 $"{(acceptShot ? 1 : 0)}," +
@@ -506,7 +510,7 @@ namespace Unity.FPS.Game
 
             // ================= WRITE =================
             _worldWriter.WriteLine(
-                $"{CustomTime()},{_participantID},{_latinRow},{_roundID},{_roundConditionID},{_latency},{_role},{_timewarp}," +
+                $"{CustomTime()},{_participantID},{_latinRow},{_roundID},{_roundConditionID},{_latency},{_role},{_timewarp},{_speed},{_speed},{_weaponIndex}," +
                 $"{playerPos.x:F3},{playerPos.y:F3},{playerPos.z:F3}," +
                 $"{camRot.x:F2},{camRot.y:F2},{camRot.z:F2}," +
                 $"{(hasFuture ? futureBotPos.x.ToString("F3") : "")}," +

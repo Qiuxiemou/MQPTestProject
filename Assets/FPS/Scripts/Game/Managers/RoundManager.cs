@@ -544,7 +544,9 @@ public class RoundManager : MonoBehaviour
             CurrentRoundID,
             CurrentLatencyMs,
             _isSeeker ? "Seeker" : "Hider",
-            CurrentTimewarpMode.ToString()
+            CurrentTimewarpMode.ToString(),
+            CurrentSpeed,
+            CurrentWeaponIndex
         );
 
         SummaryLogManager.Instance.SetRoundContext(
@@ -555,7 +557,9 @@ public class RoundManager : MonoBehaviour
             CurrentLatencyMs,
             _isSeeker ? "Seeker" : "Hider",
             CurrentTimewarpMode.ToString(),
-            System.DateTime.Now.ToString("yyyyMMdd_HHmmss")
+            System.DateTime.Now.ToString("yyyyMMdd_HHmmss"),
+            CurrentSpeed,
+            CurrentWeaponIndex
         );
 
         ParticipantLogManager.Instance.SaveRoundCondition(

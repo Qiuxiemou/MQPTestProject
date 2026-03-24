@@ -570,7 +570,7 @@ MonoBehaviour:
   ProjectilePrefab: {fileID: 8924682559891268397, guid: ec753d54f333bb944b8b04884ad63828,
     type: 3}
   DelayBetweenShots: 0.5
-  BulletSpreadAngle: 0.2
+  BulletSpreadAngle: 0.8
   BulletsPerShot: 1
   RecoilForce: 1
   AimZoomRatio: 1
@@ -1183,7 +1183,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MinReactionTime: 0
   MaxReactionTime: 0.5
-  ViewAngle: 150
+  ViewAngle: 120
   DetectionRange: 9999
   CloseDetectionRange: 15
   PeripheralAlertRange: 6

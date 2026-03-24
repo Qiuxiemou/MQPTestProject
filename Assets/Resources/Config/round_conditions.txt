@@ -1,38 +1,38 @@
 # configId | bot | latency(ms) | timewarp | speed | weaponIndex
 
-1  | Seeker | 0   | None | 8 | 0
-2  | Seeker | 30  | None | 8 | 0
-3  | Seeker | 70  | None | 8 | 0
-4  | Seeker | 150 | None | 8 | 0
+1  | Seeker | 0   | None | 10 | 0
+2  | Seeker | 30  | None | 10 | 0
+3  | Seeker | 70  | None | 10 | 0
+4  | Seeker | 150 | None | 10 | 0
 
-5  | Hider  | 0   | None | 8 | 0
-6  | Hider  | 30  | None | 8 | 0
-7  | Hider  | 70  | None | 8 | 0
-8  | Hider  | 150 | None | 8 | 0
+5  | Hider  | 0   | None | 10 | 0
+6  | Hider  | 30  | None | 10 | 0
+7  | Hider  | 70  | None | 10 | 0
+8  | Hider  | 150 | None | 10 | 0
 
-9  | Seeker | 30  | Normal | 8 | 0
-10 | Seeker | 70  | Normal | 8 | 0
-11 | Seeker | 150 | Normal | 8 | 0
+9  | Seeker | 30  | Normal | 10 | 0
+10 | Seeker | 70  | Normal | 10 | 0
+11 | Seeker | 150 | Normal | 10 | 0
 
-12 | Hider  | 30  | Normal | 8 | 0
-13 | Hider  | 70  | Normal | 8 | 0
-14 | Hider  | 150 | Normal | 8 | 0
+12 | Hider  | 30  | Normal | 10 | 0
+13 | Hider  | 70  | Normal | 10 | 0
+14 | Hider  | 150 | Normal | 10 | 0
 
-15 | Seeker | 30  | Conditional | 8 | 0
-16 | Seeker | 70  | Conditional | 8 | 0
-17 | Seeker | 150 | Conditional | 8 | 0
+15 | Seeker | 30  | Conditional | 10 | 0
+16 | Seeker | 70  | Conditional | 10 | 0
+17 | Seeker | 150 | Conditional | 10 | 0
 
-18 | Hider  | 30  | Conditional | 8 | 0
-19 | Hider  | 70  | Conditional | 8 | 0
-20 | Hider  | 150 | Conditional | 8 | 0
+18 | Hider  | 30  | Conditional | 10 | 0
+19 | Hider  | 70  | Conditional | 10 | 0
+20 | Hider  | 150 | Conditional | 10 | 0
 
 # Speed
-21 | Seeker | 150 | Normal | 4 | 0
-22 | Hider  | 150 | Normal | 4 | 0
+21 | Seeker | 150 | Normal | 5 | 0
+22 | Hider  | 150 | Normal | 5 | 0
 
-23 | Seeker | 150 | Normal | 16 | 0
-24 | Hider  | 150 | Normal | 16 | 0
+23 | Seeker | 150 | Normal | 20 | 0
+24 | Hider  | 150 | Normal | 20 | 0
 
 # Weapon
-25 | Seeker | 150 | Normal | 8 | 1
-26 | Seeker | 150 | None   | 8 | 1 
+25 | Seeker | 150 | Normal | 10 | 1
+26 | Seeker | 150 | None   | 10 | 1 

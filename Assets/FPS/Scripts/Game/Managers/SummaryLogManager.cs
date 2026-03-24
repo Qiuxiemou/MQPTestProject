@@ -54,6 +54,9 @@ public class SummaryLogManager : MonoBehaviour
     float _latency;
     string _role;
     string _timewarp;
+    float _speed;
+    int _weaponIndex;
+
 
     string _time;
 
@@ -85,6 +88,7 @@ public class SummaryLogManager : MonoBehaviour
                 "startRoundTime," +
                 "participantID,latinRow,roundNumber,conditionID,latency,role,timewarp," +
                 "enemySpeed,playerSpeed," +
+                "weaponIndex,"+
                 "totalShots,totalHits,errorAngle,accuracy,cornerShots,ttkAvg,score," +
                 "playerDist,botDist,mouseMove," +
                 "surveyQ1,surveyQ2" +
@@ -92,7 +96,7 @@ public class SummaryLogManager : MonoBehaviour
             );
         }
     }
-    public void SetRoundContext(int participantID, int latinRow, int roundID, int roundConditionID, float latency, string role, string timewarp, string time)
+    public void SetRoundContext(int participantID, int latinRow, int roundID, int roundConditionID, float latency, string role, string timewarp, string time, float speed, int weaponIndex)
     {
         _participantID = participantID;
         _latinRow = latinRow;
@@ -102,6 +106,8 @@ public class SummaryLogManager : MonoBehaviour
         _role = role;
         _timewarp = timewarp;
         _time = time;
+        _speed = speed;
+        _weaponIndex = weaponIndex;
     }
     void OnFireShot(FireShotEvent e)
     {
@@ -175,6 +181,7 @@ public class SummaryLogManager : MonoBehaviour
             //$"{Time.realtimeSinceStartup},{System.DateTime.Now:o}," +
             $"{_latency},{_role},{_timewarp}," +
             $"{enemySpeed},{playerSpeed}," +
+            $"{_weaponIndex}," +
             $"{totalShots},{totalHits},{errorAngle},{acc},{cornerShots},{avgTTK},{score}," +
             $"{playerDist},{botDist},{mouseMove}," +
             $"{surveyQ1},{surveyQ2}";

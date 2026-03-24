@@ -111,17 +111,17 @@ namespace Unity.FPS.UI
 
         void OnDamaged(float damage, GameObject damageSource)
         {
-            if (damageSource != null)
-            {
-                if (IsSeeker)
-                {
-                    score += 50;
-                }
-                else
-                {
-                    score -= 50;
-                }
-            }
+            //if (damageSource != null)
+            //{
+            //    if (IsSeeker)
+            //    {
+            //        score -= 1000;
+            //    }
+            //    else
+            //    {
+            //        score += 1000;
+            //    }
+            //}
         }
 
         public void SetEnemy(GameObject enemy)
@@ -138,7 +138,16 @@ namespace Unity.FPS.UI
             IsSeeker = RoundManager.Instance.IsSeeker;
 
             // Reset score once per round
-            score = IsSeeker ? 1000 : 4000;
+            //score = IsSeeker ? 1000 : 4000;
+
+            if (IsSeeker)
+            {
+                score -= 500;
+            }
+            else
+            {
+                score += 1000;
+            }
 
             ScoreText.text = $"Score: {score}";
         }
@@ -149,7 +158,7 @@ namespace Unity.FPS.UI
             IsSeeker = seeker;
 
             // reset score each round
-            score = IsSeeker ? 1000 : 4000;
+            score = IsSeeker ? 5000 : 1000;
             ScoreText.text = $"Score: {score}";
         }
     }

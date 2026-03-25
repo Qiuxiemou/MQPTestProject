@@ -82,6 +82,7 @@ namespace Unity.FPS.Game
         public string ShooterId;   // Who fired
         public string TargetId;    // Who got hit
         public float Damage;       // Damage dealt
+        public string EventType;
     }
 
 

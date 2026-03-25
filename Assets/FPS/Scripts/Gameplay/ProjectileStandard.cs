@@ -278,7 +278,7 @@ namespace Unity.FPS.Gameplay
             bool isBotHit = proxy != null;
             bool isPlayerHit = collider.CompareTag("Player") || collider.CompareTag(AimPointHitboxTag);
 
-            string eventType = isBotHit ? "bot_hit"
+            string eventType = isBotHit ? "bot_damaged"
                              : isPlayerHit ? "player_hit"
                              : "world_hit";
 
@@ -287,6 +287,7 @@ namespace Unity.FPS.Gameplay
                 ShooterId = owner != null ? owner.name : "Unknown",
                 TargetId = ownerGO != null ? ownerGO.name : "Unknown",
                 Damage = Damage,
+                EventType = eventType
             });
 
             // damage

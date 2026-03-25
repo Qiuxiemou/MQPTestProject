@@ -11,8 +11,8 @@ public class SummaryLogManager : MonoBehaviour
     string summaryPath;
     string sessionId;
 
-    int totalShots = 0;
-    int totalHits = 0;
+    int _totalShots = 0;
+    int _totalHits = 0;
 
     int delayedBotHits = 0;
     int damageDealt = 0;
@@ -36,7 +36,7 @@ public class SummaryLogManager : MonoBehaviour
     float totalMouseMovement = 0f;
 
     // ===== CORNER =====
-    int cornerShots = 0;
+    int _cornerShots = 0;
 
     // ===== TIME =====
     float roundStartTime;
@@ -115,13 +115,13 @@ public class SummaryLogManager : MonoBehaviour
     //}
     void OnHit(HitEvent e)
     {
-        totalShots++;
+        _totalShots++;
 
-        if (e.ShooterId == "Player")
+        if (e.ShooterId == "Player" && e.EventType == "bot_damaged")
         {
             if (e.TargetId == "Enemy_PastBot_Hider(Clone)" ||  e.TargetId == "EnemyHider(Clone)")
             {
-                totalHits++;
+                _totalHits++;
 
                 float now = Time.time;
 
@@ -134,11 +134,11 @@ public class SummaryLogManager : MonoBehaviour
                 lastHitTime = now;
             }
             
-        } else
+        } else if (e.ShooterId == "EnemySeeker(Clone)" && e.EventType == "player_hit")
         {
-            if (e.TargetId == "AimPoint")
+            if (e.TargetId == "Player")
             {
-                totalHits++;
+                _totalHits++;
 
                 float now = Time.time;
 
@@ -180,8 +180,8 @@ public class SummaryLogManager : MonoBehaviour
         //int totalHits,
         float errorAngle,
         //float accuracy,
-        int cornerShots,
-        float ttk,
+        //int cornerShots,
+        //float ttk,
         //float tth, // Remove this
         //float q1,
         //float q2,
@@ -192,7 +192,7 @@ public class SummaryLogManager : MonoBehaviour
     {
         //float acc = this.totalShots > 0? (float)this.totalHits / this.totalShots * 100f : 0f;
 
-        float acc = totalShots > 0 ? (float)totalHits / totalShots * 100f : 0f;
+        float acc = _totalShots > 0 ? (float)_totalHits / _totalShots * 100f : 0f;
 
         float avgPlayerSpeed = speedSamples > 0 ? totalPlayerSpeed / speedSamples : 0f;
         float avgBotSpeed = speedSamples > 0 ? totalBotSpeed / speedSamples : 0f;
@@ -206,15 +206,16 @@ public class SummaryLogManager : MonoBehaviour
             $"{_latency},{_role},{_timewarp}," +
             $"{enemySpeed},{playerSpeed}," +
             $"{_weaponIndex}," +
-            $"{totalShots},{totalHits},{errorAngle},{acc},{cornerShots},{avgTTK},{score}," +
+            $"{_totalShots},{_totalHits},{errorAngle},{acc},{_cornerShots},{avgTTK},{score}," +
             $"{playerDist},{botDist},{mouseMove}," +
             $"{surveyQ1},{surveyQ2}";
 
         File.AppendAllText(summaryPath, line + "\n", Encoding.UTF8);
 
         // reset for next round
-        totalShots = 0;
-        totalHits = 0;
+        _totalShots = 0;
+        _totalHits = 0;
+        _cornerShots = 0;
         delayedBotHits = 0;
         damageDealt = 0;
         damageReceived = 0;
@@ -238,7 +239,7 @@ public class SummaryLogManager : MonoBehaviour
 
         totalMouseMovement = 0f;
 
-        cornerShots = 0;
+        _cornerShots = 0;
 
         lastHitTime = -1f;
         totalTimeToHit = 0f;
@@ -277,8 +278,8 @@ public class SummaryLogManager : MonoBehaviour
     public float GetBotDistance() { return botDistance;}
     public void AddMouseMovement(float mx, float my) { totalMouseMovement += Mathf.Abs(mx) + Mathf.Abs(my); }
     public float GetMouseMovement() { return totalMouseMovement; }
-    public void CountShotAroundCorner() { cornerShots++; }
-    public void CountHits() { totalHits++; }
+    public void CountShotAroundCorner() { _cornerShots++; }
+    public void CountHits() { _totalHits++; }
     public void OnKilled()
     {
         float ttk = Time.time - roundStartTime;

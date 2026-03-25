@@ -1183,8 +1183,8 @@ public class RoundManager : MonoBehaviour
                //GameStatsLogManager.Instance.TotalHits,
             0, // error angle
                //GameStatsLogManager.Instance.Accuracy,
-            0, // corner shots
-            0, // ttk
+               // corner shots
+               // ttk
                //0, // tth
                //0, // q1
                //0, // q2

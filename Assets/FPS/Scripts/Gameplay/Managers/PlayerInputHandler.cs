@@ -69,9 +69,9 @@ namespace Unity.FPS.Gameplay
             m_CrouchAction.Disable();
 
             m_FireAction.Enable();
-            m_AimAction.Enable();
+            m_AimAction.Disable();
             m_ReloadAction.Enable();
-            m_NextWeaponAction.Enable();
+            m_NextWeaponAction.Disable();
 
             if (RoundManager.Instance != null)
             {
@@ -97,18 +97,18 @@ namespace Unity.FPS.Gameplay
             if (isSeeker)
             {
                 m_FireAction.Enable();
-                m_AimAction.Enable();
+                //m_AimAction.Disable();
                 m_ReloadAction.Enable();
-                m_NextWeaponAction.Enable();
+                //m_NextWeaponAction.Disable();
                 //m_JumpAction.Enable();
                 //m_SprintAction.Enable();
             }
             else
             {
                 m_FireAction.Disable();
-                m_AimAction.Disable();
+                //m_AimAction.Disable();
                 m_ReloadAction.Disable();
-                m_NextWeaponAction.Disable();
+                //m_NextWeaponAction.Disable();
                 //m_JumpAction.Disable();
                 //m_SprintAction.Disable();
             }

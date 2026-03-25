@@ -126,13 +126,14 @@ namespace Unity.FPS.Game
                 "futureBot_forward_x,futureBot_forward_y,futureBot_forward_z," +
                 "pastBot_x,pastBot_y,pastBot_z,"+
                 "playerCanSeeBot,botCanSeePlayer," +
-                "key_W,key_A,key_S,key_D,mouse0"
+                "key_W,key_A,key_S,key_D,mouse0," +
+                "botState"
             );
 
             // ---------- Other logs ----------
-            //_eventsCsvPath = Path.Combine(root, "events.csv");
-            //_viewCsvPath = Path.Combine(root, "view.csv");
-            //_statsCsvPath = Path.Combine(root, "stats.csv");
+            //_eventsCsvPath = Path.Combine(roundFolder, "events.csv");
+            //_viewCsvPath = Path.Combine(roundFolder, "view.csv");
+            //_statsCsvPath = Path.Combine(roundFolder, "stats.csv");
 
             //_eventsWriter = NewWriterWithHeader(_eventsCsvPath,
             //    "timestamp,event,shooter,target,damage,forward_delay_ms," +
@@ -555,7 +556,7 @@ namespace Unity.FPS.Game
             bool hasFuture = false;
             bool hasPast = false;
 
-          
+            string botState = "";
 
             var enemy = RoundManager.Instance?.CurrentEnemy;
 
@@ -583,7 +584,17 @@ namespace Unity.FPS.Game
                     futureBotPos = enemy.transform.position;
                     futureBotForward = enemy.transform.forward;
                     hasFuture = true;
-                    
+                }
+
+                // ================= BOT STATE (via reflection) =================
+                var aiSeek = enemy.GetComponent("AISeek") as MonoBehaviour;
+                if (aiSeek != null)
+                {
+                    var prop = aiSeek.GetType().GetProperty("AiState");
+                    if (prop != null)
+                    {
+                        botState = prop.GetValue(aiSeek).ToString();
+                    }
                 }
             }
 
@@ -610,7 +621,8 @@ namespace Unity.FPS.Game
                 $"{(hasPast ? pastBotPos.z.ToString("F3") : "")}," +
                 $"{(playerCanSeeBot ? 1 : 0)}," +
                 $"{(botCanSeePlayer ? 1 : 0)}," +
-                $"{keyW},{keyA},{keyS},{keyD},{mouse0}"
+                $"{keyW},{keyA},{keyS},{keyD},{mouse0}," +
+                $"{San(botState)}"
             );
 
             BumpFlushCounter();

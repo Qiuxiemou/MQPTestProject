@@ -61,6 +61,8 @@ public class RoundManager : MonoBehaviour
     [Header("Round Start UI")]
     public RoundStartUI roundStartUI;
 
+    public TutorialLoader tutorialLoader;
+
     bool waitingForPlayerInput = false;
 
     // ================= PLAYER =================
@@ -177,6 +179,8 @@ public class RoundManager : MonoBehaviour
 
         // Rebuild rounds list based on ID order
         rounds = new List<RoundCondition>();
+
+        tutorialLoader = findTutorialLoader();
 
         foreach (int id in orderRow)
         {
@@ -603,6 +607,9 @@ public class RoundManager : MonoBehaviour
         if (timerUI) timerUI.Hide();
         if (surveyUI) surveyUI.Hide();
 
+        tutorialLoader = findTutorialLoader();
+        Debug.Log($"[RoundManager] Found TutorialLoader: {tutorialLoader}");
+        tutorialLoader.LoadClip(_isSeeker, CurrentTimewarpMode != TimewarpMode.None);
         roundStartUI.Show(_isSeeker);
         waitingForPlayerInput = true;
 
@@ -612,6 +619,11 @@ public class RoundManager : MonoBehaviour
 
         }
 
+    }
+
+    TutorialLoader findTutorialLoader()
+    {
+        return FindObjectOfType<TutorialLoader>();
     }
 
     void ApplyCondition(RoundCondition c)
@@ -740,8 +752,6 @@ public class RoundManager : MonoBehaviour
             agent.speed = currentCondition.speed;
         }
     }
-
-
     void SpawnEnemyForCurrentRole()
     {
         // Cleanup old bots
@@ -760,6 +770,7 @@ public class RoundManager : MonoBehaviour
                 enemySpawnPoint.position,
                 enemySpawnPoint.rotation
             );
+            ApplyEnemyWeapon(_futureBot);
 
             ApplyEnemySpeed(_futureBot);
 
@@ -775,6 +786,7 @@ public class RoundManager : MonoBehaviour
                 enemySpawnPoint.position,
                 enemySpawnPoint.rotation
             );
+            ApplyEnemyWeapon(_futureBot);
 
             AssignPeekNodes(_futureBot);
 
@@ -787,6 +799,50 @@ public class RoundManager : MonoBehaviour
         }
         //if (_isSeeker)
         //    AssignPeekNodes(_currentEnemy);
+    }
+    void ApplyEnemyWeapon(GameObject enemy)
+    {
+        if (enemy == null) return;
+
+        var weapon = enemy.GetComponentInChildren<WeaponController>();
+        if (weapon == null)
+        {
+            Debug.LogWarning("No WeaponController found on enemy");
+            return;
+        }
+        var proj = weapon.ProjectilePrefab;
+        var damageField = proj.GetType().GetField("Damage");
+
+        // SMG condition
+        if (_isSeeker && CurrentWeaponIndex == 1)
+        {
+            Debug.Log("[RoundManager] Applying SMG to bot");
+
+            weapon.DelayBetweenShots = 0.04f;   // faster fire
+            weapon.BulletsPerShot = 1;
+            weapon.RecoilForce = 1;
+
+            // reduce damage via projectile
+            
+            if (proj != null)
+            {
+                if (damageField != null)
+                    damageField.SetValue(proj, 6f); // lower damage
+            }
+        }
+        else
+        {
+            Debug.Log("[RoundManager] Applying Rifle to bot");
+
+            weapon.DelayBetweenShots = 0.5f;
+            weapon.BulletsPerShot = 1;
+            weapon.RecoilForce = 1f;
+            if (proj != null)
+            {
+                if (damageField != null)
+                    damageField.SetValue(proj, 200f); // higher damage
+            }
+        }
     }
     IEnumerator BindScoreDisplayNextFrame()
     {

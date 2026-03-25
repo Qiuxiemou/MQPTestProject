@@ -1,3 +1,4 @@
+using Codice.CM.Common;
 using System.Collections.Generic;
 using TMPro;
 using Unity.FPS.AI;
@@ -76,6 +77,9 @@ namespace Unity.FPS.UI
         void FixedUpdate()
         {
             if (enemyController == null && hiderController == null)
+                return;
+
+            if (!RoundManager.Instance.RoundRunning)
                 return;
 
             bool isSeeing = false;
@@ -170,7 +174,14 @@ namespace Unity.FPS.UI
             {
                 if (evt.TargetId != "Enemy_PastBot_Hider(Clone)" && evt.TargetId != "EnemyHider(Clone)")
                 {
-                    score -= 100;
+                    if (RoundManager.Instance.CurrentWeaponIndex == 1) // SMG
+                    {
+                        score -= 3;
+                    }
+                    else
+                    {
+                        score -= 100;
+                    }
                 }
 
 

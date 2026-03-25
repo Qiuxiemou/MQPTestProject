@@ -9,6 +9,7 @@ using Unity.FPS.Game;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+
 public class RoundManager : MonoBehaviour
 {
     public static RoundManager Instance { get; private set; }
@@ -1051,12 +1052,27 @@ public class RoundManager : MonoBehaviour
 
     IEnumerator RespawnDelayRoutine()
     {
+        // Runtime lookup (no compile-time dependency on Unity.FPS.Gameplay)
+        object controllerComp = null;
+        if (player != null)
+            controllerComp = player.GetComponent("PlayerCharacterController");
+
+        Behaviour playerControllerBehaviour = controllerComp as Behaviour;
+
+        // remember previous enabled state and disable movement if possible
+        bool prevPlayerControllerEnabled = true;
+        if (playerControllerBehaviour != null)
+        {
+            prevPlayerControllerEnabled = playerControllerBehaviour.enabled;
+            playerControllerBehaviour.enabled = false;
+        }
+
         // Make player invincible during respawn delay
-        var playerHealth = player.GetComponent<Unity.FPS.Game.Health>();
+        var playerHealth = player != null ? player.GetComponent<Unity.FPS.Game.Health>() : null;
         if (playerHealth != null)
             playerHealth.Invincible = true;
 
-
+        // Optional short delay while player is disabled/invincible
         yield return new WaitForSeconds(1f);
 
         SpawnEnemyForCurrentRole();
@@ -1070,6 +1086,12 @@ public class RoundManager : MonoBehaviour
         // Restore vulnerability after new bot is spawned
         if (playerHealth != null)
             playerHealth.Invincible = false;
+
+        // Restore player movement state
+        if (playerControllerBehaviour != null)
+        {
+            playerControllerBehaviour.enabled = prevPlayerControllerEnabled;
+        }
 
         yield return null;
 

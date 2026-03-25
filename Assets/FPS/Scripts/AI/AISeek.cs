@@ -186,7 +186,7 @@ namespace Unity.FPS.AI
 
                     m_EnemyController.OrientTowards(m_EnemyController.KnownDetectedTarget.transform.position);
                     m_EnemyController.TryAtack(m_EnemyController.KnownDetectedTarget.transform.position,
-                        m_EnemyController.KnownPlayerTransform ? m_EnemyController.KnownPlayerTransform.position : m_EnemyController.KnownDetectedTarget.transform.position);
+                        m_EnemyController.KnownPlayerTransform ? m_EnemyController.KnownPlayerTransform.position + Vector3.up * 1.7f : m_EnemyController.KnownDetectedTarget.transform.position);
                     break;
                 case AIState.Search:
                     if (m_EnemyController.IsSeeingTarget && m_EnemyController.KnownDetectedTarget != null)

@@ -602,13 +602,8 @@ GameObject:
   - component: {fileID: 622254622036226582}
   - component: {fileID: 944632757919578044}
   - component: {fileID: 1714656887424855927}
-  - component: {fileID: 6034925979308823399}
-  - component: {fileID: 6953936115916315261}
   - component: {fileID: 1876690198651477575}
-  - component: {fileID: 1026666752698232880}
-  - component: {fileID: 1854807761068444290}
   - component: {fileID: 2939234730662113011}
-  - component: {fileID: 5016273369594690406}
   - component: {fileID: 2238427797873513307}
   m_Layer: 9
   m_Name: EnemyHider
@@ -722,6 +717,11 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  DamageTick: {fileID: 0}
+  DeathVFX: 1
+  DeathVfx: {fileID: 8950624839484268180, guid: 2a8f5052fe50f7b41b17149abb0f7414,
+    type: 3}
+  DeathVfxSpawnPoint: {fileID: 0}
   TimeToLostRecent: 2
   TimeToForget: 4
   LostToUnknownAfterHide: 2
@@ -794,31 +794,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Affiliation: 0
   AimPoint: {fileID: 7272483119018265237}
---- !u!114 &6034925979308823399
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5469839216697517205}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3482bc4b86c94f741b21f3fb92910310, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: fps.AI::ChaseTest
-  player: {fileID: 0}
---- !u!114 &6953936115916315261
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5469839216697517205}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 14b7698ec50c85c44a849a968dc1d57d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!82 &1876690198651477575
 AudioSource:
   m_ObjectHideFlags: 0
@@ -917,44 +892,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &1026666752698232880
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5469839216697517205}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 775feb5f419702146b7b7b7355b80a7e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  player: {fileID: 0}
-  detectionRange: 15
-  safeDistance: 50
-  lowHealthThreshold: 40
-  decisionDelay: 1
-  searchRadius: 70
-  coverOffset: 3
-  stopDistance: 0.3
-  wallMask:
-    serializedVersion: 2
-    m_Bits: 0
-  showDebugLines: 1
---- !u!114 &1854807761068444290
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5469839216697517205}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66c1f850217077c43b37480f04217885, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: fps.AI::EnemyDebugProbe
-  los: {fileID: 0}
-  agent: {fileID: 0}
 --- !u!95 &2939234730662113011
 Animator:
   serializedVersion: 7
@@ -977,28 +914,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &5016273369594690406
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5469839216697517205}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7eb46959c7a090348a649723cd057577, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: fps.AI::EnemyMovement
-  Player: {fileID: 0}
-  HidableLayers:
-    serializedVersion: 2
-    m_Bits: 1
-  LineOfSightChecker: {fileID: 0}
-  Agent: {fileID: 944632757919578044}
-  HideSensitivity: 0
-  MinPlayerDistance: 5
-  MinObstacleHeight: 1.25
-  UpdateFrequency: 0.25
 --- !u!114 &2238427797873513307
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -104,6 +104,7 @@ public class RoundManager : MonoBehaviour
     // ================ SCORE ====================
     IScoreDisplay scoreDisplay;
     public GameObject CurrentEnemy => _futureBot;
+    public GameObject PastEnemy => _pastBot;
 
     public interface IScoreDisplay
     {
@@ -292,11 +293,10 @@ public class RoundManager : MonoBehaviour
             Cursor.visible = true;
         } else
         {
-            SummaryLogManager.Instance?.UpdateMovement(player.transform, CurrentEnemy.transform);
-
-            // Check enemy speed for logging
             if (CurrentEnemy != null)
             {
+                SummaryLogManager.Instance?.UpdateMovement(player.transform, CurrentEnemy.transform);
+
                 var agent = CurrentEnemy.GetComponent<UnityEngine.AI.NavMeshAgent>();
                 if (agent != null)
                 {
@@ -606,7 +606,11 @@ public class RoundManager : MonoBehaviour
         roundStartUI.Show(_isSeeker);
         waitingForPlayerInput = true;
 
-        SummaryLogManager.Instance.StartRound(player.transform, CurrentEnemy.transform);
+        if (CurrentEnemy != null)
+        {
+            SummaryLogManager.Instance.StartRound(player.transform, CurrentEnemy.transform);
+
+        }
 
     }
 
@@ -741,9 +745,9 @@ public class RoundManager : MonoBehaviour
     void SpawnEnemyForCurrentRole()
     {
         // Cleanup old bots
-        if (_futureBot) Destroy(_futureBot);
-        if (_trueBot) Destroy(_trueBot);
-        if (_pastBot) Destroy(_pastBot);
+        if (_futureBot != null) { Destroy(_futureBot); _futureBot = null; }
+        if (_trueBot != null) { Destroy(_trueBot); _trueBot = null; }
+        if (_pastBot != null) { Destroy(_pastBot); _pastBot = null; }
 
         int randomIndex = UnityEngine.Random.Range(0, botSpawnPoints.Length);
         enemySpawnPoint = botSpawnPoints[randomIndex];
@@ -805,22 +809,16 @@ public class RoundManager : MonoBehaviour
 
         foreach (var r in root.GetComponentsInChildren<Renderer>(true))
         {
+            // Skip particle systems
+            if (r is ParticleSystemRenderer)
+                continue;
+
             r.enabled = visible;
         }
-        
+
         foreach (var p in root.GetComponentsInChildren<Projector>(true))
             p.enabled = visible;
 
-        // Disable health bar component (if exists)
-        //var healthBar = root.GetComponentInChildren<WorldspaceHealthBar>(true);
-        //if (healthBar != null)
-        //    healthBar.setHealthVisibility(visible);
-
-        //foreach (var c in root.GetComponentsInChildren<Canvas>(true))
-        //    c.enabled = visible;
-
-
-        // Disable any world-space canvases
         foreach (var c in root.GetComponentsInChildren<Canvas>(true))
             c.enabled = visible;
     }
@@ -978,27 +976,35 @@ public class RoundManager : MonoBehaviour
         health.Heal(health.MaxHealth);
     }
 
-    //void LogRoleChange()
+    //public void RespawnAfterDeath()
     //{
-    //    string role = _isSeeker ? "Seeker" : "Hider";
-    //    File.AppendAllText(
-    //        _roleLogPath,
-    //        $"{DateTime.Now:o},{CurrentRound},{TimeRemaining:F2},{role}\n"
-    //    );
-    //}
+    //    LM.write("[RoundManager] Player died -> respawning");
 
+    //    SummaryLogManager.Instance.OnKilled();
+
+    //    RespawnPlayer();
+    //    SpawnEnemyForCurrentRole();
+
+    //    // Score
+    //    StartCoroutine(BindScoreDisplayNextFrame());
+    //}
     public void RespawnAfterDeath()
     {
-        LM.write("[RoundManager] Player died -> respawning");
+        StartCoroutine(RespawnDelayRoutine());
+    }
 
-        SummaryLogManager.Instance.OnKilled();
+    IEnumerator RespawnDelayRoutine()
+    {
+        yield return new WaitForSeconds(1f); // wait 1 second
 
         RespawnPlayer();
         SpawnEnemyForCurrentRole();
 
-        // Score
+        yield return null; // wait 1 frame
+
         StartCoroutine(BindScoreDisplayNextFrame());
     }
+
 
     // ---------------- SCENE / UI ----------------
     void HandleSceneLoaded(Scene scene, LoadSceneMode mode)

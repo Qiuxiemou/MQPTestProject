@@ -103,8 +103,8 @@ namespace Unity.FPS.Game
 
             if (pastHealth != null)
             {
-                pastHealth.TakeDamage(damage, source);
                 futureHealth.TakeDamage(damage, source);
+                pastHealth.TakeDamage(damage, source);
             }
         }
 

@@ -5464,6 +5464,12 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!4 &307144306 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3891830871220087785, guid: 434141f8b2355f64281847a1c55a59d8,
+    type: 3}
+  m_PrefabInstance: {fileID: 7893789697126199855}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &312718432
 Mesh:
   m_ObjectHideFlags: 0
@@ -29906,6 +29912,11 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  DamageTick: {fileID: 0}
+  DeathVFX: 1
+  DeathVfx: {fileID: 0}
+  DeathVfxSpawnPoint: {fileID: 0}
+  PastBotTransform: {fileID: 0}
   TimeToLostRecent: 1
   TimeToForget: 3
   LostToUnknownAfterHide: 2
@@ -57469,7 +57480,7 @@ MonoBehaviour:
   - {fileID: 2729281214152228942}
   - {fileID: 2729281214152228944}
   LatencyTest: 0
-  SimulatedLatencyMs: 150
+  SimulatedLatencyMs: 1000
   TimeWarpmode: 1
   BotIsSeeker: 1
   TestSpeed: 10
@@ -60479,9 +60490,9 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 225071796314100312, guid: b121d0988953b2a42b10879cd510a295,
         type: 3}
-      propertyPath: PeekNodes.Array.size
-      value: 24
-      objectReference: {fileID: 0}
+      propertyPath: DeathVfxSpawnPoint
+      value: 
+      objectReference: {fileID: 307144306}
     - target: {fileID: 225071796314100312, guid: b121d0988953b2a42b10879cd510a295,
         type: 3}
       propertyPath: 'PeekNodes.Array.data[0]'
@@ -60602,11 +60613,6 @@ PrefabInstance:
       propertyPath: 'PeekNodes.Array.data[23]'
       value: 
       objectReference: {fileID: 598717724}
-    - target: {fileID: 622254622036226582, guid: b121d0988953b2a42b10879cd510a295,
-        type: 3}
-      propertyPath: HideFullHealthBar
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1806934879469178245, guid: b121d0988953b2a42b10879cd510a295,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -60675,21 +60681,6 @@ PrefabInstance:
     - target: {fileID: 5469839216697517205, guid: b121d0988953b2a42b10879cd510a295,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6034925979308823399, guid: b121d0988953b2a42b10879cd510a295,
-        type: 3}
-      propertyPath: player
-      value: 
-      objectReference: {fileID: 2729281214152228946}
-    - target: {fileID: 6480819256823784362, guid: b121d0988953b2a42b10879cd510a295,
-        type: 3}
-      propertyPath: MaxReactionTime
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6480819256823784362, guid: b121d0988953b2a42b10879cd510a295,
-        type: 3}
-      propertyPath: MinReactionTime
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6480819256823784362, guid: b121d0988953b2a42b10879cd510a295,

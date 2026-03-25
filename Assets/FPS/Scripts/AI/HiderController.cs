@@ -115,6 +115,27 @@ namespace Unity.FPS.AI
         public bool HadKnownTarget => DetectionModule.HadKnownTarget;
 
         public UnityAction onDamaged;
+        public UnityAction onDie;
+
+        float m_LastTimeDamaged = float.NegativeInfinity;
+        bool m_WasDamagedThisFrame;
+
+        [Header("Sounds")]
+        [Tooltip("Sound played when recieving damages")]
+        public AudioClip DamageTick;
+
+        [Tooltip("Whether enemy death should have vfx")]
+        public bool DeathVFX = true;
+
+        [Header("VFX")]
+        [Tooltip("The VFX prefab spawned when the enemy dies")]
+        public GameObject DeathVfx;
+
+        [Tooltip("The point at which the death VFX is spawned")]
+        public Transform DeathVfxSpawnPoint;
+
+        public Transform PastBotTransform;
+
 
         Health m_Health;
         Actor m_Actor;
@@ -212,6 +233,8 @@ namespace Unity.FPS.AI
             {
                 DetectionModule.HandleTargetDetection(m_Actor, m_SelfColliders);
             }
+
+            m_WasDamagedThisFrame = false;
 
 
             // Always run detection every frame
@@ -938,27 +961,44 @@ namespace Unity.FPS.AI
                 // pursue the player
                 DetectionModule.OnDamaged(damageSource);
 
-                //onDamaged?.Invoke();
+                onDamaged?.Invoke();
+                m_LastTimeDamaged = Time.time;
+
+                // play the damage tick sound
+                if (DamageTick && !m_WasDamagedThisFrame)
+                    AudioUtility.CreateSFX(DamageTick, transform.position, AudioUtility.AudioGroups.DamageTick, 0f);
+
+                m_WasDamagedThisFrame = true;
             }
 
         }
 
-        void OnDie()
+        private void OnDie()
         {
-            ////Log("OnDie: unregistering and destroying hider");
-            ///
+
+            if (DeathVFX)
+            {
+                if (RoundManager.Instance.PastEnemy != null)
+                {
+                    DeathVfxSpawnPoint = RoundManager.Instance.PastEnemy.transform;
+
+                    var vfx = Instantiate(DeathVfx, DeathVfxSpawnPoint.position, Quaternion.identity);
+                    Destroy(vfx, 5f);
+                }
+            }
+
             if (RoundManager.Instance != null)
             {
                 RoundManager.Instance.RespawnAfterDeath();
                 return;
             }
 
-            if (m_EnemyManager != null)
-            {
-                m_EnemyManager.UnregisterEnemy(null);
-            }
+            //if (m_EnemyManager != null)
+            //{
+            //    m_EnemyManager.UnregisterEnemy(null);
+            //}
 
-            
+
             //Destroy(gameObject);
         }
 

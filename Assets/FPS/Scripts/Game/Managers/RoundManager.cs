@@ -1051,12 +1051,22 @@ public class RoundManager : MonoBehaviour
 
     IEnumerator RespawnDelayRoutine()
     {
-        yield return new WaitForSeconds(1f); // wait 1 second
+        // Make player invincible during respawn delay
+        var playerHealth = player.GetComponent<Unity.FPS.Game.Health>();
+        if (playerHealth != null)
+            playerHealth.Invincible = true;
+
+
+        yield return new WaitForSeconds(1f);
 
         RespawnPlayer();
         SpawnEnemyForCurrentRole();
 
-        yield return null; // wait 1 frame
+        // Restore vulnerability after new bot is spawned
+        if (playerHealth != null)
+            playerHealth.Invincible = false;
+
+        yield return null;
 
         StartCoroutine(BindScoreDisplayNextFrame());
     }

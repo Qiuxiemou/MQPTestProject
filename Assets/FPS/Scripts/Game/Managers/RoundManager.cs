@@ -1052,6 +1052,25 @@ public class RoundManager : MonoBehaviour
 
     IEnumerator RespawnDelayRoutine()
     {
+
+        if (_futureBot != null)
+        {
+            Destroy(_futureBot);
+            _futureBot = null;
+        }
+
+        if (_trueBot != null)
+        {
+            Destroy(_trueBot);
+            _trueBot = null;
+        }
+
+        if (_pastBot != null)
+        {
+            Destroy(_pastBot);
+            _pastBot = null;
+        }
+
         // Runtime lookup (no compile-time dependency on Unity.FPS.Gameplay)
         object controllerComp = null;
         if (player != null)

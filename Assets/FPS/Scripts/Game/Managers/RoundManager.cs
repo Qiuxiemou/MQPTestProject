@@ -1124,21 +1124,16 @@ public class RoundManager : MonoBehaviour
             $"{DateTime.Now:o},{data.round},{data.lag}," +
             $"{data.hider},{data.seeker}"
         );
-        //File.WriteAllText(surveyPath, sb.ToString(), Encoding.UTF8);
-        ////// End of survey log
-
-        ////// Summary log
 
         // ---------------- Survey ----------------
         float q1 = data.lag;
         float q2 = IsSeeker
-            ? data.hider   // player is hider
-            : data.seeker; // player is seeker
+            ? data.hider
+            : data.seeker;
         SummaryLogManager.Instance.SetSurvey(q1, q2);
 
         // ---------------- Score ----------------
         int finalScore = ScoreProvider.Instance != null? ScoreProvider.Instance.GetScore() : 0;
-        //Debug.Log("ScoreProvider: " + ScoreProvider.Instance);
         Debug.Log("ScoreFinal: " + finalScore);
 
         // ---------------- Player Speed ----------------
@@ -1183,7 +1178,9 @@ public class RoundManager : MonoBehaviour
             SummaryLogManager.Instance.GetMouseMovement()  // mouse move
         );
         ////// end of Summary log
-
+        _buffer.Add(data);
+        FlushBuffer();
+        EventLogManager.Instance?.SafeFlush();
         CurrentRound += 1;
     }
 

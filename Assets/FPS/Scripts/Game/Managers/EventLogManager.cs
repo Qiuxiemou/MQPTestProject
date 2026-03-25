@@ -14,6 +14,8 @@ namespace Unity.FPS.Game
         [Header("Flush")]
         public int FlushEveryNLines = 200;
         public float FlushEverySeconds = 5f;
+        [Tooltip("When true, only flush when manually called (after survey submit)")]
+        public bool ManualFlushOnly = true;
 
         [Header("Player Vision")]
         [Tooltip("Layers that block player's line of sight to bots")]
@@ -62,7 +64,8 @@ namespace Unity.FPS.Game
 
         void Update()
         {
-            if (Time.unscaledTime >= _nextFlushTime)
+            // Auto flush only when ManualFlushOnly is off
+            if (!ManualFlushOnly && Time.unscaledTime >= _nextFlushTime)
             {
                 SafeFlush();
                 _nextFlushTime = Time.unscaledTime + FlushEverySeconds;
@@ -153,7 +156,7 @@ namespace Unity.FPS.Game
             return sw;
         }
 
-        void SafeFlush()
+        public void SafeFlush()
         {
             try { _eventsWriter?.Flush(); } catch { }
             try { _viewWriter?.Flush(); } catch { }
@@ -183,7 +186,7 @@ namespace Unity.FPS.Game
         void BumpFlushCounter()
         {
             _linesSinceFlush++;
-            if (_linesSinceFlush >= FlushEveryNLines)
+            if (!ManualFlushOnly && _linesSinceFlush >= FlushEveryNLines)
                 SafeFlush();
         }
 

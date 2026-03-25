@@ -90,7 +90,6 @@
     <Compile Include="Assets\FPS\Scripts\Game\PlayerLatency.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\IgnoreHitDetection.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\DebugUtility.cs" />
-    <Compile Include="Assets\FPS\Scripts\Game\TutorialLoader.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Shared\Health.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\TimedSelfDestruct.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\TimewarpSettings.cs" />

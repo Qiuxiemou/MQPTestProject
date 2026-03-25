@@ -61,8 +61,6 @@ public class RoundManager : MonoBehaviour
     [Header("Round Start UI")]
     public RoundStartUI roundStartUI;
 
-    public TutorialLoader tutorialLoader;
-
     bool waitingForPlayerInput = false;
 
     // ================= PLAYER =================
@@ -178,8 +176,6 @@ public class RoundManager : MonoBehaviour
 
         // Rebuild rounds list based on ID order
         rounds = new List<RoundCondition>();
-
-        tutorialLoader = findTutorialLoader();
 
         foreach (int id in orderRow)
         {
@@ -607,19 +603,11 @@ public class RoundManager : MonoBehaviour
         if (timerUI) timerUI.Hide();
         if (surveyUI) surveyUI.Hide();
 
-        tutorialLoader = findTutorialLoader();
-        Debug.Log($"[RoundManager] Found TutorialLoader: {tutorialLoader}");
-        tutorialLoader.LoadClip(_isSeeker, CurrentTimewarpMode != TimewarpMode.None);
         roundStartUI.Show(_isSeeker);
         waitingForPlayerInput = true;
 
         SummaryLogManager.Instance.StartRound(player.transform, CurrentEnemy.transform);
 
-    }
-
-    TutorialLoader findTutorialLoader()
-    {
-        return FindObjectOfType<TutorialLoader>();
     }
 
     void ApplyCondition(RoundCondition c)

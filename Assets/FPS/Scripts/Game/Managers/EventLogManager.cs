@@ -291,6 +291,11 @@ namespace Unity.FPS.Game
             // ===== SAFETY =====
             if (_shotEventWriter == null) return;
 
+            if (e.EventType == "bot_die" || e.EventType != "player_die")
+            {
+                SummaryLogManager.Instance.OnKilled();
+            }
+             
             LM.write("OnHitCsv triggered");
 
             // ===== BASIC REFERENCES =====
@@ -340,6 +345,7 @@ namespace Unity.FPS.Game
             {
                 SummaryLogManager.Instance.CountShotAroundCorner();
             }
+
 
             //if (e.EventType == "bot_damaged")
             //{

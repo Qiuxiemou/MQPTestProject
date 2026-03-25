@@ -521,9 +521,8 @@ namespace Unity.FPS.Gameplay
                         Damage = Damage,
                         HitPoint = point,
 
-                        ShotAroundCorner = shotIsAroundCorner,
-                        //AcceptShot = true, // or your logic
-                        //HitsErrorAngle = errorAngle,
+                        ShotAroundCorner = false,
+                        AcceptShot = false,
                     });
                 }
             }

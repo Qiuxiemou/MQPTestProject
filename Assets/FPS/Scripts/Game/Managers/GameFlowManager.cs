@@ -69,6 +69,11 @@ namespace Unity.FPS.Game
 
         void OnPlayerDeath(PlayerDeathEvent evt)
         {
+            EventManager.Broadcast(new HitCsvEvent
+            {
+                EventType = "player_die"
+            });
+
             // If RoundManager exists → show survey instead
             if (RoundManager.Instance != null)
             {

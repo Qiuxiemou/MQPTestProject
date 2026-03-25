@@ -122,7 +122,8 @@ namespace Unity.FPS.Game
                 "futureBot_x,futureBot_y,futureBot_z," +
                 "futureBot_forward_x,futureBot_forward_y,futureBot_forward_z," +
                 "pastBot_x,pastBot_y,pastBot_z,"+
-                "playerCanSeeBot,botCanSeePlayer"
+                "playerCanSeeBot,botCanSeePlayer," +
+                "key_W,key_A,key_S,key_D,mouse0"
             );
 
             // ---------- Other logs ----------
@@ -246,11 +247,10 @@ namespace Unity.FPS.Game
 
                 if (Physics.Raycast(origin, dir.normalized, out RaycastHit hit, dist, PlayerVisionObstructionLayers))
                 {
-                    // Check if we hit the bot itself (or its parent)
                     if (hit.collider.CompareTag("Bot"))
                     {
                         playerCanSeeBot = true;
-                        Debug.Log("Player can see bot: " + bot.name);
+                        //Debug.Log("Player can see bot: " + bot.name);
                         return;
                     }
                     // Otherwise something is blocking the view
@@ -258,7 +258,6 @@ namespace Unity.FPS.Game
                 else
                 {
                     playerCanSeeBot = true;
-                    Debug.Log("Player can see bot: " + bot.name);
                     return;
                 }
             }
@@ -568,7 +567,6 @@ namespace Unity.FPS.Game
                         futureBotPos = proxy.futureHealth.transform.position;
                         futureBotForward = enemy.transform.forward;
                         hasFuture = true;
-                       
                     }
 
                     if (proxy.pastHealth != null)
@@ -586,6 +584,13 @@ namespace Unity.FPS.Game
                 }
             }
 
+            // ================= INPUT =================
+            int keyW = Input.GetKey(KeyCode.W) ? 1 : 0;
+            int keyA = Input.GetKey(KeyCode.A) ? 1 : 0;
+            int keyS = Input.GetKey(KeyCode.S) ? 1 : 0;
+            int keyD = Input.GetKey(KeyCode.D) ? 1 : 0;
+            int mouse0 = Input.GetMouseButton(0) ? 1 : 0;
+
             // ================= WRITE =================
             _worldWriter.WriteLine(
                 $"{CustomTime()},{_participantID},{_latinRow},{_roundID},{_roundConditionID},{_latency},{_role},{_timewarp},{_speed},{_speed},{_weaponIndex}," +
@@ -601,7 +606,8 @@ namespace Unity.FPS.Game
                 $"{(hasPast ? pastBotPos.y.ToString("F3") : "")}," +
                 $"{(hasPast ? pastBotPos.z.ToString("F3") : "")}," +
                 $"{(playerCanSeeBot ? 1 : 0)}," +
-                $"{(botCanSeePlayer ? 1 : 0)}"
+                $"{(botCanSeePlayer ? 1 : 0)}," +
+                $"{keyW},{keyA},{keyS},{keyD},{mouse0}"
             );
 
             BumpFlushCounter();

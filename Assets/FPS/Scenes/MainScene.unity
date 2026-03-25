@@ -57480,6 +57480,7 @@ MonoBehaviour:
   timerUI: {fileID: 925943784}
   surveyUI: {fileID: 1298435347}
   roundStartUI: {fileID: 2111119429}
+  tutorialLoader: {fileID: 0}
   player: {fileID: 2729281214152228921}
   playerSpawnPoint: {fileID: 1880157105}
   seekerBotPrefab: {fileID: 6163822215945196408, guid: 504df3be75ea8ed449e61ed2e5877d1b,

@@ -1059,8 +1059,13 @@ public class RoundManager : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        RespawnPlayer();
         SpawnEnemyForCurrentRole();
+        ApplyTimewarpMode();
+        ConfigureEnemyShootingBehavior();
+
+        RespawnPlayer();
+        ApplyTimewarpModeForPlayer();
+        ApplyPlayerSpeed();
 
         // Restore vulnerability after new bot is spawned
         if (playerHealth != null)

@@ -63,8 +63,21 @@ public class TimerUI : MonoBehaviour
     public void ForceRefresh()
     {
         if (RoundManager.Instance == null) return;
-        latencyText.text = $"Latency: {RoundManager.Instance.CurrentLatencyMs} ms";
-        timewarpText.text = $"Timewarp: {RoundManager.Instance.CurrentTimewarpMode}";
+        latencyText.text = $"PING: {RoundManager.Instance.CurrentLatencyMs * 2}ms";
+
+        //timewarpText.text = $"Mode: {RoundManager.Instance.CurrentTimewarpMode}";
+        if (RoundManager.Instance.CurrentTimewarpMode == TimewarpMode.None && !RoundManager.Instance.IsSeeker)
+        {
+            timewarpText.text = $"LEAD YOUR SHOT";
+        }
+        else if (RoundManager.Instance.CurrentTimewarpMode != TimewarpMode.None && !RoundManager.Instance.IsSeeker)
+        {
+            timewarpText.text = $"AIM DIRECTLY AT BOT";
+        }
+        else
+        {
+            timewarpText.text = $"";
+        }
     }
 
     public void Show() { gameObject.SetActive(true); ForceRefresh(); }

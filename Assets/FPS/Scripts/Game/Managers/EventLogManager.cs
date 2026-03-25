@@ -298,24 +298,44 @@ namespace Unity.FPS.Game
              
             LM.write("OnHitCsv triggered");
 
-            // ===== BASIC REFERENCES =====
-            Transform playerTf = e.ClientTf;
-            Transform botTf = e.ServerTf;
+            // ===== GET PLAYER =====
+            Transform playerTf = GameObject.FindGameObjectWithTag("Player")?.transform;
+            Vector3 playerPos = playerTf ? playerTf.position : Vector3.zero;
 
+            // ===== GET BOT =====
+            Vector3 botPos = Vector3.zero;
+
+            var enemy = RoundManager.Instance?.CurrentEnemy;
+
+            if (_timewarp == "None")
+            {
+                enemy = RoundManager.Instance?.CurrentEnemy;
+                if (enemy != null)
+                {
+                    botPos = enemy.transform.position;
+                }
+            } else
+            {
+                enemy = RoundManager.Instance?.PastEnemy;
+                if (enemy != null)
+                {
+                    botPos = enemy.transform.position;
+                }
+            }
+
+               
             // ===== ERROR ANGLE =====
             float errorAngle = 0f;
 
-            if (playerTf != null && botTf != null)
+            if (playerTf != null)
             {
-                Vector3 playerPos = playerTf.position + Vector3.up * 1.5f;
-                Vector3 botPos = botTf.position + Vector3.up * 1.5f;
-
                 Vector3 toBot = (botPos - playerPos).normalized;
 
                 Camera cam = playerTf.GetComponentInChildren<Camera>();
                 Vector3 forward = cam ? cam.transform.forward : playerTf.forward;
 
-                errorAngle = Vector3.Angle(forward, toBot);
+                errorAngle = e.EventType != "bot_damaged" && e.EventType != "bot_die" ? Vector3.Angle(forward, toBot) : 0f;
+                Debug.Log("error " + errorAngle);
             }
 
             // ===== SCORE (placeholder for now) =====

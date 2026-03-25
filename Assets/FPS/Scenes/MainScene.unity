@@ -57640,10 +57640,10 @@ MonoBehaviour:
   - {fileID: 2729281214152228945}
   - {fileID: 2729281214152228942}
   - {fileID: 2729281214152228944}
-  LatencyTest: 0
+  LatencyTest: 1
   SimulatedLatencyMs: 200
   TimeWarpmode: 1
-  BotIsSeeker: 1
+  BotIsSeeker: 0
   TestSpeed: 8
   TestWeapon: 0
   roundConditionFile: {fileID: 4900000, guid: d789d650bb8f0c44ba59b81dc90cb988, type: 3}

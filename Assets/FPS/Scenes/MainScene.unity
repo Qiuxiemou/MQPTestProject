@@ -5053,9 +5053,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 185f3b8b68161854988398a63204224d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: fps.Game::TutorialLoader
-  tutorial1: {fileID: 32900000, guid: 11acfdeb99fdfb34cabd0d027804e282, type: 3}
-  tutorial2: {fileID: 32900000, guid: 17a18261cc6c1c04daaf90765e5171ec, type: 3}
-  nullclip: {fileID: 0}
+  tutorial1: {fileID: 32900000, guid: 4501b65ab6e958b448363d23aa4ba2f7, type: 3}
+  tutorial2: {fileID: 32900000, guid: 8f43b4ed08283f547a9d7a634b9d1a89, type: 3}
+  nullclip: {fileID: 32900000, guid: ac7e6198302172b4aa5c2bdf63e876cb, type: 3}
   videoPlayer: {fileID: 266883853}
   renderTexture: {fileID: 8400000, guid: ee9496262e171d14fa17e684d1ab2b70, type: 2}
 --- !u!328 &266883853
@@ -5066,7 +5066,7 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 266883850}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 11acfdeb99fdfb34cabd0d027804e282, type: 3}
+  m_VideoClip: {fileID: 32900000, guid: 4501b65ab6e958b448363d23aa4ba2f7, type: 3}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}
@@ -57642,8 +57642,8 @@ MonoBehaviour:
   - {fileID: 2729281214152228944}
   LatencyTest: 1
   SimulatedLatencyMs: 200
-  TimeWarpmode: 1
-  BotIsSeeker: 0
+  TimeWarpmode: 0
+  BotIsSeeker: 1
   TestSpeed: 8
   TestWeapon: 0
   roundConditionFile: {fileID: 4900000, guid: d789d650bb8f0c44ba59b81dc90cb988, type: 3}

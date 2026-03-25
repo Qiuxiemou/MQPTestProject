@@ -15,6 +15,10 @@ namespace Unity.FPS.Game
         public int FlushEveryNLines = 200;
         public float FlushEverySeconds = 5f;
 
+        [Header("Player Vision")]
+        [Tooltip("Layers that block player's line of sight to bots")]
+        public LayerMask PlayerVisionObstructionLayers;
+
         // ================= FILE PATHS =================
         string _eventsCsvPath, _viewCsvPath, _worldCsvPath, _statsCsvPath;
         string _playerInputPath, _shotEventPath;
@@ -39,6 +43,7 @@ namespace Unity.FPS.Game
 
 
         bool botCanSeePlayer = false;
+        bool playerCanSeeBot = false;
 
         // ================= UNITY =================
         void Awake()
@@ -65,6 +70,7 @@ namespace Unity.FPS.Game
 
             if (RoundManager.Instance != null && RoundManager.Instance.RoundRunning)
             {
+                UpdatePlayerCanSeeBot();
                 LogWorldState();
             }
         }
@@ -201,6 +207,61 @@ namespace Unity.FPS.Game
         string CustomTime()
         {
             return System.DateTime.Now.ToString("yy:MM:dd:HH:mm:ss:fff");
+        }
+
+        // ================= PLAYER VISION =================
+        void UpdatePlayerCanSeeBot()
+        {
+            playerCanSeeBot = false;
+
+            // Get player camera
+            Transform playerTf = GameObject.FindGameObjectWithTag("Player")?.transform;
+            if (playerTf == null) return;
+
+            Camera cam = playerTf.GetComponentInChildren<Camera>();
+            if (cam == null) return;
+
+            // Find all bots with tag "Bot"
+            GameObject[] bots = GameObject.FindGameObjectsWithTag("Bot");
+
+            foreach (GameObject bot in bots)
+            {
+                if (bot == null) continue;
+
+                Vector3 botCenter = bot.transform.position + Vector3.up * 1.0f;
+
+                // Check if bot is within camera viewport
+                Vector3 viewportPoint = cam.WorldToViewportPoint(botCenter);
+
+                // Must be in front of camera and within screen bounds
+                if (viewportPoint.z <= 0f ||
+                    viewportPoint.x < 0f || viewportPoint.x > 1f ||
+                    viewportPoint.y < 0f || viewportPoint.y > 1f)
+                    continue;
+
+                // Raycast from camera to bot to check for obstructions
+                Vector3 origin = cam.transform.position;
+                Vector3 dir = botCenter - origin;
+                float dist = dir.magnitude;
+
+                if (Physics.Raycast(origin, dir.normalized, out RaycastHit hit, dist, PlayerVisionObstructionLayers))
+                {
+                    // Check if we hit the bot itself (or its parent)
+                    if (hit.collider.CompareTag("Bot"))
+                    {
+                        playerCanSeeBot = true;
+                        Debug.Log("Player can see bot: " + bot.name);
+                        return;
+                    }
+                    // Otherwise something is blocking the view
+                }
+                else
+                {
+                    playerCanSeeBot = true;
+                    Debug.Log("Player can see bot: " + bot.name);
+                    return;
+                }
+            }
         }
 
         // ================= EVENTS =================
@@ -539,7 +600,7 @@ namespace Unity.FPS.Game
                 $"{(hasPast ? pastBotPos.x.ToString("F3") : "")}," +
                 $"{(hasPast ? pastBotPos.y.ToString("F3") : "")}," +
                 $"{(hasPast ? pastBotPos.z.ToString("F3") : "")}," +
-                $"0," +
+                $"{(playerCanSeeBot ? 1 : 0)}," +
                 $"{(botCanSeePlayer ? 1 : 0)}"
             );
 

@@ -57635,17 +57635,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c7747893f578244ebf571f0db1588b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: fps.Game::RoundManager
-  roundLengthSeconds: 55
+  roundLengthSeconds: 20
   disableWhilePaused:
   - {fileID: 2729281214152228945}
   - {fileID: 2729281214152228942}
   - {fileID: 2729281214152228944}
-  LatencyTest: 1
+  LatencyTest: 0
   SimulatedLatencyMs: 200
-  TimeWarpmode: 0
+  TimeWarpmode: 1
   BotIsSeeker: 1
   TestSpeed: 8
-  TestWeapon: 0
+  TestWeapon: 1
   roundConditionFile: {fileID: 4900000, guid: d789d650bb8f0c44ba59b81dc90cb988, type: 3}
   currentRoundIndex: 0
   latinSquareFile: {fileID: 4900000, guid: a12398fb7b8b55843a8d5476ab954b25, type: 3}
@@ -66804,7 +66804,7 @@ PrefabInstance:
     - target: {fileID: 8826354702754706539, guid: c996b53e9f849234393d1e90f68d1679,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9070484638528544996, guid: c996b53e9f849234393d1e90f68d1679,
         type: 3}

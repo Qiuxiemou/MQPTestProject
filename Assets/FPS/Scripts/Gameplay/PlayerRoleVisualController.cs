@@ -94,7 +94,7 @@ public class PlayerRoleVisualController : MonoBehaviour
     void ApplyUI(bool isSeeker)
     {
         if (crosshair) crosshair.SetActive(isSeeker);
-        if (weaponHUDManager) weaponHUDManager.SetActive(isSeeker);
+        //if (weaponHUDManager) weaponHUDManager.SetActive(isSeeker);
 
         if (firstPersonSocket) firstPersonSocket.SetActive(isSeeker);
         if (weaponCamera) weaponCamera.SetActive(isSeeker);

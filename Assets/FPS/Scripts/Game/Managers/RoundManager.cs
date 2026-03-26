@@ -474,9 +474,17 @@ public class RoundManager : MonoBehaviour
         {
             case TimewarpMode.None:
                 // No timewarp: shoot at current position (no prediction)
-                SetField(type, enemyController, "UseBlendAim", true);
-                SetField(type, enemyController, "BlendToFuture", 0.6f);
-                SetField(type, enemyController, "BlendRadius", 0.15f);
+                if (CurrentLatencyMs == 0 ) {
+                    SetField(type, enemyController, "UseBlendAim", true);
+                    SetField(type, enemyController, "BlendToFuture", 0.1f);
+                    SetField(type, enemyController, "BlendRadius", 0.15f);
+                } else
+                {
+                    SetField(type, enemyController, "UseBlendAim", true);
+                    SetField(type, enemyController, "BlendToFuture", 0.6f);
+                    SetField(type, enemyController, "BlendRadius", 0.15f);
+                }
+                    
                 //Debug.Log("[RoundManager] Enemy shooting: No prediction (Mode: None)");
                 break;
 

@@ -57641,11 +57641,11 @@ MonoBehaviour:
   - {fileID: 2729281214152228942}
   - {fileID: 2729281214152228944}
   LatencyTest: 0
-  SimulatedLatencyMs: 100
+  SimulatedLatencyMs: 0
   TimeWarpmode: 0
   BotIsSeeker: 1
   TestSpeed: 8
-  TestWeapon: 1
+  TestWeapon: 0
   roundConditionFile: {fileID: 4900000, guid: d789d650bb8f0c44ba59b81dc90cb988, type: 3}
   currentRoundIndex: 0
   latinSquareFile: {fileID: 4900000, guid: a12398fb7b8b55843a8d5476ab954b25, type: 3}

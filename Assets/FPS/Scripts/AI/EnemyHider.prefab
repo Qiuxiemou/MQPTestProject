@@ -722,6 +722,7 @@ MonoBehaviour:
   DeathVfx: {fileID: 8950624839484268180, guid: 2a8f5052fe50f7b41b17149abb0f7414,
     type: 3}
   DeathVfxSpawnPoint: {fileID: 0}
+  PastBotTransform: {fileID: 0}
   TimeToLostRecent: 2
   TimeToForget: 4
   LostToUnknownAfterHide: 2
@@ -1009,9 +1010,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MinReactionTime: 0
   MaxReactionTime: 0
-  ViewAngle: 150
+  ViewAngle: 180
   DetectionRange: 9999
-  CloseDetectionRange: 15
+  CloseDetectionRange: 30
   PeripheralAlertRange: 6
   AttackRange: 30
   DetectionSourcePoint: {fileID: 2553834914728479853}

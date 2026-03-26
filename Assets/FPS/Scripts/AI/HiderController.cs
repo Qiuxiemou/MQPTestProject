@@ -491,9 +491,23 @@ namespace Unity.FPS.AI
             for (int i = 0; i < peekJiggleCount; i++)
             {
 
-                Vector3 toLastSeen = _lastKnownPlayerPos - transform.position;
-                Vector3 lookDir = toLastSeen.normalized;
+                //Vector3 toLastSeen = _lastKnownPlayerPos - transform.position;
+                //Vector3 lookDir = toLastSeen.normalized;
+                //Quaternion targetRot = Quaternion.LookRotation(lookDir);
+                //transform.rotation = Quaternion.Slerp(
+                //    transform.rotation,
+                //    targetRot,
+                //    Time.deltaTime * OrientationSpeed);
+
+                Vector3 centerMap = new Vector3(54f, 2f, 17f);
+
+                Vector3 lookDir = centerMap - transform.position;
+
+                // Prevent looking up/down
+                lookDir.y = 0f;
+
                 Quaternion targetRot = Quaternion.LookRotation(lookDir);
+
                 transform.rotation = Quaternion.Slerp(
                     transform.rotation,
                     targetRot,
@@ -662,10 +676,24 @@ namespace Unity.FPS.AI
                 timer += Time.deltaTime;
 
                 // Ping-pong between left and right
-                float t = Mathf.PingPong(timer, IdleScanDuration) / IdleScanDuration;
-                Vector3 lookDir = Vector3.Slerp(leftDir, rightDir, t);
+                //float t = Mathf.PingPong(timer, IdleScanDuration) / IdleScanDuration;
+                //Vector3 lookDir = Vector3.Slerp(leftDir, rightDir, t);
+
+                //Quaternion targetRot = Quaternion.LookRotation(lookDir);
+                //transform.rotation = Quaternion.Slerp(
+                //    transform.rotation,
+                //    targetRot,
+                //    Time.deltaTime * OrientationSpeed);
+
+                Vector3 centerMap = new Vector3(54f, 2f, 17f);
+
+                Vector3 lookDir = centerMap - transform.position;
+
+                // Prevent looking up/down
+                lookDir.y = 0f;
 
                 Quaternion targetRot = Quaternion.LookRotation(lookDir);
+
                 transform.rotation = Quaternion.Slerp(
                     transform.rotation,
                     targetRot,

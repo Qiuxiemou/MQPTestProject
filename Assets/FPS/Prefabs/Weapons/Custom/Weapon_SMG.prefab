@@ -192,7 +192,7 @@ MonoBehaviour:
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
   OverheatingMaterial: {fileID: 2100000, guid: bbfadc30c17002448a215c8857fefa7a, type: 2}
-  CoolingCellsSound: {fileID: 8300000, guid: 93331a7c9fe98494a84f18effb358899, type: 3}
+  CoolingCellsSound: {fileID: 0}
   AmmoToVolumeRatioCurve:
     serializedVersion: 2
     m_Curve:

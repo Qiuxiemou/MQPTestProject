@@ -37,6 +37,7 @@ public class TutorialLoader : MonoBehaviour
         }
 
         videoPlayer.Stop();
+        videoPlayer.SetDirectAudioMute(0, true);
         videoPlayer.Play();
         Debug.Log(videoPlayer.isPlaying);
         return result;

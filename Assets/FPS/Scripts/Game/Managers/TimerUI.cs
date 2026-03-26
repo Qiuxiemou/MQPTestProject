@@ -20,9 +20,9 @@ public class TimerUI : MonoBehaviour
         {
             RoundManager.Instance.OnTimerTick += HandleTick;
 
-            RoundManager.Instance.OnBotRoleChanged += UpdateRoundInfo;
+            //RoundManager.Instance.OnBotRoleChanged += UpdateRoundInfo;
 
-            UpdateRoundInfo(RoundManager.Instance.IsSeeker);
+            //UpdateRoundInfo(RoundManager.Instance.IsSeeker);
         }
     }
 
@@ -31,7 +31,7 @@ public class TimerUI : MonoBehaviour
         if (RoundManager.Instance != null)
         {
             RoundManager.Instance.OnTimerTick -= HandleTick;
-            RoundManager.Instance.OnBotRoleChanged -= UpdateRoundInfo;
+            //RoundManager.Instance.OnBotRoleChanged -= UpdateRoundInfo;
         }
     }
 
@@ -62,12 +62,12 @@ public class TimerUI : MonoBehaviour
 
     public void ForceRefresh()
     {
-        if (RoundManager.Instance == null) return;
-        latencyText.text = $"PING: {RoundManager.Instance.CurrentLatencyMs * 2}ms";
+        if (RoundManager.Instance == null) return;        
 
         //timewarpText.text = $"Mode: {RoundManager.Instance.CurrentTimewarpMode}";
         if (RoundManager.Instance.CurrentTimewarpMode == TimewarpMode.None && !RoundManager.Instance.IsSeeker)
         {
+            latencyText.text = $"PING: {RoundManager.Instance.CurrentLatencyMs * 2}ms";
             timewarpText.text = $"LEAD YOUR SHOT";
         }
         else if (RoundManager.Instance.CurrentTimewarpMode != TimewarpMode.None && !RoundManager.Instance.IsSeeker)
@@ -77,6 +77,7 @@ public class TimerUI : MonoBehaviour
         else
         {
             timewarpText.text = $"";
+            latencyText.text = $"";
         }
     }
 

@@ -4953,7 +4953,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1820, y: -70}
+  m_AnchoredPosition: {x: -1820, y: -105}
   m_SizeDelta: {x: 600, y: 60}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &255976400
@@ -5083,10 +5083,10 @@ VideoPlayer:
   m_TargetAudioSources:
   - {fileID: 0}
   m_DirectAudioVolumes:
-  - 1
+  - 0
   m_Url: 
   m_EnabledAudioTracks: 01
-  m_DirectAudioMutes: 00
+  m_DirectAudioMutes: 01
   m_ControlledAudioTrackCount: 1
   m_PlayOnAwake: 1
   m_SkipOnDrop: 1
@@ -6077,7 +6077,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -2020, y: -150}
+  m_AnchoredPosition: {x: -2020, y: -40}
   m_SizeDelta: {x: 400, y: 60}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &315032637
@@ -57641,9 +57641,9 @@ MonoBehaviour:
   - {fileID: 2729281214152228942}
   - {fileID: 2729281214152228944}
   LatencyTest: 0
-  SimulatedLatencyMs: 0
+  SimulatedLatencyMs: 200
   TimeWarpmode: 0
-  BotIsSeeker: 1
+  BotIsSeeker: 0
   TestSpeed: 8
   TestWeapon: 0
   roundConditionFile: {fileID: 4900000, guid: d789d650bb8f0c44ba59b81dc90cb988, type: 3}

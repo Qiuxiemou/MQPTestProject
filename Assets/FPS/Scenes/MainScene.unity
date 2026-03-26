@@ -57635,15 +57635,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c7747893f578244ebf571f0db1588b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: fps.Game::RoundManager
-  roundLengthSeconds: 20
+  roundLengthSeconds: 55
   disableWhilePaused:
   - {fileID: 2729281214152228945}
   - {fileID: 2729281214152228942}
   - {fileID: 2729281214152228944}
   LatencyTest: 0
-  SimulatedLatencyMs: 200
+  SimulatedLatencyMs: 1000
   TimeWarpmode: 1
-  BotIsSeeker: 1
+  BotIsSeeker: 0
   TestSpeed: 8
   TestWeapon: 1
   roundConditionFile: {fileID: 4900000, guid: d789d650bb8f0c44ba59b81dc90cb988, type: 3}

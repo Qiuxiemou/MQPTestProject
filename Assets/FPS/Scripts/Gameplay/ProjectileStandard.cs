@@ -265,6 +265,9 @@ namespace Unity.FPS.Gameplay
 
         void OnHit(Vector3 point, Vector3 normal, Collider collider)
         {
+            if (collider.gameObject.layer == 3)
+                return;
+
             GameObject owner = m_ProjectileBase.Owner;
             Transform playerTf = GameObject.FindGameObjectWithTag("Player")?.transform;
 
@@ -282,6 +285,7 @@ namespace Unity.FPS.Gameplay
                              : isPlayerHit ? "player_hit"
                              : "world_hit";
 
+            
             EventManager.Broadcast(new HitEvent
             {
                 ShooterId = owner != null ? owner.name : "Unknown",

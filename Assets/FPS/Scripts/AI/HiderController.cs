@@ -172,6 +172,9 @@ namespace Unity.FPS.AI
 
         Coroutine _peekCoroutine;
 
+
+        bool botDie;
+
         
 
 
@@ -221,6 +224,8 @@ namespace Unity.FPS.AI
             ////Log($"Start at {_coverPos} | Initial State = {_state}");
 
             _lastKnownPlayerPos = new Vector3(72.8f, 2.24f, 17.34f);
+
+            botDie = false;
 
             // Start FSM as a coroutine so peeking can use coroutines easily
             StartCoroutine(StateMachineLoop());
@@ -948,13 +953,6 @@ namespace Unity.FPS.AI
             //        ////Log("OnDamaged: forwarded to DetectionModule.OnDamaged");
             //    }
             //}
-            EventManager.Broadcast(new HitCsvEvent
-            {
-                EventType = "bot_die",
-                ShooterId = damageSource ? damageSource.name : "Unknown",
-                TargetId = this.name,
-                Damage = damage,
-            });
 
             if (damageSource && !damageSource.GetComponent<HiderController>())
             {
@@ -975,6 +973,15 @@ namespace Unity.FPS.AI
 
         private void OnDie()
         {
+
+            if (botDie) return;
+
+            botDie = true;
+
+            EventManager.Broadcast(new HitCsvEvent
+            {
+                EventType = "bot_die"
+            });
 
             if (DeathVFX)
             {

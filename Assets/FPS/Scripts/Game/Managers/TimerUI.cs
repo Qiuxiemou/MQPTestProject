@@ -72,6 +72,7 @@ public class TimerUI : MonoBehaviour
         }
         else if (RoundManager.Instance.CurrentTimewarpMode != TimewarpMode.None && !RoundManager.Instance.IsSeeker)
         {
+            latencyText.text = $"";
             timewarpText.text = $"AIM DIRECTLY AT BOT";
         }
         else

@@ -844,7 +844,7 @@ MonoBehaviour:
   debugKnownPlayer: {fileID: 0}
   debugKnownTarget: {fileID: 0}
   UseBlendAim: 1
-  BlendToFuture: 0.3
+  BlendToFuture: 0.6
   BlendSigma: 0.15
   BlendRadius: 0.15
   LastSeenPlayerPosition: {x: 0, y: 0, z: 0}
@@ -872,9 +872,9 @@ MonoBehaviour:
   PitchDistortionMovementSpeed:
     Min: 0
     Max: 0
-  WatchTurnSpeed: 720
-  PatrolHeadYawAmplitude: 10
-  PatrolHeadYawSpeed: 1.2
+  WatchTurnSpeed: 360
+  PatrolHeadYawAmplitude: 30
+  PatrolHeadYawSpeed: 5
   PatrolBodyTurnSpeed: 8
 --- !u!114 &2739245804788288154
 MonoBehaviour:

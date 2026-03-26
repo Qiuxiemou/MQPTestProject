@@ -310,6 +310,19 @@ namespace Unity.FPS.Gameplay
                 Health realHealth = null;
                 CharacterController realCC = null;
 
+                if (collider.CompareTag("Player"))
+                {
+                    EventManager.Broadcast(new HitCsvEvent
+                    {
+                        EventType = "player_hit",
+                        ShooterId = owner ? owner.name : "Unknown",
+                        TargetId = collider.name,
+                        Damage = Damage,
+                        HitPoint = point,
+                        ShotAroundCorner = false,
+                        AcceptShot = true
+                    });
+                }
                 if (collider.CompareTag(AimPointHitboxTag))
                 {
                     Debug.Log("[Projectile] Hit delayed AimPoint hitbox");
@@ -408,21 +421,6 @@ namespace Unity.FPS.Gameplay
 
                     hitObjectName = "Player_AimPoint";
 
-                    // Broadcast for direct Player-tag hits (TimewarpMode.None)
-                    // AimPointHitbox hits already broadcast earlier in the damage section
-                    if (!collider.CompareTag(AimPointHitboxTag))
-                    {
-                        EventManager.Broadcast(new HitCsvEvent
-                        {
-                            EventType    = "player_hit",
-                            ShooterId    = owner ? owner.name : "Unknown",
-                            TargetId     = hitObjectName,
-                            Damage       = Damage,
-                            HitPoint     = point,
-                            ShotAroundCorner = shotIsAroundCorner,
-                            AcceptShot   = true
-                        });
-                    }
                 }
 
                 // ---------- PLAYER → BOT ----------

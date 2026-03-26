@@ -407,6 +407,22 @@ namespace Unity.FPS.Gameplay
                     }
 
                     hitObjectName = "Player_AimPoint";
+
+                    // Broadcast for direct Player-tag hits (TimewarpMode.None)
+                    // AimPointHitbox hits already broadcast earlier in the damage section
+                    if (!collider.CompareTag(AimPointHitboxTag))
+                    {
+                        EventManager.Broadcast(new HitCsvEvent
+                        {
+                            EventType    = "player_hit",
+                            ShooterId    = owner ? owner.name : "Unknown",
+                            TargetId     = hitObjectName,
+                            Damage       = Damage,
+                            HitPoint     = point,
+                            ShotAroundCorner = shotIsAroundCorner,
+                            AcceptShot   = true
+                        });
+                    }
                 }
 
                 // ---------- PLAYER → BOT ----------

@@ -995,7 +995,7 @@ public class RoundManager : MonoBehaviour
             var playerLatency = player.GetComponentInChildren<PlayerLatency>();
             if (playerLatency != null)
             {
-                playerLatency.latency = CurrentLatencyMs / 1000f;
+                playerLatency.latency = CurrentLatencyMs * 2  / 1000f;
                 LM.write($"[RoundManager] Player latency set to {CurrentLatencyMs} ms");
             }
             else

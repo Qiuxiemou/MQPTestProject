@@ -107,6 +107,7 @@ public class RoundManager : MonoBehaviour
     // ================ SCORE ====================
     IScoreDisplay scoreDisplay;
     public GameObject CurrentEnemy => _futureBot;
+    public GameObject TrueEnemy => _trueBot;
     public GameObject PastEnemy => _pastBot;
 
     public interface IScoreDisplay
@@ -272,6 +273,23 @@ public class RoundManager : MonoBehaviour
         if (waitingForPlayerInput && Input.GetKeyDown(KeyCode.Tab))
         {
             StartRoundGameplay();
+        }
+
+        //if (!RoundRunning)
+        //{
+        //    if (_futureBot != null) { Destroy(_futureBot); _futureBot = null; }
+        //    if (_trueBot != null) { Destroy(_trueBot); _trueBot = null; }
+        //    if (_pastBot != null) { Destroy(_pastBot); _pastBot = null; }
+        //}
+
+        if (surveyUI != null)
+        {
+            if (surveyUI.isActiveAndEnabled)
+            {
+                if (_futureBot != null) { Destroy(_futureBot); _futureBot = null; }
+                if (_trueBot != null) { Destroy(_trueBot); _trueBot = null; }
+                if (_pastBot != null) { Destroy(_pastBot); _pastBot = null; }
+            }
         }
     }
 
@@ -681,6 +699,8 @@ public class RoundManager : MonoBehaviour
 
         if (timerUI) timerUI.Hide();
         if (surveyUI) surveyUI.Show(currentRoundIndex);
+
+
 
         // end round
         GameStatsLogManager.Instance?.EndRoundLogStats();

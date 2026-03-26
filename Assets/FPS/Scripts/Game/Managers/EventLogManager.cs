@@ -291,7 +291,7 @@ namespace Unity.FPS.Game
             // ===== SAFETY =====
             if (_shotEventWriter == null) return;
 
-            if (e.EventType == "bot_die" || e.EventType != "player_die")
+            if (e.EventType == "bot_die" || e.EventType == "player_die")
             {
                 SummaryLogManager.Instance.OnKilled();
             }

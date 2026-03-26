@@ -89,7 +89,7 @@ public class SummaryLogManager : MonoBehaviour
                 "participantID,latinRow,roundNumber,conditionID,latency,role,timewarp," +
                 "enemySpeed,playerSpeed," +
                 "weaponIndex,"+
-                "totalShots,totalHits,errorAngle,accuracy,cornerShots,ttkAvg,score," +
+                "totalShots,totalHits,totalKills,errorAngle,accuracy,cornerShots,ttkAvg,score," +
                 "playerDist,botDist,mouseMove," +
                 "surveyQ1,surveyQ2" +
                 "\n"
@@ -206,7 +206,7 @@ public class SummaryLogManager : MonoBehaviour
             $"{_latency},{_role},{_timewarp}," +
             $"{enemySpeed},{playerSpeed}," +
             $"{_weaponIndex}," +
-            $"{_totalShots},{_totalHits},{errorAngle},{acc},{_cornerShots},{avgTTK},{score}," +
+            $"{_totalShots},{_totalHits},{killCount},{errorAngle},{acc},{_cornerShots},{avgTTK},{score}," +
             $"{playerDist},{botDist},{mouseMove}," +
             $"{surveyQ1},{surveyQ2}";
 

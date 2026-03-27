@@ -7,6 +7,7 @@ public class TimerUI : MonoBehaviour
     [SerializeField] private Text timerText;  
     [SerializeField] private Text latencyText;
     [SerializeField] private Text timewarpText;
+    [SerializeField] private Image leadShotOn;
 
     void Awake()
     {
@@ -69,16 +70,25 @@ public class TimerUI : MonoBehaviour
         {
             latencyText.text = $"PING: {RoundManager.Instance.CurrentLatencyMs * 2}ms";
             timewarpText.text = $"LEAD YOUR SHOT";
+            Color c = leadShotOn.color;
+            c.a = 1f;
+            leadShotOn.color = c;
         }
         else if (RoundManager.Instance.CurrentTimewarpMode != TimewarpMode.None && !RoundManager.Instance.IsSeeker)
         {
             latencyText.text = $"";
             timewarpText.text = $"AIM DIRECTLY AT BOT";
+            Color c = leadShotOn.color;
+            c.a = 0f;
+            leadShotOn.color = c;
         }
         else
         {
             timewarpText.text = $"";
             latencyText.text = $"";
+            Color c = leadShotOn.color;
+            c.a = 0f;
+            leadShotOn.color = c;
         }
     }
 

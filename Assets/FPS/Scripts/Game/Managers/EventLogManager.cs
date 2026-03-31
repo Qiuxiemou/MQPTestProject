@@ -109,7 +109,7 @@ namespace Unity.FPS.Game
             // ---------- Shot Event ----------
             _shotEventPath = Path.Combine(root, "ShotEvent.csv");
             _shotEventWriter = NewWriterWithHeader(_shotEventPath,
-                "time,participantID,latinRow,round,conditionID,latency,role,timewarp,enemySpeed,playerSpeed,weapon,eventType,shooterID,damage,hitObject,shotAroundCorner,acceptShot,score,errorAngle,"
+                "time,participantID,latinRow,round,conditionID,latency,role,timewarp,enemySpeed,playerSpeed,weapon,eventType,shooterID,damage,hitObject,shotAroundCorner,acceptShot,errorAngle,"
                     +"player_x,player_y,player_z,bot_x,bot_y,bot_z");
 
             // ----------World Log----------
@@ -295,8 +295,6 @@ namespace Unity.FPS.Game
             {
                 SummaryLogManager.Instance.OnKilled();
             }
-             
-            LM.write("OnHitCsv triggered");
 
             // ===== GET PLAYER =====
             Transform playerTf = GameObject.FindGameObjectWithTag("Player")?.transform;
@@ -338,17 +336,6 @@ namespace Unity.FPS.Game
                 Debug.Log("error " + errorAngle);
             }
 
-            // ===== SCORE (placeholder for now) =====
-            int score = 0;
-
-            // ===== ACCEPT SHOT =====
-            bool acceptShot = (e.ShotAroundCorner && _timewarp == "Normal") || (!e.ShotAroundCorner) ? true : false;
-
-            // ===== DEBUG =====
-            //LM.write($"ShotAroundCorner: {e.ShotAroundCorner}");
-            //LM.write($"AcceptShot: {acceptShot}");
-            //LM.write($"ErrorAngle: {errorAngle}");
-
             // ===== 5. LOG TO CSV =====
             LogShotEvent(
                 e.EventType,
@@ -356,8 +343,7 @@ namespace Unity.FPS.Game
                 e.Damage,
                 e.TargetId,
                 e.ShotAroundCorner,
-                acceptShot,
-                score,
+                e.AcceptShot,
                 errorAngle
             );
 
@@ -486,7 +472,7 @@ namespace Unity.FPS.Game
             BumpFlushCounter();
         }
 
-        public void LogShotEvent(string eventType,string shooterId, float damage, string hitObject, bool shotAroundCorner, bool acceptShot, int score, float errorAngle)
+        public void LogShotEvent(string eventType,string shooterId, float damage, string hitObject, bool shotAroundCorner, bool acceptShot, float errorAngle)
         {
             if (_shotEventWriter == null) return;
 
@@ -508,7 +494,7 @@ namespace Unity.FPS.Game
                 $"{eventType},{San(shooterId)},{damage:F2},{San(hitObject)}," +
                 $"{(shotAroundCorner ? 1 : 0)}," +
                 $"{(acceptShot ? 1 : 0)}," +
-                $"{score},{errorAngle:F3}," +
+                $"{errorAngle:F3}," +
                 $"{playerPos.x:F3},{playerPos.y:F3},{playerPos.z:F3}," +
                 $"{botPos.x:F3},{botPos.y:F3},{botPos.z:F3}"
             );

@@ -1183,7 +1183,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MinReactionTime: 0
   MaxReactionTime: 0.5
-  ViewAngle: 120
+  ViewAngle: 135
   DetectionRange: 9999
   CloseDetectionRange: 15
   PeripheralAlertRange: 6

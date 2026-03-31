@@ -492,47 +492,6 @@ namespace Unity.FPS.Gameplay
                 AudioUtility.CreateSFX(ImpactSfxClip, point, AudioUtility.AudioGroups.Impact, 1f, 3f);
             }
 
-
-            //if (AreaOfDamage)
-            //{
-            //    // area damage
-            //    AreaOfDamage.InflictDamageInArea(Damage, point, HittableLayers, k_TriggerInteraction,
-            //        m_ProjectileBase.Owner);
-            //}
-            //else
-            //{
-            //    var proxy = collider.GetComponentInParent<BotHealthProxy>();
-            //    if (proxy != null)
-            //    {
-            //        //LM.write($"[ProjectileStandard] OnHit proxy != null");
-            //        proxy.TakeDamage(Damage, m_ProjectileBase.Owner);
-            //    }
-            //    else
-            //    {
-            //        //LM.write($"[ProjectileStandard] OnHit else");
-            //        Damageable damageable = collider.GetComponent<Damageable>();
-            //        if (damageable)
-            //            damageable.InflictDamage(Damage, false, m_ProjectileBase.Owner);
-            //    }
-            //}
-
-            //// impact vfx
-            //if (ImpactVfx)
-            //{
-            //    GameObject impactVfxInstance = Instantiate(ImpactVfx, point + (normal * ImpactVfxSpawnOffset),
-            //        Quaternion.LookRotation(normal));
-            //    if (ImpactVfxLifetime > 0)
-            //    {
-            //        Destroy(impactVfxInstance.gameObject, ImpactVfxLifetime);
-            //    }
-            //}
-
-            //// impact sfx
-            //if (ImpactSfxClip)
-            //{
-            //    AudioUtility.CreateSFX(ImpactSfxClip, point, AudioUtility.AudioGroups.Impact, 1f, 3f);
-            //}
-
             // Self Destruct
             Destroy(this.gameObject);
         

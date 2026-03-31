@@ -1119,6 +1119,19 @@ public class RoundManager : MonoBehaviour
         if (playerHealth != null)
             playerHealth.Invincible = true;
 
+        // Disable AimPoint hitbox during respawn delay
+        Transform aimPoint = null;
+        bool prevAimPointActive = true;
+        if (player != null)
+        {
+            aimPoint = player.transform.Find("AimPoint");
+            if (aimPoint != null)
+            {
+                prevAimPointActive = aimPoint.gameObject.activeSelf;
+                aimPoint.gameObject.SetActive(false);
+            }
+        }
+
         // Optional short delay while player is disabled/invincible
         yield return new WaitForSeconds(1f);
 
@@ -1133,6 +1146,12 @@ public class RoundManager : MonoBehaviour
         // Restore vulnerability after new bot is spawned
         if (playerHealth != null)
             playerHealth.Invincible = false;
+
+        // Restore AimPoint hitbox
+        if (aimPoint != null)
+        {
+            aimPoint.gameObject.SetActive(prevAimPointActive);
+        }
 
         // Restore player movement state
         if (playerControllerBehaviour != null)

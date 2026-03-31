@@ -57878,7 +57878,7 @@ MonoBehaviour:
   - {fileID: 2729281214152228945}
   - {fileID: 2729281214152228942}
   - {fileID: 2729281214152228944}
-  LatencyTest: 1
+  LatencyTest: 0
   SimulatedLatencyMs: 200
   TimeWarpmode: 0
   BotIsSeeker: 1

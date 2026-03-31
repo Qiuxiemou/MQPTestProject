@@ -15,6 +15,7 @@ public class NodeWeight : MonoBehaviour
     [Header("Last Seen Player Influence")]
     public float LastSeenFactor = 2f;     // strength of influence
     public float LastSeenMaxDistance = 30f; // how far it affects nodes
+    public float HeatWeight = 3;
 
     // This will store the static heat applied from historical player positions
     [HideInInspector]
@@ -22,7 +23,7 @@ public class NodeWeight : MonoBehaviour
 
     void Awake()
     {
-        randomFactor = UnityEngine.Random.Range(0f, 1.5f);
+        randomFactor = UnityEngine.Random.Range(1f, 3f);
         LastVisitTime = Time.time;
     }
 
@@ -30,7 +31,7 @@ public class NodeWeight : MonoBehaviour
     {
         if (Time.time - LastVisitTime >= 5f)
         {
-            randomFactor = UnityEngine.Random.Range(0.0f, 2f);
+            randomFactor = UnityEngine.Random.Range(1f, 3f);
         }
         LastVisitTime = Time.time;
     }
@@ -52,14 +53,14 @@ public class NodeWeight : MonoBehaviour
     {
         float timeSince = Time.time - LastVisitTime;
         float distance = Vector3.Distance(botPosition, transform.position);
-        return timeSince * TimeFactor - distance * DistanceFactor;
+        return Mathf.Max(0f, timeSince * TimeFactor - distance * DistanceFactor);
     }
 
     // Get total weight (dynamic + heatmap + seen)
     public float GetTotalWeight(Vector3 botPosition, Vector3 lastSeenPosition, float sinceLastSeenPlayer)
     {
         float dynamicWeight = GetDynamicWeight(botPosition);
-        float heatMultiplier = 1f + HeatmapWeight * randomFactor;
+        float heatMultiplier = 1f + HeatmapWeight * randomFactor * HeatWeight;
         float lastSeenMultiplier = GetLastSeenMultiplier(lastSeenPosition, sinceLastSeenPlayer);
 
         return dynamicWeight * heatMultiplier * lastSeenMultiplier;
@@ -69,7 +70,7 @@ public class NodeWeight : MonoBehaviour
     public float GetTotalWeight(Vector3 botPosition)
     {
         float dynamicWeight = GetDynamicWeight(botPosition);
-        float heatMultiplier = 1f + HeatmapWeight * randomFactor;
+        float heatMultiplier = 1f + HeatmapWeight * randomFactor * HeatWeight;
 
         return dynamicWeight * heatMultiplier;
     }
@@ -106,10 +107,12 @@ public class NodeWeight : MonoBehaviour
                     enemy.LastSeenPlayerPosition,
                     enemy.TimeSinceLastSeenPlayer
                 );
+                //Debug.Log($"Node {name} - Dynamic: {GetDynamicWeight(ReferenceEnemy.position):F2}, Heat: {1f + HeatmapWeight * randomFactor}, LastSeenMult: {GetLastSeenMultiplier(enemy.LastSeenPlayerPosition, enemy.TimeSinceLastSeenPlayer):F2}, Total: {totalWeight:F2}");
             }
             else
             {
                 totalWeight = GetTotalWeight(ReferenceEnemy.position);
+                //Debug.Log($"Node {name} - Dynamic: {GetDynamicWeight(ReferenceEnemy.position):F2}, Heat: {1f + HeatmapWeight * randomFactor}, Total: {totalWeight:F2}");
             }
         }
 

@@ -14,9 +14,6 @@ public class HeatmapManager : MonoBehaviour
     [Header("All patrol nodes in the scene")]
     public NodeWeight[] AllNodes;
 
-    [Header("How much weight each recorded position adds")]
-    public float HeatFactor = 1f;
-
     private int count = 0;
 
     void Awake()
@@ -30,7 +27,11 @@ public class HeatmapManager : MonoBehaviour
             AllNodes = FindObjectsOfType<NodeWeight>();
 
         // Clear previous data
-        heatByNode.Clear();
+        foreach (var node in AllNodes)
+        {
+            node.HeatmapWeight = 1f;
+            Debug.Log($"Node {node.name} - Initial Heatmap Weight: {node.HeatmapWeight}");
+        }
 
         if (HeatmapSource != null && AllNodes != null && AllNodes.Length > 0)
         {
@@ -52,17 +53,24 @@ public class HeatmapManager : MonoBehaviour
 
                 if (closestNode != null)
                 {
-                    closestNode.HeatmapWeight += HeatFactor;
+                    closestNode.HeatmapWeight += 1;
                 }
             }
+        }
+
+        foreach (var node in AllNodes)
+        {
+            Debug.Log($"Node {node.name} - Heat: {node.HeatmapWeight:F2} - Count: {count}");
+            GetHeat(node);
         }
     }
 
     // Get the precomputed heat value for a node
-    public float GetHeat(NodeWeight node)
+    public void GetHeat(NodeWeight node)
     {
-        if (node == null) return 0f;
+        if (node == null) return;
 
-        return heatByNode.TryGetValue(node, out float heat) ? heat / count : 0f;
+        node.HeatmapWeight = node.HeatmapWeight / count;
+        Debug.Log($"Node {node.name} - Heatmap Weight: {node.HeatmapWeight:F2}");
     }
 }

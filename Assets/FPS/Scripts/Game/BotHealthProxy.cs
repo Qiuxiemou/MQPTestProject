@@ -135,7 +135,7 @@ namespace Unity.FPS.Game
 
         public void TakeDamage(float damage, GameObject source)
         {
-            LM.write($"{transform.root.name} takeDamage | Mode={currentMode}");
+            //LM.write($"{transform.root.name} takeDamage | Mode={currentMode}");
 
             bool hasLOS = HasLineOfSightFromFutureToPlayer();
 
@@ -146,7 +146,7 @@ namespace Unity.FPS.Game
             switch (currentMode)
             {
                 case TimewarpMode.None:
-                    acceptShot = true;
+                    shotAroundCorner = false;
                     if (futureHealth != null)
                         StartCoroutine(DamageBackwards(damage, source));
                     break;
@@ -159,7 +159,6 @@ namespace Unity.FPS.Game
 
                 case TimewarpMode.Conditional:
                     acceptShot = hasLOS;
-
                     if (hasLOS)
                     {
                         LM.write("CTW: LOS valid -> forward");

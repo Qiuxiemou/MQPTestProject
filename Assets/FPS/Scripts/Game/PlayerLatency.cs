@@ -24,18 +24,34 @@ public class PlayerLatency : MonoBehaviour
             _initialized = true;
         }
 
-        buffer.Enqueue((Time.time, player.position+ offset));
+        buffer.Enqueue((Time.time, player.position + offset));
 
         if (Time.time - startTime < latency)
         {
-            transform.localPosition = transform.parent.InverseTransformPoint(initialPosition); ;
+            transform.localPosition = transform.parent.InverseTransformPoint(initialPosition);
             return;
         }
-            
+
         // Output delayed samples
         while (buffer.Count > 0 && Time.time - buffer.Peek().time >= latency)
         {
-            transform.localPosition = transform.parent.InverseTransformPoint(buffer.Dequeue().pos); ;
+            transform.localPosition = transform.parent.InverseTransformPoint(buffer.Dequeue().pos);
         }
+    }
+
+    // Reset the latency buffer and hold the aimpoint at worldPos for `latency` seconds.
+    // Call this right after player respawn to keep AimPoint at respawn position for the configured delay.
+    public void ResetToPosition(Vector3 worldPos)
+    {
+        buffer.Clear();
+        initialPosition = worldPos;
+        startTime = Time.time;
+        _initialized = true;
+
+        // Immediately place the aimpoint at the provided world position
+        if (transform.parent != null)
+            transform.localPosition = transform.parent.InverseTransformPoint(initialPosition);
+        else
+            transform.position = initialPosition;
     }
 }

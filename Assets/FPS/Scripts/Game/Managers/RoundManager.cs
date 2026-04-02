@@ -1062,7 +1062,7 @@ public class RoundManager : MonoBehaviour
     }
 
     //public void RespawnAfterDeath()
-    //{
+   //{
     //    LM.write("[RoundManager] Player died -> respawning");
 
     //    SummaryLogManager.Instance.OnKilled();
@@ -1119,20 +1119,7 @@ public class RoundManager : MonoBehaviour
         if (playerHealth != null)
             playerHealth.Invincible = true;
 
-        // Disable AimPoint hitbox during respawn delay
-        Transform aimPoint = null;
-        bool prevAimPointActive = true;
-        if (player != null)
-        {
-            aimPoint = player.transform.Find("AimPoint");
-            if (aimPoint != null)
-            {
-                prevAimPointActive = aimPoint.gameObject.activeSelf;
-                aimPoint.gameObject.SetActive(false);
-            }
-        }
-
-        // Optional short delay while player is disabled/invincible
+        // Short delay while player is disabled/invincible
         yield return new WaitForSeconds(1f);
 
         SpawnEnemyForCurrentRole();
@@ -1143,15 +1130,23 @@ public class RoundManager : MonoBehaviour
         ApplyTimewarpModeForPlayer();
         ApplyPlayerSpeed();
 
+        // Ensure AimPoint stays at the respawn position for the latency duration:
+        // Use the PlayerLatency component to reset its buffer / initial position.
+        var playerLatencyComp = player != null ? player.GetComponentInChildren<PlayerLatency>() : null;
+        if (playerLatencyComp != null)
+        {
+            Vector3 aimWorldPos = player.transform.position + playerLatencyComp.offset;
+            playerLatencyComp.ResetToPosition(aimWorldPos);
+            LM.write($"[RoundManager] Reset PlayerLatency to {aimWorldPos}, holding for {playerLatencyComp.latency} s");
+        }
+        else
+        {
+            LM.write("[RoundManager] PlayerLatency component not found");
+        }
+
         // Restore vulnerability after new bot is spawned
         if (playerHealth != null)
             playerHealth.Invincible = false;
-
-        // Restore AimPoint hitbox
-        if (aimPoint != null)
-        {
-            aimPoint.gameObject.SetActive(prevAimPointActive);
-        }
 
         // Restore player movement state
         if (playerControllerBehaviour != null)

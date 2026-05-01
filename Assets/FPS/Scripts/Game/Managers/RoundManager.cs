@@ -1049,6 +1049,33 @@ public class RoundManager : MonoBehaviour
         if (controller) controller.enabled = true;
 
         ResetPlayerHealth();
+
+        if (IsSeeker)
+        {
+            var playerLatency = player.GetComponentInChildren<PlayerLatency>();
+            if (playerLatency != null)
+            {
+                playerLatency.latency = CurrentLatencyMs  / 1000f;
+                LM.write($"[RoundManager] Player latency set to {CurrentLatencyMs} ms");
+            }
+            else
+            {
+                LM.write("[RoundManager] PlayerLatency component not found");
+            }
+        }
+        else
+        {
+            var playerLatency = player.GetComponentInChildren<PlayerLatency>();
+            if (playerLatency != null)
+            {
+                playerLatency.latency = 0;
+                LM.write($"[RoundManager] Player latency set to {CurrentLatencyMs} ms");
+            }
+            else
+            {
+                LM.write("[RoundManager] PlayerLatency component not found");
+            }
+        }
     }
 
 
@@ -1140,6 +1167,7 @@ public class RoundManager : MonoBehaviour
         var playerLatencyComp = player != null ? player.GetComponentInChildren<PlayerLatency>() : null;
         if (playerLatencyComp != null)
         {
+            playerLatencyComp.latency = CurrentLatencyMs;
             Vector3 aimWorldPos = player.transform.position + playerLatencyComp.offset;
             playerLatencyComp.ResetToPosition(aimWorldPos);
             LM.write($"[RoundManager] Reset PlayerLatency to {aimWorldPos}, holding for {playerLatencyComp.latency} s");

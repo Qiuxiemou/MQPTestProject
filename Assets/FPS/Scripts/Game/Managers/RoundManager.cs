@@ -138,9 +138,9 @@ public class RoundManager : MonoBehaviour
         CurrentLatencyMs = settings.latency;
         CurrentSpeed = settings.speed;
         CurrentWeaponIndex = settings.weaponIndex;
+        CurrentTimewarpMode = settings.timewarpMode;
 
-        LM.write($"[RoundManager] Player Overrides Applied → " +
-            $"Seeker={_isSeeker}, Latency={CurrentLatencyMs}, Speed={CurrentSpeed}, Weapon={CurrentWeaponIndex}");
+        Debug.Log($"[RoundManager] Player overrides applied: Seeker={_isSeeker}, Latency={CurrentLatencyMs}, Speed={CurrentSpeed}, WeaponIndex={CurrentWeaponIndex}, TimewarpMode={TimeWarpmode}");
     }
 
     // ================= LOGGING =================
@@ -352,7 +352,7 @@ public class RoundManager : MonoBehaviour
             pastProxy.SetTimewarpMode(CurrentTimewarpMode);
         }
 
-        LM.write($"[RoundManager] Applied Timewarp Mode: {CurrentTimewarpMode}");
+        Debug.Log($"[RoundManager] Applied Timewarp Mode: {CurrentTimewarpMode}");
 
         Transform futureHitbox = _futureBot.transform.Find("HitBox");
         Transform pastHitbox = _pastBot?.transform.Find("HitBox");
@@ -676,16 +676,18 @@ public class RoundManager : MonoBehaviour
     void ApplyCondition(RoundCondition c)
     {
         _isSeeker = LatencyTest ? BotIsSeeker : (c.bot == BotRole.Seeker);
-        CurrentTimewarpMode = LatencyTest ? TimeWarpmode : c.timewarp;
+
+        CurrentTimewarpMode = UseTimewarpOverride
+            ? UIOverwrideTimewarp
+            : c.timewarp;
+
         CurrentLatencyMs = LatencyTest ? SimulatedLatencyMs : c.latencyMs;
+
         CurrentSpeed = LatencyTest ? TestSpeed : c.speed;
+
         CurrentWeaponIndex = LatencyTest ? TestWeapon : c.weapon;
 
-        LM.write($"[ApplyCondition] bot={c.bot}, isSeeker={_isSeeker}");
-
-        LM.write(
-            $"[RoundManager] Condition → Bot={_isSeeker}, Latency={CurrentTimewarpMode}, Timewarp={CurrentLatencyMs}, Speed = {CurrentSpeed}, Weapon = {CurrentWeaponIndex}"
-        );
+        LM.write($"[ApplyCondition] bot={c.bot}, isSeeker={_isSeeker}, speed={CurrentSpeed}, timewarp={CurrentTimewarpMode}");
     }
 
     IEnumerator RoundTick()
@@ -800,7 +802,7 @@ public class RoundManager : MonoBehaviour
         var agent = enemy.GetComponent<UnityEngine.AI.NavMeshAgent>();
         if (agent != null)
         {
-            agent.speed = currentCondition.speed;
+            agent.speed = CurrentSpeed;
         }
     }
     void SpawnEnemyForCurrentRole()

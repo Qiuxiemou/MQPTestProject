@@ -5,5 +5,5 @@ public class RoundSettingsOverride
     public float latency;
     public float speed;
     public int weaponIndex;
-    //public RoundManager.TimewarpMode timewarpMode;
+    public TimewarpMode timewarpMode;
 }

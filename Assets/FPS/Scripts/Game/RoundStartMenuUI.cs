@@ -55,8 +55,10 @@ public class RoundStartMenuUI : MonoBehaviour
             latency = latencySlider.value,
             speed = speedSlider.value,
             weaponIndex = weaponDropdown.value,
-            //timewarpMode = (RoundManager.TimewarpMode)timewarpDropdown.value
+            timewarpMode = (TimewarpMode)timewarpDropdown.value
         };
+
+        Debug.Log($"Applying settings: Seeker={settings.isSeeker}, Latency={settings.latency}, Speed={settings.speed}, WeaponIndex={settings.weaponIndex}, TimewarpMode={settings.timewarpMode}");
 
         RoundManager.Instance.ApplyPlayerOverrides(settings);
         RoundManager.Instance.StartRoundFromUI();

@@ -27,6 +27,9 @@ public class RoundManager : MonoBehaviour
     public TimewarpMode TimeWarpmode = TimewarpMode.None;
     public bool BotIsSeeker = true;
 
+    public TimewarpMode UIOverwrideTimewarp = TimewarpMode.None;
+    public bool UseTimewarpOverride = false;
+
     // ================= SPEED & WEAPON =================
     [Header("Weapon and Speed Setting")]
     public float CurrentSpeed { get; private set; }
@@ -61,6 +64,9 @@ public class RoundManager : MonoBehaviour
 
     [Header("Round Start UI")]
     public RoundStartUI roundStartUI;
+
+    [Header("Round Start Menu")]
+    public RoundStartMenuUI roundStartMenuUI;
 
     public TutorialLoader tutorialLoader;
 
@@ -124,6 +130,17 @@ public class RoundManager : MonoBehaviour
             LM.write("Enemy already exists, assigning now");
             scoreDisplay.SetEnemy(_futureBot);
         }
+    }
+
+    public void ApplyPlayerOverrides(RoundSettingsOverride settings)
+    {
+        _isSeeker = settings.isSeeker;
+        CurrentLatencyMs = settings.latency;
+        CurrentSpeed = settings.speed;
+        CurrentWeaponIndex = settings.weaponIndex;
+
+        LM.write($"[RoundManager] Player Overrides Applied → " +
+            $"Seeker={_isSeeker}, Latency={CurrentLatencyMs}, Speed={CurrentSpeed}, Weapon={CurrentWeaponIndex}");
     }
 
     // ================= LOGGING =================
@@ -270,27 +287,11 @@ public class RoundManager : MonoBehaviour
     }
     void Update()
     {
-        if (waitingForPlayerInput && Input.GetKeyDown(KeyCode.Tab))
-        {
-            StartRoundGameplay();
-        }
-
-        //if (!RoundRunning)
-        //{
-        //    if (_futureBot != null) { Destroy(_futureBot); _futureBot = null; }
-        //    if (_trueBot != null) { Destroy(_trueBot); _trueBot = null; }
-        //    if (_pastBot != null) { Destroy(_pastBot); _pastBot = null; }
-        //}
-
-        if (surveyUI != null)
-        {
-            if (surveyUI.isActiveAndEnabled)
-            {
-                if (_futureBot != null) { Destroy(_futureBot); _futureBot = null; }
-                if (_trueBot != null) { Destroy(_trueBot); _trueBot = null; }
-                if (_pastBot != null) { Destroy(_pastBot); _pastBot = null; }
-            }
-        }
+        // REMOVE THIS COMPLETELY
+        // if (waitingForPlayerInput)
+        // {
+        //     StartRoundGameplay();
+        // }
     }
 
     void OnEnable()
@@ -527,10 +528,23 @@ public class RoundManager : MonoBehaviour
         waitingForPlayerInput = false;
 
         roundStartUI.Hide();
+        roundStartMenuUI.Hide();
 
         RoundRunning = true;
 
         SetGameplayPause(false);
+
+        // NOW spawn using final values (including UI override)
+        SpawnEnemyForCurrentRole();
+        ApplyTimewarpMode();
+        ConfigureEnemyShootingBehavior();
+
+        RespawnPlayer();
+        ApplyTimewarpModeForPlayer();
+        ApplyPlayerSpeed();
+
+        OnRoundWeaponChanged?.Invoke(CurrentWeaponIndex);
+        OnBotRoleChanged?.Invoke(_isSeeker);
 
         if (timerUI) timerUI.Show();
 
@@ -566,6 +580,17 @@ public class RoundManager : MonoBehaviour
         LM.write($"[RoundManager] Starting round {currentCondition.id}");
 
         ApplyCondition(currentCondition);
+
+        // UI OVERRIDE (must come AFTER condition)
+        if (UseTimewarpOverride)
+        {
+            CurrentTimewarpMode = UIOverwrideTimewarp;
+
+            LM.write($"[RoundManager] UI override applied: {CurrentTimewarpMode}");
+        }
+
+        roundStartMenuUI.Show();
+        waitingForPlayerInput = true;
 
 
         EventLogManager.Instance.SetRoundContext(
@@ -604,9 +629,6 @@ public class RoundManager : MonoBehaviour
         //RoundRunning = true;
         _timeRemaining = roundLengthSeconds;
 
-        SpawnEnemyForCurrentRole();
-        ApplyTimewarpMode();
-        ConfigureEnemyShootingBehavior();
         StartCoroutine(BindScoreDisplayNextFrame());
 
         RespawnPlayer();
@@ -637,8 +659,6 @@ public class RoundManager : MonoBehaviour
         tutorialLoader = findTutorialLoader();
         Debug.Log($"[RoundManager] Found TutorialLoader: {tutorialLoader}");
         tutorialLoader.LoadClip(_isSeeker, CurrentTimewarpMode != TimewarpMode.None);
-        roundStartUI.Show(_isSeeker);
-        waitingForPlayerInput = true;
 
         if (CurrentEnemy != null)
         {
@@ -660,6 +680,8 @@ public class RoundManager : MonoBehaviour
         CurrentLatencyMs = LatencyTest ? SimulatedLatencyMs : c.latencyMs;
         CurrentSpeed = LatencyTest ? TestSpeed : c.speed;
         CurrentWeaponIndex = LatencyTest ? TestWeapon : c.weapon;
+
+        LM.write($"[ApplyCondition] bot={c.bot}, isSeeker={_isSeeker}");
 
         LM.write(
             $"[RoundManager] Condition → Bot={_isSeeker}, Latency={CurrentTimewarpMode}, Timewarp={CurrentLatencyMs}, Speed = {CurrentSpeed}, Weapon = {CurrentWeaponIndex}"
@@ -1005,45 +1027,26 @@ public class RoundManager : MonoBehaviour
     {
         if (!playerSpawnPoint) return;
 
+        StartCoroutine(RespawnSafe());
+    }
+
+    IEnumerator RespawnSafe()
+    {
         var controller = player.GetComponent<CharacterController>();
         if (controller) controller.enabled = false;
+
+        yield return null; // 👈 critical: let systems stop updating once
 
         player.transform.SetPositionAndRotation(
             playerSpawnPoint.position,
             playerSpawnPoint.rotation
         );
 
-        //player.ResetVelocity();
+        yield return null; // 👈 let transforms settle
 
         if (controller) controller.enabled = true;
 
         ResetPlayerHealth();
-
-        if (IsSeeker) {
-            var playerLatency = player.GetComponentInChildren<PlayerLatency>();
-            if (playerLatency != null)
-            {
-                playerLatency.latency = CurrentLatencyMs * 2  / 1000f;
-                LM.write($"[RoundManager] Player latency set to {CurrentLatencyMs} ms");
-            }
-            else
-            {
-                LM.write("[RoundManager] PlayerLatency component not found");
-            }
-        } 
-        else
-        {
-            var playerLatency = player.GetComponentInChildren<PlayerLatency>();
-            if (playerLatency != null)
-            {
-                playerLatency.latency = 0;
-                LM.write($"[RoundManager] Player latency set to {CurrentLatencyMs} ms");
-            }
-            else
-            {
-                LM.write("[RoundManager] PlayerLatency component not found");
-            }
-        }
     }
 
 
@@ -1309,6 +1312,11 @@ public class RoundManager : MonoBehaviour
 
         //File.WriteAllText(_surveyCsvPath, sb.ToString(), Encoding.UTF8);
         _buffer.Clear();
+    }
+
+    public void StartRoundFromUI()
+    {
+        StartRoundGameplay();
     }
 }
 

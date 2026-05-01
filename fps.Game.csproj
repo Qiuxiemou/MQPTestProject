@@ -64,6 +64,7 @@
     <Compile Include="Assets\FPS\Scripts\Game\Shared\Damageable.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\RoundConfigLoader.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\RoundStartUI.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\RoundSettingsOverride.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\Managers\RoundCondition.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\MeshCombiner.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\MeshCombineUtility.cs" />
@@ -88,6 +89,7 @@
     <Compile Include="Assets\FPS\Scripts\Game\Managers\LogManager.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\BotHealthProxy.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\PlayerLatency.cs" />
+    <Compile Include="Assets\FPS\Scripts\Game\RoundStartMenuUI.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\IgnoreHitDetection.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\DebugUtility.cs" />
     <Compile Include="Assets\FPS\Scripts\Game\TutorialLoader.cs" />
@@ -1141,6 +1143,10 @@
     </Reference>
     <Reference Include="Unity.ProBuilder">
       <HintPath>Library\ScriptAssemblies\Unity.ProBuilder.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>Library\ScriptAssemblies\Unity.TextMeshPro.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEditor.UI">

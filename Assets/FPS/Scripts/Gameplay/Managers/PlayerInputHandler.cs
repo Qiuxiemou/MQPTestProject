@@ -64,9 +64,9 @@ namespace Unity.FPS.Gameplay
             m_MoveAction.Enable();
             m_LookAction.Enable();
 
-            m_JumpAction.Disable();
-            m_SprintAction.Disable();
-            m_CrouchAction.Disable();
+            m_JumpAction.Enable();
+            m_SprintAction.Enable();
+            m_CrouchAction.Enable();
 
             m_FireAction.Enable();
             m_AimAction.Disable();
@@ -99,6 +99,7 @@ namespace Unity.FPS.Gameplay
                 m_FireAction.Enable();
                 //m_AimAction.Disable();
                 m_ReloadAction.Enable();
+                m_AimAction.Enable();
                 //m_NextWeaponAction.Disable();
                 //m_JumpAction.Enable();
                 //m_SprintAction.Enable();
@@ -108,6 +109,7 @@ namespace Unity.FPS.Gameplay
                 m_FireAction.Disable();
                 //m_AimAction.Disable();
                 m_ReloadAction.Disable();
+                m_AimAction.Disable();
                 //m_NextWeaponAction.Disable();
                 //m_JumpAction.Disable();
                 //m_SprintAction.Disable();

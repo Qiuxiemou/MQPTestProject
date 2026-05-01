@@ -30,7 +30,7 @@ public class SurveyUI : MonoBehaviour
     void Awake()
     {
         if (submitButton)
-            submitButton.interactable = false;
+            submitButton.interactable = true;
 
         Setup(lagSlider);
         Setup(hiderSlider);
@@ -39,21 +39,21 @@ public class SurveyUI : MonoBehaviour
             lagSlider.onValueChanged.AddListener((v) =>
             {
                 lagTouched = true;
-                CheckAllAnswered();
+                //CheckAllAnswered();
             });
 
         if (hiderSlider)
             hiderSlider.onValueChanged.AddListener((v) =>
             {
                 hiderTouched = true;
-                CheckAllAnswered();
+                //CheckAllAnswered();
             });
 
         if (seekerSlider)
             seekerSlider.onValueChanged.AddListener((v) =>
             {
                 seekerTouched = true;
-                CheckAllAnswered();
+                //CheckAllAnswered();
             });
 
         Hide();
@@ -85,7 +85,7 @@ public class SurveyUI : MonoBehaviour
         seekerTouched = false;
 
         if (submitButton)
-            submitButton.interactable = false;
+            submitButton.interactable = true;
 
         //Debug.Log("[DEBUG] SurveyUI shown");
         //Debug.Log($"[DEBUG] Time.timeScale = {Time.timeScale}");
@@ -155,16 +155,18 @@ public class SurveyUI : MonoBehaviour
     }
     void CheckAllAnswered()
     {
-        bool roleSpecificAnswered;
+        //bool roleSpecificAnswered;
 
-        if (RoundManager.Instance != null && RoundManager.Instance.IsSeeker)
-            roleSpecificAnswered = hiderTouched;   // player is hider
-        else
-            roleSpecificAnswered = seekerTouched;    // player is seeker
+        //if (RoundManager.Instance != null && RoundManager.Instance.IsSeeker)
+        //    roleSpecificAnswered = hiderTouched;   // player is hider
+        //else
+        //    roleSpecificAnswered = seekerTouched;    // player is seeker
 
-        if (lagTouched && roleSpecificAnswered)
-            submitButton.interactable = true;
-        else
-            submitButton.interactable = false;
+        //if (lagTouched && roleSpecificAnswered)
+        //    submitButton.interactable = true;
+        //else
+        //    submitButton.interactable = false;
+
+        //submimtButton.interactable = true;
     }
 }

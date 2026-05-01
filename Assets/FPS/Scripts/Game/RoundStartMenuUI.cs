@@ -29,6 +29,8 @@ public class RoundStartMenuUI : MonoBehaviour
 
         UpdateLatencyText(latencySlider.value);
         UpdateSpeedText(speedSlider.value);
+
+        DontDestroyOnLoad(root);
     }
 
     void UpdateLatencyText(float value)
@@ -66,6 +68,14 @@ public class RoundStartMenuUI : MonoBehaviour
         Hide();
     }
 
-    public void Show() => root.SetActive(true);
-    public void Hide() => root.SetActive(false);
+    public void Show()
+    {
+        if (!root) return;
+        root.SetActive(true);
+    }
+    public void Hide()
+    {
+        if (root == null) return;
+        root.SetActive(false);
+    }
 }

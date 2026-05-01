@@ -1199,6 +1199,9 @@ public class RoundManager : MonoBehaviour
 
         if (!roundStartUI)
             roundStartUI = FindFirstObjectByType<RoundStartUI>(FindObjectsInactive.Include);
+
+        if (!roundStartMenuUI)
+            roundStartMenuUI = FindFirstObjectByType<RoundStartMenuUI>(FindObjectsInactive.Include);
     }
 
     // ---------------- PAUSE / LOGGING ----------------
